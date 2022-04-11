@@ -106,7 +106,10 @@ class App(tk.Tk):
 
     def apply_theme(self):
         _base_vals.using_theme = True
-        self.tk.call("source", "./vmcompact/sun-valley-theme/sun-valley.tcl")
+        self.tk.call(
+            "source",
+            Path(__file__).parent.resolve() / "sun-valley-theme/sun-valley.tcl",
+        )
         self.tk.call("set_theme", self.configuration["theme"]["mode"])
 
     def _make_app(self, kind, vban=None):
