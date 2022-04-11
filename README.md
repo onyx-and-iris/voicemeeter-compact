@@ -65,6 +65,7 @@ For vban connections to work correctly VBAN TEXT incoming stream MUST be configu
 
 ## Profiles
 Three example profiles are included with the package, one for each kind of Voicemeeter. Use these to configure parameter startup states. Any parameter supported by the underlying interfaces is supported. For a detailed description of parameter coverage see:
+
 [Voicemeeter Remote API Python](https://github.com/onyx-and-iris/voicemeeter-api-python)
 
 [VBAN CMD API Python](https://github.com/onyx-and-iris/vban-cmd-python)
