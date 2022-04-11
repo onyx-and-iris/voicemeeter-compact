@@ -1,0 +1,15 @@
+extends = 'blank'
+[strip-0]
+label = "PhysStrip0"
+
+[strip-1]
+label = "PhysStrip1"
+
+[strip-2]
+label = "VirtStrip0"
+
+[bus-0]
+label = "PhysBus0"
+
+[bus-1]
+label = "PhysBus1"

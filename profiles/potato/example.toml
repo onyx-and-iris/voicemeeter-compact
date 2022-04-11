@@ -1,0 +1,48 @@
+extends = 'blank'
+[strip-0]
+label = "PhysStrip0"
+
+[strip-1]
+label = "PhysStrip1"
+
+[strip-2]
+label = "PhysStrip2"
+
+[strip-3]
+label = "PhysStrip3"
+
+[strip-4]
+label = "PhysStrip4"
+
+[strip-5]
+label = "VirtStrip0"
+
+[strip-6]
+label = "VirtStrip1"
+
+[strip-7]
+label = "VirtStrip2"
+
+[bus-0]
+label = "PhysBus0"
+
+[bus-1]
+label = "PhysBus1"
+
+[bus-2]
+label = "PhysBus2"
+
+[bus-3]
+label = "PhysBus3"
+
+[bus-4]
+label = "PhysBus4"
+
+[bus-5]
+label = "VirtBus0"
+
+[bus-6]
+label = "VirtBus1"
+
+[bus-7]
+label = "VirtBus2"
