@@ -59,18 +59,21 @@ For each channel labelframe the width and height may be adjusted which effects t
 Select the default submix bus when Submix frame is shown. For example, a dedicated bus for OBS.
 
 ### vban.toml
-Configure as many vban connections as you wish. This allows the app too work over a LAN connection as well as with a local Voicemeeter installation. If you don't wish to use any vban connections I advise you to delete this file.
+Configure as many vban connections as you wish. This allows the app to work over a LAN connection as well as with a local Voicemeeter installation. If you don't wish to use any vban connections I advise you to delete this file.
 
 For vban connections to work correctly VBAN TEXT incoming stream MUST be configured correctly on the remote machine. Both pcs ought to be connected to a local private network and should be able to ping one another.
 
 ## Profiles
 Three example profiles are included with the package, one for each kind of Voicemeeter. Use these to configure parameter startup states. Any parameter supported by the underlying interfaces is supported. For a detailed description of parameter coverage see:
-[Voicemeeter Remote API Python](https://github.com/onyx-and-iris/voicemeeter-api-python)[VBAN CMD API Python](https://github.com/onyx-and-iris/vban-cmd-python)
+[Voicemeeter Remote API Python](https://github.com/onyx-and-iris/voicemeeter-api-python)
+
 [VBAN CMD API Python](https://github.com/onyx-and-iris/vban-cmd-python)
 Profiles may be loaded at any time via the menu.
 
 ## Special Thanks
 [Vincent Burel](https://github.com/vburel2018) for creating Voicemeeter, its SDK, the C Remote API and Streamer View app!
+
 [Christian Volkmann](https://github.com/chvolkmann/voicemeeter-remote-python) for the detailed work that went into creating the underlying Remote API Python Interface.
 Unfortunately, the Remote API Python Interface has `NOT` been open source licensed. I have raised an issue and asked directly and politely but so far no response. If a license is added in future I will update this section. Without an open source license there is no guarantee that in future this package may not be pulled down, without any notice.
+
 [Rdbende](https://github.com/rdbende) for creating the beautiful Sun Valley Tkinter theme.
