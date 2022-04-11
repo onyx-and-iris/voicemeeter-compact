@@ -36,11 +36,15 @@ class App(tk.Tk):
         super().__init__()
         defaults = {
             "theme": {
+                "enabled": True,
                 "mode": "light",
             },
             "extends": {
                 "extended": False,
                 "extends_horizontal": True,
+            },
+            "submixes": {
+                "default": 0,
             },
         }
         self.configuration = defaults | self.configuration
@@ -66,7 +70,7 @@ class App(tk.Tk):
         self.drag_id = ""
         self.bind("<Configure>", self.dragging)
 
-        self.iconbitmap(Path.cwd() / "vmcompact" / "img" / "cat.ico")
+        self.iconbitmap(Path(__file__).parent.resolve() / "img" / "cat.ico")
 
     @property
     def target(self):
