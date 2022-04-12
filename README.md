@@ -26,7 +26,8 @@ if __name__ == "__main__":
     kind_id = "banana"
 
     # hide can be used to enable/disable the Voicemeeter GUI
-    # if hidden the audio engine will still start and the app should work as normal but the main VM GUI will not display,
+    # if hidden the audio engine will still start and the app should work as normal 
+    # but the main VM GUI will not display,
     # nor will there be an icon in the taskbar.
     voicemeeter.launch(kind_id, hide=False)
 
@@ -42,6 +43,12 @@ It's important to know that only labelled strips and buses will appear in the Ch
 ![Image of unlabelled app](nolabels.png)
 
 If the GUI looks like the above when you first load it, then no channels are labelled. From the `menu->Profiles->Load Profile` you may load an example config. Save your current Voicemeeter settings first :).
+
+### kind_id
+A *kind_id* specifies a major Voicemeeter version. This may be one of:
+- `basic`
+- `banana`
+- `potato`
 
 ## Config Files
 ### app.toml
