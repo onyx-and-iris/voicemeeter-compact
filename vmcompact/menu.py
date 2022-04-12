@@ -15,7 +15,8 @@ class Menus(tk.Menu):
         super().__init__()
         self._parent = parent
         self._vmr = vmr
-        self.vban_conns = [None for i, _ in enumerate(self.configuration_vban)]
+        if self.configuration_vban is not None:
+            self.vban_conns = [None for i, _ in enumerate(self.configuration_vban)]
         self.menubar = tk.Menu(self, tearoff=0)
         parent["menu"] = self.menubar
         self._is_topmost = tk.BooleanVar()
@@ -88,19 +89,22 @@ class Menus(tk.Menu):
         # vban connect menu
         self.menu_vban = tk.Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(menu=self.menu_vban, label="VBAN Connect")
-        for i, _ in enumerate(self.configuration_vban):
-            setattr(self, f"menu_vban_{i+1}", tk.Menu(self.menu_vban, tearoff=0))
-            target_menu = getattr(self, f"menu_vban_{i+1}")
-            self.menu_vban.add_cascade(
-                menu=target_menu, label=f"VBAN Connect #{i+1}", underline=0
-            )
-            target_menu.add_command(
-                label="Connect", command=partial(self.vban_connect, i)
-            )
-            target_menu.add_command(
-                label="Disconnect", command=partial(self.vban_disconnect, i)
-            )
-            target_menu.entryconfig(1, state="disabled")
+        if self.configuration_vban is not None:
+            for i, _ in enumerate(self.configuration_vban):
+                setattr(self, f"menu_vban_{i+1}", tk.Menu(self.menu_vban, tearoff=0))
+                target_menu = getattr(self, f"menu_vban_{i+1}")
+                self.menu_vban.add_cascade(
+                    menu=target_menu, label=f"VBAN Connect #{i+1}", underline=0
+                )
+                target_menu.add_command(
+                    label="Connect", command=partial(self.vban_connect, i)
+                )
+                target_menu.add_command(
+                    label="Disconnect", command=partial(self.vban_disconnect, i)
+                )
+                target_menu.entryconfig(1, state="disabled")
+        else:
+            self.menubar.entryconfig(2, state="disabled")
 
         # extends menu
         self.menu_extends = tk.Menu(self.menubar, tearoff=0)
@@ -191,7 +195,8 @@ class Menus(tk.Menu):
 
     @property
     def configuration_vban(self):
-        return configuration["vban"]
+        if "vban" in configuration:
+            return configuration["vban"]
 
     def action_invoke_voicemeeter(self, cmd):
         getattr(self.target.command, cmd)()
