@@ -22,7 +22,7 @@ class BaseValues:
     # bus assigned as current submix
     submixes: int = 0
     # pdirty delay
-    pdelay: int = 50
+    pdelay: int = 5
     # ldirty delay
     ldelay: int = 50
 
