@@ -18,8 +18,8 @@ setuptools.setup(
     license="MIT",
     packages=["vmcompact"],
     package_data={
-        "vmcompact": ["img/*"],
         "vmcompact": [
+            "img/*",
             "sun-valley-theme/*",
             "sun-valley-theme/theme/*",
             "sun-valley-theme/theme/*/*",
