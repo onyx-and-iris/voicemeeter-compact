@@ -233,7 +233,7 @@ class Strip(Channel):
                             ]
                         ),
                     )
-                peak = vals[0] if vals[0] > vals[1] else vals[0]
+                peak = vals[0] if vals[0] > vals[1] else vals[1]
                 self.level.set(
                     (0 if self.mute.get() else 100 + (peak - 18) + self.gain.get())
                 )
@@ -289,7 +289,7 @@ class Bus(Channel):
                         self._parent._parent.bus_levels[self.index * 8 + 1]
                     ),
                 )
-                peak = vals[0] if vals[0] > vals[1] else vals[0]
+                peak = vals[0] if vals[0] > vals[1] else vals[1]
                 self.level.set((0 if self.mute.get() else 100 + (peak - 18)))
         self.after(
             _base_vals.ldelay if not _base_vals.in_scale_button_1 else 100,

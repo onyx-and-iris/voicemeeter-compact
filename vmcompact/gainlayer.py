@@ -188,7 +188,7 @@ class GainLayer(ttk.LabelFrame):
                             ]
                         ),
                     )
-                peak = vals[0] if vals[0] > vals[1] else vals[0]
+                peak = vals[0] if vals[0] > vals[1] else vals[1]
                 self.level.set(
                     (
                         0
