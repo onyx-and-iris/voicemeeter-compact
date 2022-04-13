@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from functools import partial
+from math import log
 
 from .data import _base_vals
 from .config import StripConfig, BusConfig
@@ -76,6 +77,11 @@ class Channel(ttk.LabelFrame):
         self.setter("gain", self.gain.get())
         self._parent._parent.nav_frame.info_text.set(round(self.gain.get(), 1))
 
+    def convert_level(self, val):
+        if _base_vals.vban_connected:
+            return round(-val * 0.01, 1)
+        return round(20 * log(val, 10), 1) if val > 0 else -200.0
+
     def _make_widgets(self):
         """Creates a progressbar, scale, mute button and config button for a single channel"""
         # Progress bar
@@ -131,7 +137,7 @@ class Channel(ttk.LabelFrame):
         """keeps params synced but ensures sliders are responsive"""
         if self._parent._parent.pdirty and not _base_vals.in_scale_button_1:
             self.sync()
-        self.after(1, self.watch_pdirty_step)
+        self.after(_base_vals.pdelay, self.watch_pdirty_step)
 
     def sync(self):
         """sync params with voicemeeter"""
@@ -201,14 +207,39 @@ class Strip(Channel):
 
     def watch_levels_step(self):
         if not _base_vals.dragging:
-            vals = self.target.levels.prefader
-            val = vals[0] if vals[0] > vals[1] else vals[0]
-            self.level.set(val)
-            self.level.set(
-                (0 if self.mute.get() else 100 + (val - 18) + self.gain.get())
-            )
+            if self._parent._parent.ldirty:
+                if self.index <= self._parent.phys_in:
+                    vals = (
+                        self.convert_level(
+                            self._parent._parent.strip_levels[self.index * 2]
+                        ),
+                        self.convert_level(
+                            self._parent._parent.strip_levels[self.index * 2 + 1]
+                        ),
+                    )
+                else:
+                    vals = (
+                        self.convert_level(
+                            self._parent._parent.strip_levels[
+                                self._parent.phys_in * 2
+                                + (self.index - self._parent.phys_in) * 8
+                            ]
+                        ),
+                        self.convert_level(
+                            self._parent._parent.strip_levels[
+                                self._parent.phys_in * 2
+                                + (self.index - self._parent.phys_in) * 8
+                                + 1
+                            ]
+                        ),
+                    )
+                peak = vals[0] if vals[0] > vals[1] else vals[0]
+                self.level.set(
+                    (0 if self.mute.get() else 100 + (peak - 18) + self.gain.get())
+                )
         self.after(
-            25 if not _base_vals.in_scale_button_1 else 100, self.watch_levels_step
+            _base_vals.ldelay if not _base_vals.in_scale_button_1 else 100,
+            self.watch_levels_step,
         )
 
 
@@ -251,14 +282,18 @@ class Bus(Channel):
 
     def watch_levels_step(self):
         if not _base_vals.dragging:
-            vals = self.target.levels.all
-            val = vals[0] if vals[0] > vals[1] else vals[0]
-            self.level.set(val)
-            self.level.set(
-                (0 if self.mute.get() else 100 + (val - 18) + self.gain.get())
-            )
+            if self._parent._parent.ldirty:
+                vals = (
+                    self.convert_level(self._parent._parent.bus_levels[self.index * 8]),
+                    self.convert_level(
+                        self._parent._parent.bus_levels[self.index * 8 + 1]
+                    ),
+                )
+                peak = vals[0] if vals[0] > vals[1] else vals[0]
+                self.level.set((0 if self.mute.get() else 100 + (peak - 18)))
         self.after(
-            25 if not _base_vals.in_scale_button_1 else 100, self.watch_levels_step
+            _base_vals.ldelay if not _base_vals.in_scale_button_1 else 100,
+            self.watch_levels_step,
         )
 
 
@@ -364,7 +399,7 @@ class ChannelFrame(ttk.Frame):
     def watch_pdirty_step(self):
         if self._parent.pdirty:
             self.watch_labels()
-        self.after(1, self.watch_pdirty_step)
+        self.after(_base_vals.pdelay, self.watch_pdirty_step)
 
     def watch_labels(self):
         for i, labelframe in enumerate(self.labelframes):

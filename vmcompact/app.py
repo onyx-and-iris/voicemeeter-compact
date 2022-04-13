@@ -61,6 +61,11 @@ class App(tk.Tk):
 
         # start pdirty watcher
         self.upd_pdirty()
+        self.strip_levels = None
+        self.bus_levels = None
+        self._strip_levels = None
+        self._bus_levels = None
+        self.watch_levels()
 
         self.resizable(False, False)
         if _base_vals.themes_enabled:
@@ -84,6 +89,14 @@ class App(tk.Tk):
     @pdirty.setter
     def pdirty(self, val):
         self._pdirty = val
+
+    @property
+    def ldirty(self):
+        return self._ldirty
+
+    @ldirty.setter
+    def ldirty(self, val):
+        self._ldirty = val
 
     @property
     def configuration(self):
@@ -155,7 +168,27 @@ class App(tk.Tk):
 
     def upd_pdirty_step(self):
         self.pdirty = self.target.pdirty
-        self.after(1, self.upd_pdirty_step)
+        self.after(_base_vals.pdelay, self.upd_pdirty_step)
+
+    def watch_levels(self):
+        self.after(1, self.watch_levels_step)
+
+    def watch_levels_step(self):
+        """
+        Continuously fetch level arrays, only update
+        if ldirty
+        """
+        self._strip_levels = self.target.strip_levels
+        self._bus_levels = self.target.bus_levels
+
+        self.ldirty = not (
+            self.strip_levels == self._strip_levels
+            and self.bus_levels == self._bus_levels
+        )
+        if self.ldirty:
+            self.strip_levels = self._strip_levels
+            self.bus_levels = self._bus_levels
+        self.after(_base_vals.ldelay, self.watch_levels_step)
 
     def dragging(self, event, *args):
         if event.widget is self:

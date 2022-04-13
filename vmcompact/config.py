@@ -67,7 +67,7 @@ class Config(ttk.Frame):
         """keeps params synced but ensures sliders are responsive"""
         if self._parent.pdirty and not _base_vals.in_scale_button_1:
             self.sync()
-        self.after(1, self.watch_pdirty_step)
+        self.after(_base_vals.pdelay, self.watch_pdirty_step)
 
 
 class StripConfig(Config):

@@ -21,6 +21,10 @@ class BaseValues:
     using_theme: bool = False
     # bus assigned as current submix
     submixes: int = 0
+    # pdirty delay
+    pdelay: int = 50
+    # ldirty delay
+    ldelay: int = 50
 
 
 _base_vals = BaseValues()

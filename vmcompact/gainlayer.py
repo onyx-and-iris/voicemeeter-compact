@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox as msg
 from functools import partial
+from math import log
 
 from .data import _base_vals
 
@@ -74,6 +75,11 @@ class GainLayer(ttk.LabelFrame):
                 background=f'{"green" if self.on.get() else "white"}',
             )
 
+    def convert_level(self, val):
+        if _base_vals.vban_connected:
+            return round(-val * 0.01, 1)
+        return round(20 * log(val, 10), 1) if val > 0 else -200.0
+
     def _make_widgets(self):
         """Creates a progressbar, scale, on button and config button for a single channel"""
         # Progress bar
@@ -135,7 +141,7 @@ class GainLayer(ttk.LabelFrame):
         """keeps params synced but ensures sliders are responsive"""
         if self._parent._parent.pdirty and not _base_vals.in_scale_button_1:
             self.sync()
-        self.after(1, self.watch_pdirty_step)
+        self.after(_base_vals.pdelay, self.watch_pdirty_step)
 
     def sync(self):
         """sync params with voicemeeter"""
@@ -156,18 +162,45 @@ class GainLayer(ttk.LabelFrame):
 
     def watch_levels_step(self):
         if not _base_vals.dragging:
-            vals = self._parent.target.strip[self.index].levels.prefader
-            val = vals[0] if vals[0] > vals[1] else vals[0]
-            self.level.set(val)
-            self.level.set(
-                (
-                    0
-                    if self._parent._parent.channel_frame.strips[self.index].mute.get()
-                    else 100 + (val - 18) + self.gain.get()
+            if self._parent._parent.ldirty:
+                if self.index <= self._parent.phys_in:
+                    vals = (
+                        self.convert_level(
+                            self._parent._parent.strip_levels[self.index * 2]
+                        ),
+                        self.convert_level(
+                            self._parent._parent.strip_levels[self.index * 2 + 1]
+                        ),
+                    )
+                else:
+                    vals = (
+                        self.convert_level(
+                            self._parent._parent.strip_levels[
+                                self._parent.phys_in * 2
+                                + (self.index - self._parent.phys_in) * 8
+                            ]
+                        ),
+                        self.convert_level(
+                            self._parent._parent.strip_levels[
+                                self._parent.phys_in * 2
+                                + (self.index - self._parent.phys_in) * 8
+                                + 1
+                            ]
+                        ),
+                    )
+                peak = vals[0] if vals[0] > vals[1] else vals[0]
+                self.level.set(
+                    (
+                        0
+                        if self._parent._parent.channel_frame.strips[
+                            self.index
+                        ].mute.get()
+                        else 100 + (peak - 18) + self.gain.get()
+                    )
                 )
-            )
         self.after(
-            25 if not _base_vals.in_scale_button_1 else 100, self.watch_levels_step
+            _base_vals.ldelay if not _base_vals.in_scale_button_1 else 100,
+            self.watch_levels_step,
         )
 
 
@@ -175,6 +208,7 @@ class SubMixFrame(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
         self._parent = parent
+        self.phys_in, self.virt_in = parent.kind.ins
         self.phys_out, self.virt_out = parent.kind.outs
         self.buses = tuple(f"A{i+1}" for i in range(self.phys_out)) + tuple(
             f"B{i+1}" for i in range(self.virt_out)
@@ -232,7 +266,7 @@ class SubMixFrame(ttk.Frame):
     def watch_pdirty_step(self):
         if self._parent.pdirty:
             self.watch_labels()
-        self.after(1, self.watch_pdirty_step)
+        self.after(_base_vals.pdelay, self.watch_pdirty_step)
 
     def watch_labels(self):
         for i, gainlayer in enumerate(self.gainlayers):
