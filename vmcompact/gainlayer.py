@@ -18,6 +18,10 @@ class GainLayer(ttk.LabelFrame):
         self.level = tk.DoubleVar()
         self.on = tk.BooleanVar()
         self.s = self._parent._parent.styletable
+        if index <= parent.phys_in:
+            self.level_offset = index * 2
+        else:
+            self.level_offset = parent.phys_in * 2 + (index - parent.phys_in) * 8
 
         self.sync()
         self._make_widgets()
@@ -162,42 +166,59 @@ class GainLayer(ttk.LabelFrame):
 
     def watch_levels_step(self):
         if not _base_vals.dragging:
-            if self._parent._parent.ldirty:
-                if self.index <= self._parent.phys_in:
+            if (
+                self._parent._parent.ldirty
+                and _base_vals.strip_level_array_size
+                == len(self._parent._parent.comp_strip)
+            ):
+                if self.index <= self._parent.phys_in and any(
+                    self._parent._parent.comp_strip[
+                        self.level_offset : self.level_offset + 1
+                    ]
+                ):
                     vals = (
                         self.convert_level(
-                            self._parent._parent.strip_levels[self.index * 2]
+                            self._parent._parent.strip_levels[self.level_offset]
                         ),
                         self.convert_level(
-                            self._parent._parent.strip_levels[self.index * 2 + 1]
+                            self._parent._parent.strip_levels[self.level_offset + 1]
                         ),
                     )
-                else:
+                    peak = vals[0] if vals[0] > vals[1] else vals[1]
+                    self.level.set(
+                        (
+                            0
+                            if self._parent._parent.channel_frame.strips[
+                                self.index
+                            ].mute.get()
+                            or not self.on.get()
+                            else 100 + (peak - 18) + self.gain.get()
+                        )
+                    )
+                elif any(
+                    self._parent._parent.comp_strip[
+                        self.level_offset : self.level_offset + 1
+                    ]
+                ):
                     vals = (
                         self.convert_level(
-                            self._parent._parent.strip_levels[
-                                self._parent.phys_in * 2
-                                + (self.index - self._parent.phys_in) * 8
-                            ]
+                            self._parent._parent.strip_levels[self.level_offset]
                         ),
                         self.convert_level(
-                            self._parent._parent.strip_levels[
-                                self._parent.phys_in * 2
-                                + (self.index - self._parent.phys_in) * 8
-                                + 1
-                            ]
+                            self._parent._parent.strip_levels[self.level_offset + 1]
                         ),
                     )
-                peak = vals[0] if vals[0] > vals[1] else vals[1]
-                self.level.set(
-                    (
-                        0
-                        if self._parent._parent.channel_frame.strips[
-                            self.index
-                        ].mute.get()
-                        else 100 + (peak - 18) + self.gain.get()
+                    peak = vals[0] if vals[0] > vals[1] else vals[1]
+                    self.level.set(
+                        (
+                            0
+                            if self._parent._parent.channel_frame.strips[
+                                self.index
+                            ].mute.get()
+                            or not self.on.get()
+                            else 100 + (peak - 18) + self.gain.get()
+                        )
                     )
-                )
         self.after(
             _base_vals.ldelay if not _base_vals.in_scale_button_1 else 100,
             self.watch_levels_step,

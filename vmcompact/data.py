@@ -25,6 +25,10 @@ class BaseValues:
     pdelay: int = 5
     # ldirty delay
     ldelay: int = 50
+    # size of strip level array for a kind
+    strip_level_array_size: int = None
+    # size of bus level array for a kind
+    bus_level_array_size: int = None
 
 
 _base_vals = BaseValues()

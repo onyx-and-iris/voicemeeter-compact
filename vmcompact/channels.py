@@ -175,6 +175,10 @@ class Strip(Channel):
 
     def __init__(self, parent, index, id):
         super().__init__(parent, index, id)
+        if index <= parent.phys_in:
+            self.level_offset = index * 2
+        else:
+            self.level_offset = parent.phys_in * 2 + (index - parent.phys_in) * 8
 
     @property
     def target(self):
@@ -207,36 +211,45 @@ class Strip(Channel):
 
     def watch_levels_step(self):
         if not _base_vals.dragging:
-            if self._parent._parent.ldirty:
-                if self.index <= self._parent.phys_in:
+            if (
+                self._parent._parent.ldirty
+                and _base_vals.strip_level_array_size
+                == len(self._parent._parent.comp_strip)
+            ):
+                if self.index <= self._parent.phys_in and any(
+                    self._parent._parent.comp_strip[
+                        self.level_offset : self.level_offset + 1
+                    ]
+                ):
                     vals = (
                         self.convert_level(
-                            self._parent._parent.strip_levels[self.index * 2]
+                            self._parent._parent.strip_levels[self.level_offset]
                         ),
                         self.convert_level(
-                            self._parent._parent.strip_levels[self.index * 2 + 1]
+                            self._parent._parent.strip_levels[self.level_offset + 1]
                         ),
                     )
-                else:
+                    peak = vals[0] if vals[0] > vals[1] else vals[1]
+                    self.level.set(
+                        (0 if self.mute.get() else 100 + (peak - 18) + self.gain.get())
+                    )
+                elif any(
+                    self._parent._parent.comp_strip[
+                        self.level_offset : self.level_offset + 1
+                    ]
+                ):
                     vals = (
                         self.convert_level(
-                            self._parent._parent.strip_levels[
-                                self._parent.phys_in * 2
-                                + (self.index - self._parent.phys_in) * 8
-                            ]
+                            self._parent._parent.strip_levels[self.level_offset]
                         ),
                         self.convert_level(
-                            self._parent._parent.strip_levels[
-                                self._parent.phys_in * 2
-                                + (self.index - self._parent.phys_in) * 8
-                                + 1
-                            ]
+                            self._parent._parent.strip_levels[self.level_offset + 1]
                         ),
                     )
-                peak = vals[0] if vals[0] > vals[1] else vals[1]
-                self.level.set(
-                    (0 if self.mute.get() else 100 + (peak - 18) + self.gain.get())
-                )
+                    peak = vals[0] if vals[0] > vals[1] else vals[1]
+                    self.level.set(
+                        (0 if self.mute.get() else 100 + (peak - 18) + self.gain.get())
+                    )
         self.after(
             _base_vals.ldelay if not _base_vals.in_scale_button_1 else 100,
             self.watch_levels_step,
@@ -248,6 +261,7 @@ class Bus(Channel):
 
     def __init__(self, parent, index, id):
         super().__init__(parent, index, id)
+        self.level_offset = self.index * 8
 
     @property
     def target(self):
@@ -282,15 +296,24 @@ class Bus(Channel):
 
     def watch_levels_step(self):
         if not _base_vals.dragging:
-            if self._parent._parent.ldirty:
-                vals = (
-                    self.convert_level(self._parent._parent.bus_levels[self.index * 8]),
-                    self.convert_level(
-                        self._parent._parent.bus_levels[self.index * 8 + 1]
-                    ),
-                )
-                peak = vals[0] if vals[0] > vals[1] else vals[1]
-                self.level.set((0 if self.mute.get() else 100 + (peak - 18)))
+            if self._parent._parent.ldirty and _base_vals.bus_level_array_size == len(
+                self._parent._parent.comp_bus
+            ):
+                if any(
+                    self._parent._parent.comp_bus[
+                        self.level_offset : self.level_offset + 1
+                    ]
+                ):
+                    vals = (
+                        self.convert_level(
+                            self._parent._parent.bus_levels[self.level_offset]
+                        ),
+                        self.convert_level(
+                            self._parent._parent.bus_levels[self.level_offset + 1]
+                        ),
+                    )
+                    peak = vals[0] if vals[0] > vals[1] else vals[1]
+                    self.level.set((0 if self.mute.get() else 100 + (peak - 18)))
         self.after(
             _base_vals.ldelay if not _base_vals.in_scale_button_1 else 100,
             self.watch_levels_step,
@@ -312,6 +335,8 @@ class ChannelFrame(ttk.Frame):
         self._is_strip = is_strip
         self.phys_in, self.virt_in = parent.kind.ins
         self.phys_out, self.virt_out = parent.kind.outs
+        _base_vals.strip_level_array_size = 2 * self.phys_in + 8 * self.virt_in
+        _base_vals.bus_level_array_size = 8 * (self.phys_out + self.virt_out)
 
         defaults = {
             "width": 80,

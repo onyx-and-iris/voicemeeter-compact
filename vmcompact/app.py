@@ -67,10 +67,8 @@ class App(tk.Tk):
 
         # start pdirty watcher
         self.upd_pdirty()
-        self.strip_levels = None
-        self.bus_levels = None
-        self._strip_levels = None
-        self._bus_levels = None
+        self.strip_levels = self.target.strip_levels
+        self.bus_levels = self.target.bus_levels
         self.watch_levels()
 
         self.resizable(False, False)
@@ -180,20 +178,16 @@ class App(tk.Tk):
         self.after(1, self.watch_levels_step)
 
     def watch_levels_step(self):
-        """
-        Continuously fetch level arrays, only update
-        if ldirty
-        """
-        self._strip_levels = self.target.strip_levels
-        self._bus_levels = self.target.bus_levels
+        """Continuously fetch level arrays, only update if ldirty"""
+        _strip_levels = self.target.strip_levels
+        _bus_levels = self.target.bus_levels
+        self.comp_strip = [not a == b for a, b in zip(self.strip_levels, _strip_levels)]
+        self.comp_bus = [not a == b for a, b in zip(self.bus_levels, _bus_levels)]
 
-        self.ldirty = not (
-            self.strip_levels == self._strip_levels
-            and self.bus_levels == self._bus_levels
-        )
+        self.ldirty = any(self.comp_strip) or any(self.comp_bus)
         if self.ldirty:
-            self.strip_levels = self._strip_levels
-            self.bus_levels = self._bus_levels
+            self.strip_levels = _strip_levels
+            self.bus_levels = _bus_levels
         self.after(_base_vals.ldelay, self.watch_levels_step)
 
     def dragging(self, event, *args):
