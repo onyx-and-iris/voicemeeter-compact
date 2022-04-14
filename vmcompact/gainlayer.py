@@ -171,31 +171,7 @@ class GainLayer(ttk.LabelFrame):
                 and _base_vals.strip_level_array_size
                 == len(self._parent._parent.comp_strip)
             ):
-                if self.index <= self._parent.phys_in and any(
-                    self._parent._parent.comp_strip[
-                        self.level_offset : self.level_offset + 1
-                    ]
-                ):
-                    vals = (
-                        self.convert_level(
-                            self._parent._parent.strip_levels[self.level_offset]
-                        ),
-                        self.convert_level(
-                            self._parent._parent.strip_levels[self.level_offset + 1]
-                        ),
-                    )
-                    peak = vals[0] if vals[0] > vals[1] else vals[1]
-                    self.level.set(
-                        (
-                            0
-                            if self._parent._parent.channel_frame.strips[
-                                self.index
-                            ].mute.get()
-                            or not self.on.get()
-                            else 100 + (peak - 18) + self.gain.get()
-                        )
-                    )
-                elif any(
+                if any(
                     self._parent._parent.comp_strip[
                         self.level_offset : self.level_offset + 1
                     ]
