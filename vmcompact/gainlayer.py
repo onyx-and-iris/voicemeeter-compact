@@ -61,6 +61,18 @@ class GainLayer(ttk.LabelFrame):
     def scale_release(self, *args):
         _base_vals.in_scale_button_1 = False
 
+    def _on_mousewheel(self, event):
+        if event.delta > 0:
+            self.gain.set(self.gain.get() + 3)
+        else:
+            self.gain.set(self.gain.get() - 3)
+        if self.gain.get() > 12:
+            self.gain.set(12)
+        elif self.gain.get() < -60:
+            self.gain.set(-60)
+        self.setter("gain", self.gain.get())
+        self._parent._parent.nav_frame.info_text.set(round(self.gain.get(), 1))
+
     def scale_callback(self, *args):
         """callback function for scale widget"""
         self.setter("gain", self.gain.get())
@@ -112,6 +124,7 @@ class GainLayer(ttk.LabelFrame):
         self.scale.bind("<Enter>", self.scale_enter)
         self.scale.bind("<ButtonRelease-1>", self.scale_release)
         self.scale.bind("<Leave>", self.scale_leave)
+        self.scale.bind("<MouseWheel>", self._on_mousewheel)
 
         # On button
         self.button_on = ttk.Checkbutton(
