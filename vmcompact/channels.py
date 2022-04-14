@@ -213,26 +213,25 @@ class Strip(Channel):
         if not _base_vals.dragging:
             if (
                 self._parent._parent.ldirty
-                and _base_vals.strip_level_array_size
-                == len(self._parent._parent.comp_strip)
-            ):
-                if any(
+                and any(
                     self._parent._parent.comp_strip[
                         self.level_offset : self.level_offset + 1
                     ]
-                ):
-                    vals = (
-                        self.convert_level(
-                            self._parent._parent.strip_levels[self.level_offset]
-                        ),
-                        self.convert_level(
-                            self._parent._parent.strip_levels[self.level_offset + 1]
-                        ),
-                    )
-                    peak = vals[0] if vals[0] > vals[1] else vals[1]
-                    self.level.set(
-                        (0 if self.mute.get() else 100 + (peak - 18) + self.gain.get())
-                    )
+                )
+                and _base_vals.strip_level_array_size
+                == len(self._parent._parent.comp_strip)
+            ):
+                vals = (
+                    self.convert_level(
+                        self._parent._parent.strip_levels[self.level_offset]
+                    ),
+                    self.convert_level(
+                        self._parent._parent.strip_levels[self.level_offset + 1]
+                    ),
+                )
+                self.level.set(
+                    (0 if self.mute.get() else 100 + (max(vals) - 18) + self.gain.get())
+                )
         self.after(
             _base_vals.ldelay if not _base_vals.in_scale_button_1 else 100,
             self.watch_levels_step,
@@ -279,24 +278,25 @@ class Bus(Channel):
 
     def watch_levels_step(self):
         if not _base_vals.dragging:
-            if self._parent._parent.ldirty and _base_vals.bus_level_array_size == len(
-                self._parent._parent.comp_bus
-            ):
-                if any(
+            if (
+                self._parent._parent.ldirty
+                and any(
                     self._parent._parent.comp_bus[
                         self.level_offset : self.level_offset + 1
                     ]
-                ):
-                    vals = (
-                        self.convert_level(
-                            self._parent._parent.bus_levels[self.level_offset]
-                        ),
-                        self.convert_level(
-                            self._parent._parent.bus_levels[self.level_offset + 1]
-                        ),
-                    )
-                    peak = vals[0] if vals[0] > vals[1] else vals[1]
-                    self.level.set((0 if self.mute.get() else 100 + (peak - 18)))
+                )
+                and _base_vals.bus_level_array_size
+                == len(self._parent._parent.comp_bus)
+            ):
+                vals = (
+                    self.convert_level(
+                        self._parent._parent.bus_levels[self.level_offset]
+                    ),
+                    self.convert_level(
+                        self._parent._parent.bus_levels[self.level_offset + 1]
+                    ),
+                )
+                self.level.set((0 if self.mute.get() else 100 + (max(vals) - 18)))
         self.after(
             _base_vals.ldelay if not _base_vals.in_scale_button_1 else 100,
             self.watch_levels_step,

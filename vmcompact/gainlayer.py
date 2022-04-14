@@ -168,33 +168,32 @@ class GainLayer(ttk.LabelFrame):
         if not _base_vals.dragging:
             if (
                 self._parent._parent.ldirty
-                and _base_vals.strip_level_array_size
-                == len(self._parent._parent.comp_strip)
-            ):
-                if any(
+                and any(
                     self._parent._parent.comp_strip[
                         self.level_offset : self.level_offset + 1
                     ]
-                ):
-                    vals = (
-                        self.convert_level(
-                            self._parent._parent.strip_levels[self.level_offset]
-                        ),
-                        self.convert_level(
-                            self._parent._parent.strip_levels[self.level_offset + 1]
-                        ),
+                )
+                and _base_vals.strip_level_array_size
+                == len(self._parent._parent.comp_strip)
+            ):
+                vals = (
+                    self.convert_level(
+                        self._parent._parent.strip_levels[self.level_offset]
+                    ),
+                    self.convert_level(
+                        self._parent._parent.strip_levels[self.level_offset + 1]
+                    ),
+                )
+                self.level.set(
+                    (
+                        0
+                        if self._parent._parent.channel_frame.strips[
+                            self.index
+                        ].mute.get()
+                        or not self.on.get()
+                        else 100 + (max(vals) - 18) + self.gain.get()
                     )
-                    peak = vals[0] if vals[0] > vals[1] else vals[1]
-                    self.level.set(
-                        (
-                            0
-                            if self._parent._parent.channel_frame.strips[
-                                self.index
-                            ].mute.get()
-                            or not self.on.get()
-                            else 100 + (peak - 18) + self.gain.get()
-                        )
-                    )
+                )
         self.after(
             _base_vals.ldelay if not _base_vals.in_scale_button_1 else 100,
             self.watch_levels_step,
