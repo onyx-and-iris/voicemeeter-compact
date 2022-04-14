@@ -53,13 +53,13 @@ class App(tk.Tk):
         }
         if configuration:
             self.configuration = defaults | self.configuration
-            _base_vals.themes_enabled = self.configuration["theme"]["enabled"]
-            _base_vals.extends_horizontal = self.configuration["extends"][
-                "extends_horizontal"
-            ]
-            _base_vals.submixes = self.configuration["submixes"]["default"]
         else:
             configuration["app"] = defaults
+        _base_vals.themes_enabled = self.configuration["theme"]["enabled"]
+        _base_vals.extends_horizontal = self.configuration["extends"][
+            "extends_horizontal"
+        ]
+        _base_vals.submixes = self.configuration["submixes"]["default"]
         # create menus
         self.menus = Menus(self, vmr)
         self.styletable = ttk.Style()
