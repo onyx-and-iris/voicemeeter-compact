@@ -40,20 +40,26 @@ class App(tk.Tk):
                 "mode": "light",
             },
             "extends": {
-                "extended": False,
+                "extended": True,
                 "extends_horizontal": True,
+            },
+            "channel": {
+                "width": 80,
+                "height": 130,
             },
             "submixes": {
                 "default": 0,
             },
         }
-        self.configuration = defaults | self.configuration
-        _base_vals.themes_enabled = self.configuration["theme"]["enabled"]
-        _base_vals.extends_horizontal = self.configuration["extends"][
-            "extends_horizontal"
-        ]
-        _base_vals.submixes = self.configuration["submixes"]["default"]
-
+        if configuration:
+            self.configuration = defaults | self.configuration
+            _base_vals.themes_enabled = self.configuration["theme"]["enabled"]
+            _base_vals.extends_horizontal = self.configuration["extends"][
+                "extends_horizontal"
+            ]
+            _base_vals.submixes = self.configuration["submixes"]["default"]
+        else:
+            configuration["app"] = defaults
         # create menus
         self.menus = Menus(self, vmr)
         self.styletable = ttk.Style()

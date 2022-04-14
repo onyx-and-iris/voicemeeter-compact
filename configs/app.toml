@@ -5,7 +5,7 @@ mode="light"
 # load in extended mode? if so which orientation
 [extends]
 extended=true
-extends_horizontal=false
+extends_horizontal=true
 # default dimensions for channel label frames
 [channel]
 width=80
