@@ -10,6 +10,6 @@ extends_horizontal=true
 [channel]
 width=80
 height=130
-# default submix bus
+# default submix bus (0-7 corresponding to A1,A2..B2,B3)
 [submixes]
-default=6
+default=0
