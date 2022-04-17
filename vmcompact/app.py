@@ -65,7 +65,7 @@ class App(tk.Tk):
         self.styletable = ttk.Style()
         self._vmr = vmr
 
-        # start pdirty watcher
+        # start watchers, initialize level arrays
         self.upd_pdirty()
         self.strip_levels = self.target.strip_levels
         self.bus_levels = self.target.bus_levels
@@ -135,6 +135,8 @@ class App(tk.Tk):
         )
         self._vban = vban
         self.kind = kind
+        self.strip_levels = self.target.strip_levels
+        self.bus_levels = self.target.bus_levels
 
         self._make_top_level_frames()
 
@@ -184,7 +186,7 @@ class App(tk.Tk):
         self.comp_strip = [not a == b for a, b in zip(self.strip_levels, _strip_levels)]
         self.comp_bus = [not a == b for a, b in zip(self.bus_levels, _bus_levels)]
 
-        self.ldirty = any(self.comp_strip) or any(self.comp_bus)
+        self.ldirty = any(any(l) for l in (self.comp_strip, self.comp_bus))
         if self.ldirty:
             self.strip_levels = _strip_levels
             self.bus_levels = _bus_levels

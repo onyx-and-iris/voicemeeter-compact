@@ -346,20 +346,26 @@ class ChannelFrame(ttk.Frame):
 
         # create labelframes
         if is_strip:
-            self.strips = [
+            self.strips = tuple(
                 Strip(self, i, self.identifier)
                 for i in range(self.phys_in + self.virt_in)
-            ]
+            )
         else:
-            self.buses = [
+            self.buses = tuple(
                 Bus(self, i, self.identifier)
                 for i in range(self.phys_out + self.virt_out)
-            ]
+            )
 
         # position label frames. destroy any without label text
         self.labelframes = self.strips if is_strip else self.buses
 
         self.col_row_configure()
+
+        for i, labelframe in enumerate(self.labelframes):
+            labelframe.grid(row=0, column=i)
+            if not labelframe.cget("text"):
+                self.columnconfigure(i, minsize=0)
+                labelframe.grid_remove()
 
         for i, labelframe in enumerate(self.labelframes):
             labelframe.grid(row=0, column=i)
