@@ -29,6 +29,8 @@ class BaseValues:
     strip_level_array_size: int = None
     # size of bus level array for a kind
     bus_level_array_size: int = None
+    # size of mousewheel scroll step
+    mwscroll_step: int = 3
 
 
 _base_vals = BaseValues()

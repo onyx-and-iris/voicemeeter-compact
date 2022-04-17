@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 from typing import NamedTuple
-from functools import partial
 from pathlib import Path
 
 from .errors import VMCompactErrors
@@ -47,6 +46,9 @@ class App(tk.Tk):
                 "width": 80,
                 "height": 130,
             },
+            "mwscroll_step": {
+                "size": 3,
+            },
             "submixes": {
                 "default": 0,
             },
@@ -60,6 +62,8 @@ class App(tk.Tk):
             "extends_horizontal"
         ]
         _base_vals.submixes = self.configuration["submixes"]["default"]
+        _base_vals.mwscroll_step = self.configuration["mwscroll_step"]["size"]
+
         # create menus
         self.menus = Menus(self, vmr)
         self.styletable = ttk.Style()

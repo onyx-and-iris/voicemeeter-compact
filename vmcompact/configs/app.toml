@@ -1,0 +1,18 @@
+# load with themes enabled? set the default mode
+[theme]
+enabled=true
+mode="light"
+# load in extended mode? if so which orientation
+[extends]
+extended=true
+extends_horizontal=true
+# default dimensions for channel label frames
+[channel]
+width=80
+height=130
+# size of a single mouse wheen scroll step
+[mwscroll_step]
+size=3
+# default submix bus
+[submixes]
+default=6

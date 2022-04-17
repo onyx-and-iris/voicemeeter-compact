@@ -73,10 +73,14 @@ class Channel(ttk.LabelFrame):
         _base_vals.in_scale_button_1 = False
 
     def _on_mousewheel(self, event):
-        if event.delta > 0:
-            self.gain.set(self.gain.get() + 3)
-        else:
-            self.gain.set(self.gain.get() - 3)
+        self.gain.set(
+            self.gain.get()
+            + (
+                _base_vals.mwscroll_step
+                if event.delta > 0
+                else -_base_vals.mwscroll_step
+            )
+        )
         if self.gain.get() > 12:
             self.gain.set(12)
         elif self.gain.get() < -60:
