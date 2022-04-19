@@ -41,7 +41,7 @@ if __name__ == "__main__":
 
 It's important to know that only labelled strips and buses will appear in the Channel frames. Removing a Channels label will cause the GUI to grow/shrink in real time.
 
-![Image of unlabelled app](nolabels.png)
+![Image of unlabelled app](./doc_imgs/nolabels.png)
 
 If the GUI looks like the above when you first load it, then no channels are labelled. From the menu, `Profiles->Load Profile` you may load an example config. Save your current Voicemeeter settings first :).
 
