@@ -47,6 +47,12 @@ It's important to know that only labelled strips and buses will appear in the Ch
 
 If the GUI looks like the above when you first load it, then no channels are labelled. From the menu, `Profiles->Load Profile` you may load an example config. Save your current Voicemeeter settings first :).
 
+### kind_id
+A *kind_id* specifies a major Voicemeeter version. This may be one of:
+- `basic`
+- `banana`
+- `potato`
+
 ## Config Files
 The following config files should be placed in the same directory as your `__main__.py`.
 
