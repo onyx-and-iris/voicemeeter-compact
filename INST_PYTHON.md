@@ -1,6 +1,4 @@
 ## Git Installation
-Either install the `Github desktop client` or:
-
 https://git-scm.com/download/win
 
 ## Python Installation
@@ -24,5 +22,6 @@ Then use the command `pip install .` and wait for the required packages to insta
 
 Finally, run the GUI with the command `python .` or `pythonw .`
 
-If the GUI looks like the above when you first load it, then no channels are labelled. From the menu, Profiles->Load Profile you may load an example config. Save your current Voicemeeter settings first :).
+If the GUI looks like the image below when you first load it, then no channels are labelled. From the menu, Profiles->Load Profile you may load an example config. Save your current Voicemeeter settings first :).
+
 ![Image of no labels example](./doc_imgs/nolabels.png)

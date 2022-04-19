@@ -5,10 +5,12 @@
 # Voicemeeter Compact
 ## Prerequisites
 - Voicemeeter (Basic v1.0.8.2), (Banana v2.0.6.2) or (Potato v3.0.2.2)
-- Git for Windows [Don't have Git?](INST_PYTHON.md)
-- Python 3.9+ [Don't have Python?](INST_PYTHON.md)
+- [Git for Windows](https://git-scm.com/download/win)
+- Python 3.9+
 
 ## Installation
+For a step-by-step guide [click here](INST_PYTHON.md)
+
 ```
 git clone https://github.com/onyx-and-iris/voicemeeter-compact
 cd voicemeeter-compact
