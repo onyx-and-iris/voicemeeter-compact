@@ -12,4 +12,4 @@ If you install Python straight from `python.org` instead remember to click 'Add 
 
 Once you have Python and Git for Windows installed you can simply download the source files (zip) directly with the green `Code` button, once extracted enter the directory and then from Powershell, `pip install .`
 
-Now just run the `__main__.py` file with command `python .` or `pythonw .`
+Now in Powershell use command `python .` or `pythonw .`
