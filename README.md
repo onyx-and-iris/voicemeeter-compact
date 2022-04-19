@@ -5,7 +5,7 @@
 # Voicemeeter Compact
 ## Prerequisites
 - Voicemeeter 1 (Basic), 2 (Banana) or 3 (Potato)
-- Python 3.9+ [Don't have Python?](PYTHON.md)
+- Python 3.9+ [Don't have Python?](INST_PYTHON.md)
 
 ## Installation
 ```
