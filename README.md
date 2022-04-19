@@ -6,6 +6,7 @@
 ## Prerequisites
 - Voicemeeter 1 (Basic), 2 (Banana) or 3 (Potato)
 - Python 3.9+
+![Don't have Python?](PYTHON.md)
 
 ## Installation
 ```
@@ -21,20 +22,20 @@ import voicemeeter
 import vmcompact
 
 
-if __name__ == "__main__":
-    # choose the kind of Voicemeeter (Local connection)
-    kind_id = "banana"
-
-    # hide can be used to enable/disable the Voicemeeter GUI
-    # if hidden the audio engine will still start and the app should work as normal 
-    # but the main VM GUI will not display,
-    # nor will there be an icon in the taskbar.
-    voicemeeter.launch(kind_id, hide=False)
-
+def main():
     # pass the kind_id and the vmr object to the app
     with voicemeeter.remote(kind_id) as vmr:
         app = vmcompact.connect(kind_id, vmr)
         app.mainloop()
+
+
+if __name__ == "__main__":
+    # choose the kind of Voicemeeter (Local connection)
+    kind_id = "banana"
+
+    voicemeeter.launch(kind_id, hide=False)
+
+    main()
 ```
 
 
@@ -42,15 +43,11 @@ It's important to know that only labelled strips and buses will appear in the Ch
 
 ![Image of unlabelled app](nolabels.png)
 
-If the GUI looks like the above when you first load it, then no channels are labelled. From the `menu->Profiles->Load Profile` you may load an example config. Save your current Voicemeeter settings first :).
-
-### kind_id
-A *kind_id* specifies a major Voicemeeter version. This may be one of:
-- `basic`
-- `banana`
-- `potato`
+If the GUI looks like the above when you first load it, then no channels are labelled. From the menu, `Profiles->Load Profile` you may load an example config. Save your current Voicemeeter settings first :).
 
 ## Config Files
+The following config files should be placed in the same directory as your `__main__.py`.
+
 ### app.toml
 Configure certain startup states for the app.
 - `theme`
@@ -61,6 +58,9 @@ Extending the app will show both strips and buses. In reduced mode only one or t
 
 - `channel`
 For each channel labelframe the width and height may be adjusted which effects the spacing between widgets and the length of the scales and progressbars respectively.
+
+- `mwscroll_step`
+Sets the amount (in db) the gain slider moves with a single mousewheel step. Default 3.
 
 - `submixes`
 Select the default submix bus when Submix frame is shown. For example, a dedicated bus for OBS.
