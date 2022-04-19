@@ -5,6 +5,7 @@
 # Voicemeeter Compact
 ## Prerequisites
 - Voicemeeter 1 (Basic), 2 (Banana) or 3 (Potato)
+- Git for Windows (or the Github Desktop client)
 - Python 3.9+ [Don't have Python?](INST_PYTHON.md)
 
 ## Installation
