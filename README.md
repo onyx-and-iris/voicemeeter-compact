@@ -68,7 +68,7 @@ Sets the amount (in db) the gain slider moves with a single mousewheel step. Def
 Select the default submix bus when Submix frame is shown. For example, a dedicated bus for OBS.
 
 ### vban.toml
-Configure as many vban connections as you wish. This allows the app to work over a LAN connection as well as with a local Voicemeeter installation. If you don't wish to use any vban connections I advise you to delete this file.
+Configure as many vban connections as you wish. This allows the app to work over a LAN connection as well as with a local Voicemeeter installation.
 
 For vban connections to work correctly VBAN TEXT incoming stream MUST be configured correctly on the remote machine. Both pcs ought to be connected to a local private network and should be able to ping one another.
 
