@@ -4,7 +4,7 @@
 ![Image of app in vertical extended mode](horizontal_extended.png)
 # Voicemeeter Compact
 ## Prerequisites
-- Voicemeeter 1 (Basic v1.0.8.2), 2 (Banana v2.0.6.2) or 3 (Potato v3.0.2.2)
+- Voicemeeter (Basic v1.0.8.2), (Banana v2.0.6.2) or (Potato v3.0.2.2)
 - Git for Windows (or the [Github Desktop client](https://desktop.github.com/))
 - Python 3.9+ [Don't have Python?](INST_PYTHON.md)
 
