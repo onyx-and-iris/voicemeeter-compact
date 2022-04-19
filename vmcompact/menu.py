@@ -89,7 +89,7 @@ class Menus(tk.Menu):
         # vban connect menu
         self.menu_vban = tk.Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(menu=self.menu_vban, label="VBAN Connect")
-        if self.configuration_vban is not None:
+        if self.configuration_vban:
             for i, _ in enumerate(self.configuration_vban):
                 setattr(self, f"menu_vban_{i+1}", tk.Menu(self.menu_vban, tearoff=0))
                 target_menu = getattr(self, f"menu_vban_{i+1}")

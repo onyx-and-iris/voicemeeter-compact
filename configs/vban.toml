@@ -1,12 +1,13 @@
-# example connections
-[connection-1]
-kind = 'banana'
-ip = '<ip address 1>'
-streamname = 'Command1'
-port = 6990
+### example connections
+### set the ip then uncomment
+# [connection-1]
+# kind = 'banana'
+# ip = '<ip address 1>'
+# streamname = 'Command1'
+# port = 6990
 
-[connection-2]
-kind = 'potato'
-ip = '<ip address 2>'
-streamname = 'Command1'
-port = 6990
+# [connection-2]
+# kind = 'potato'
+# ip = '<ip address 2>'
+# streamname = 'Command1'
+# port = 6990
