@@ -59,6 +59,7 @@ should be in the same location.
 Regarding profiles, a directory for each kind should hold the profile files and in each there can be any number of config files. Example, a config for streaming, a config for general listening/movie watching or any other type of config.
 
 .
+
 ├── `__main__.py`
 
 ├── configs
