@@ -302,6 +302,9 @@ class Menus(tk.Menu):
         target_menu = getattr(self, f"menu_vban_{i+1}")
         target_menu.entryconfig(0, state="normal")
         target_menu.entryconfig(1, state="disabled")
+        self.menubar.entryconfig(
+            4, state=f"{'normal' if kind.name == 'Potato' else 'disabled'}"
+        )
 
         self.after(15000, self.enable_vban_menus)
 
