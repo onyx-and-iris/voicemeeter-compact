@@ -346,8 +346,6 @@ class ChannelFrame(ttk.Frame):
         self.width = self.configuration["width"]
         self.height = self.configuration["height"]
 
-        self.watch_pdirty()
-
         # create labelframes
         if is_strip:
             self.strips = tuple(
@@ -371,11 +369,7 @@ class ChannelFrame(ttk.Frame):
                 self.columnconfigure(i, minsize=0)
                 labelframe.grid_remove()
 
-        for i, labelframe in enumerate(self.labelframes):
-            labelframe.grid(row=0, column=i)
-            if not labelframe.cget("text"):
-                self.columnconfigure(i, minsize=0)
-                labelframe.grid_remove()
+        self.watch_pdirty()
 
     @property
     def target(self):
