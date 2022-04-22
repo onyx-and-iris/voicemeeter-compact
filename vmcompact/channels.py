@@ -276,9 +276,9 @@ class Bus(Channel):
                 self.identifier,
             )
             if _base_vals.extends_horizontal:
-                self.config_frame.grid(column=0, row=1, columnspan=3)
+                self.config_frame.grid(column=0, row=1, columnspan=4)
             else:
-                self.config_frame.grid(column=0, row=3, columnspan=3)
+                self.config_frame.grid(column=0, row=3, columnspan=4)
             self._parent._parent.channel_frame.reset_config_buttons(self)
             self._parent._parent.bus_frame.reset_config_buttons(self)
         else:

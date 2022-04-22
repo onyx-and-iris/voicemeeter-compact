@@ -8,19 +8,16 @@ class Banner(ttk.Frame):
     def __init__(self, parent):
         super().__init__()
         self._parent = parent
-        self.web = "onyxandiris.online"
         self.submix = tk.StringVar()
-        if self._parent.kind.name == "Potato":
-            self.submix.set(self.target.bus[_base_vals.submixes].label)
+        self.submix.set(self.target.bus[_base_vals.submixes].label)
 
-            if self._parent.kind.name == "Potato":
-                self.label = ttk.Label(
-                    self,
-                    text=f"SUBMIX: {self.submix.get().upper()}",
-                )
-                self.label.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.W, tk.E))
+        self.label = ttk.Label(
+            self,
+            text=f"SUBMIX: {self.submix.get().upper()}",
+        )
+        self.label.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.W, tk.E))
 
-                self.upd_submix()
+        self.upd_submix()
 
     @property
     def target(self):

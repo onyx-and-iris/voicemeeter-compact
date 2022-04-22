@@ -152,19 +152,20 @@ class App(tk.Tk):
         self.channel_frame.grid(row=0, column=0, sticky=(tk.W))
         # separator
         self.sep = ttk.Separator(self, orient="vertical")
-        self.sep.grid(row=0, column=1, sticky=(tk.S, tk.N))
+        self.sep.grid(row=0, column=1, sticky=(tk.N, tk.S))
         self.columnconfigure(1, minsize=15)
 
         # navigation frame
         self.nav_frame = Navigation(self)
-        self.nav_frame.grid(row=0, column=3)
+        self.nav_frame.grid(row=0, column=3, sticky=(tk.E))
 
         if self.configuration["extends"]["extended"]:
             self.nav_frame.extend.set(True)
             self.nav_frame.extend_frame()
 
-        self.banner = Banner(self)
-        self.banner.grid(row=4, column=0, columnspan=3)
+        if self.kind.name == "Potato":
+            self.banner = Banner(self)
+            self.banner.grid(row=4, column=0, columnspan=3)
 
     def _destroy_top_level_frames(self):
         [
