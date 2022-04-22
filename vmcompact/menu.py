@@ -296,8 +296,6 @@ class Menus(tk.Menu):
         i_to_close.logout()
         # build new app frames according to a kind
         kind = kind_get(self._vmr.type)
-        # destroy the current App frames
-        self._parent._destroy_top_level_frames()
         self._parent._make_app(kind, None)
         target_menu = getattr(self, f"menu_vban_{i+1}")
         target_menu.entryconfig(0, state="normal")
