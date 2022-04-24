@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from typing import NamedTuple
 from pathlib import Path
+import sv_ttk
 
 from .errors import VMCompactErrors
 from .data import _base_vals, _kinds_all
@@ -127,11 +128,7 @@ class App(tk.Tk):
 
     def apply_theme(self):
         _base_vals.using_theme = True
-        self.tk.call(
-            "source",
-            Path(__file__).parent.resolve() / "sun-valley-theme/sun-valley.tcl",
-        )
-        self.tk.call("set_theme", self.configuration["theme"]["mode"])
+        sv_ttk.set_theme(self.configuration["theme"]["mode"])
 
     def _make_app(self, kind, vban=None):
         self.title(

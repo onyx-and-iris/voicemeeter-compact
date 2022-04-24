@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from functools import partial
 import webbrowser
+import sv_ttk
 
 import vbancmd
 
@@ -153,7 +154,7 @@ class Menus(tk.Menu):
         [
             self.menu_themes.add_command(
                 label=theme.capitalize(),
-                command=partial(self.load_theme, theme),
+                command=self.toggle_theme,
             )
             for theme in tcl_themes
         ]
@@ -236,26 +237,30 @@ class Menus(tk.Menu):
             for j, var in enumerate(self._selected_bus):
                 var.set(True if i == j else False)
 
-    def load_theme(self, theme):
-        self.tk.call("set_theme", theme)
-        self.configuration_app["theme"]["mode"] = theme
+    def toggle_theme(self):
+        sv_ttk.toggle_theme()
+        self.configuration_app["theme"]["mode"] = sv_ttk.get_theme()
         self.menu_themes.entryconfig(
             0,
-            state=f"{'disabled' if theme == 'light' else 'normal'}",
+            state=f"{'disabled' if sv_ttk.get_theme() == 'light' else 'normal'}",
         )
         self.menu_themes.entryconfig(
             1,
-            state=f"{'disabled' if theme == 'dark' else 'normal'}",
+            state=f"{'disabled' if sv_ttk.get_theme() == 'dark' else 'normal'}",
         )
         [
-            menu.config(bg=f"{'black' if theme == 'dark' else 'white'}")
+            menu.config(bg=f"{'black' if sv_ttk.get_theme() == 'dark' else 'white'}")
             for menu in self.menubar.winfo_children()
             if isinstance(menu, tk.Menu)
         ]
-        self.menu_lock.config(bg=f"{'black' if theme == 'dark' else 'white'}")
-        self.menu_profiles_load.config(bg=f"{'black' if theme == 'dark' else 'white'}")
+        self.menu_lock.config(
+            bg=f"{'black' if sv_ttk.get_theme() == 'dark' else 'white'}"
+        )
+        self.menu_profiles_load.config(
+            bg=f"{'black' if sv_ttk.get_theme() == 'dark' else 'white'}"
+        )
         [
-            menu.config(bg=f"{'black' if theme == 'dark' else 'white'}")
+            menu.config(bg=f"{'black' if sv_ttk.get_theme() == 'dark' else 'white'}")
             for menu in self.menu_vban.winfo_children()
             if isinstance(menu, tk.Menu)
         ]

@@ -20,13 +20,11 @@ setuptools.setup(
     package_data={
         "vmcompact": [
             "img/*",
-            "sun-valley-theme/*",
-            "sun-valley-theme/theme/*",
-            "sun-valley-theme/theme/*/*",
         ],
     },
     install_requires=[
         "toml",
+        "sv-ttk",
         "voicemeeter@git+https://github.com/onyx-and-iris/voicemeeter-api-python#egg=voicemeeter",
         "vbancmd@git+https://github.com/onyx-and-iris/vban-cmd-python#egg=vbancmd",
     ],
