@@ -144,4 +144,4 @@ Profiles may be loaded at any time via the menu.
 [Christian Volkmann](https://github.com/chvolkmann/voicemeeter-remote-python) for the detailed work that went into creating the underlying Remote API Python Interface.
 Unfortunately, the Remote API Python Interface has `NOT` been open source licensed. I have raised an issue and asked directly and politely but so far no response. If a license is added in future I will update this section. Without an open source license there is no guarantee that in future this package may not be pulled down, without any notice.
 
-[Rdbende](https://github.com/rdbende) for creating the beautiful Sun Valley Tkinter theme.
+[Rdbende](https://github.com/rdbende) for creating the beautiful Sun Valley Tkinter theme and adding it to Pypi!
