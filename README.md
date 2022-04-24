@@ -1,7 +1,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/onyx-and-iris/voicemeeter-compact/blob/main/LICENSE)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-![Image of app in vertical extended mode](horizontal_extended.png)
+![Image of app/potato size comparison](./doc_imgs/potatocomparisonsmaller.png)
 # Voicemeeter Compact
 ## Prerequisites
 - Voicemeeter (Basic v1.0.8.2), (Banana v2.0.6.2) or (Potato v3.0.2.2)
@@ -9,7 +9,7 @@
 - Python 3.9+
 
 ## Installation
-For a step-by-step guide [click here](INST_PYTHON.md)
+For a step-by-step guide [click here](INSTALLATION.md)
 
 ```
 git clone https://github.com/onyx-and-iris/voicemeeter-compact
