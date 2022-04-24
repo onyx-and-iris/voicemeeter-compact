@@ -10,7 +10,7 @@ extends_horizontal=true
 [channel]
 width=80
 height=130
-# size of a single mouse wheen scroll step
+# size of a single mouse wheel scroll step
 [mwscroll_step]
 size=3
 # default submix bus
