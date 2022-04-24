@@ -1,7 +1,9 @@
 ## Git Installation
+
 https://git-scm.com/download/win
 
 ## Python Installation
+
 If you don't have Python already you can fetch it easily from the Windows Store. Simply type `store` into the windows search bar, and select the latest version. At the time of writing that is Python 3.10.
 
 ![Image of Python in Windows Store](./doc_imgs/wspython310.png)
