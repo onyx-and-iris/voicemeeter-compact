@@ -447,4 +447,4 @@ class ChannelFrame(ttk.Frame):
             else:
                 self.columnconfigure(i, minsize=self.width)
                 labelframe.grid()
-                labelframe["text"] = labelframe.getter("label")
+                labelframe.sync()
