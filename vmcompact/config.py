@@ -379,35 +379,32 @@ class BusConfig(Config):
         return getattr(_target, self.identifier)[self.index]
 
     def make_row0(self):
-        self._cur_bus_mode = tk.StringVar()
-        self._cur_bus_mode.set(f"Bus Mode: {self.bus_modes[self.get_current_index()]}")
-        self.busmode_button = ttk.Button(self, textvariable=self._cur_bus_mode)
+        self.bus_mode_label_text = tk.StringVar()
+        self.bus_mode_current = tk.StringVar(value="normal")
+        self.bus_mode_label_text.set(f"Bus Mode: {self.bus_mode_current.get()}")
+        self.target.mode.normal = True
+        self.busmode_button = ttk.Button(self, textvariable=self.bus_mode_label_text)
         self.busmode_button.grid(column=0, row=0, columnspan=2, sticky=(tk.W))
         self.busmode_button.bind("<Button-1>", self.rotate_bus_modes_right)
         self.busmode_button.bind("<Button-3>", self.rotate_bus_modes_left)
 
-    def get_current_index(self):
-        for mode in self.bus_modes:
-            if getattr(self.target.mode, mode.lower()):
-                return self.bus_modes.index(mode)
-
     def rotate_bus_modes_right(self, *args):
-        current_index = self.get_current_index()
+        current_index = self.bus_modes.index(self.bus_mode_current.get())
         if current_index + 1 < len(self.bus_modes):
-            next = self.bus_modes[current_index + 1]
+            self.bus_mode_current.set(self.bus_modes[current_index + 1])
         else:
-            next = self.bus_modes[0]
-        setattr(self.target.mode, next.lower(), True)
-        self._cur_bus_mode.set(f"Bus Mode: {next}")
+            self.bus_mode_current.set(self.bus_modes[0])
+        setattr(self.target.mode, self.bus_mode_current.get().lower(), True)
+        self.bus_mode_label_text.set(f"Bus Mode: {self.bus_mode_current.get()}")
 
     def rotate_bus_modes_left(self, *args):
-        current_index = self.get_current_index()
+        current_index = self.bus_modes.index(self.bus_mode_current.get())
         if current_index == 0:
-            next = self.bus_modes[-1]
+            self.bus_mode_current.set(self.bus_modes[-1])
         else:
-            next = self.bus_modes[current_index - 1]
-        setattr(self.target.mode, next.lower(), True)
-        self._cur_bus_mode.set(f"Bus Mode: {next}")
+            self.bus_mode_current.set(self.bus_modes[current_index - 1])
+        setattr(self.target.mode, self.bus_mode_current.get().lower(), True)
+        self.bus_mode_label_text.set(f"Bus Mode: {self.bus_mode_current.get()}")
 
     def make_row1(self):
         param_buttons = [
