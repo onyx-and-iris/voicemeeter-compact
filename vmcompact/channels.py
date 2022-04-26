@@ -283,9 +283,9 @@ class Bus(Channel):
             self._parent._parent.bus_frame.update_bus_modes()
             self._parent._parent.bus_frame.reset_config_buttons(self)
         else:
-            self._parent._parent.bus_modes[self.index].set(
-                self.config_frame.bus_mode_current.get()
-            )
+            self._parent._parent.bus_modes_cache[
+                "vban" if _base_vals.vban_connected else "vmr"
+            ][self.index].set(self.config_frame.bus_mode)
             self.config_frame.destroy()
 
         if not _base_vals.using_theme:
