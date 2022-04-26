@@ -380,9 +380,11 @@ class BusConfig(Config):
 
     def make_row0(self):
         self.bus_mode_label_text = tk.StringVar()
-        self.bus_mode_current = tk.StringVar(value="normal")
+        self.bus_mode_current = tk.StringVar(
+            value=self._parent.bus_modes[self.index].get()
+        )
         self.bus_mode_label_text.set(f"Bus Mode: {self.bus_mode_current.get()}")
-        self.target.mode.normal = True
+        setattr(self.target.mode, self.bus_mode_current.get(), True)
         self.busmode_button = ttk.Button(self, textvariable=self.bus_mode_label_text)
         self.busmode_button.grid(column=0, row=0, columnspan=2, sticky=(tk.W))
         self.busmode_button.bind("<Button-1>", self.rotate_bus_modes_right)

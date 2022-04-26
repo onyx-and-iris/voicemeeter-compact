@@ -280,8 +280,12 @@ class Bus(Channel):
             else:
                 self.config_frame.grid(column=0, row=3, columnspan=4)
             self._parent._parent.channel_frame.reset_config_buttons(self)
+            self._parent._parent.bus_frame.update_bus_modes()
             self._parent._parent.bus_frame.reset_config_buttons(self)
         else:
+            self._parent._parent.bus_modes[self.index].set(
+                self.config_frame.bus_mode_current.get()
+            )
             self.config_frame.destroy()
 
         if not _base_vals.using_theme:
@@ -387,6 +391,15 @@ class ChannelFrame(ttk.Frame):
     @property
     def identifier(self):
         return "strip" if self._is_strip else "bus"
+
+    def update_bus_modes(self):
+        [
+            self._parent.bus_modes[i].set(
+                labelframe.config_frame.bus_mode_current.get()
+            )
+            for i, labelframe in enumerate(self.labelframes)
+            if labelframe is not None and labelframe.config_frame
+        ]
 
     def reset_config_buttons(self, current):
         if not _base_vals.using_theme:
