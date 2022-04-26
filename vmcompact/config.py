@@ -378,35 +378,44 @@ class BusConfig(Config):
         _target = super(BusConfig, self).target
         return getattr(_target, self.identifier)[self.index]
 
+    @property
+    def bus_mode(self):
+        return self._parent.bus_modes_cache[
+            "vban" if _base_vals.vban_connected else "vmr"
+        ][self.index].get()
+
+    @bus_mode.setter
+    def bus_mode(self, val):
+        self._parent.bus_modes_cache["vban" if _base_vals.vban_connected else "vmr"][
+            self.index
+        ].set(val)
+
     def make_row0(self):
         self.bus_mode_label_text = tk.StringVar()
-        self.bus_mode_current = tk.StringVar(
-            value=self._parent.bus_modes[self.index].get()
-        )
-        self.bus_mode_label_text.set(f"Bus Mode: {self.bus_mode_current.get()}")
-        setattr(self.target.mode, self.bus_mode_current.get(), True)
+        self.bus_mode_label_text.set(f"Bus Mode: {self.bus_mode}")
+        setattr(self.target.mode, self.bus_mode.lower(), True)
         self.busmode_button = ttk.Button(self, textvariable=self.bus_mode_label_text)
         self.busmode_button.grid(column=0, row=0, columnspan=2, sticky=(tk.W))
         self.busmode_button.bind("<Button-1>", self.rotate_bus_modes_right)
         self.busmode_button.bind("<Button-3>", self.rotate_bus_modes_left)
 
     def rotate_bus_modes_right(self, *args):
-        current_index = self.bus_modes.index(self.bus_mode_current.get())
+        current_index = self.bus_modes.index(self.bus_mode)
         if current_index + 1 < len(self.bus_modes):
-            self.bus_mode_current.set(self.bus_modes[current_index + 1])
+            self.bus_mode = self.bus_modes[current_index + 1]
         else:
-            self.bus_mode_current.set(self.bus_modes[0])
-        setattr(self.target.mode, self.bus_mode_current.get().lower(), True)
-        self.bus_mode_label_text.set(f"Bus Mode: {self.bus_mode_current.get()}")
+            self.bus_mode = self.bus_modes[0]
+        setattr(self.target.mode, self.bus_mode.lower(), True)
+        self.bus_mode_label_text.set(f"Bus Mode: {self.bus_mode}")
 
     def rotate_bus_modes_left(self, *args):
-        current_index = self.bus_modes.index(self.bus_mode_current.get())
+        current_index = self.bus_modes.index(self.bus_mode)
         if current_index == 0:
-            self.bus_mode_current.set(self.bus_modes[-1])
+            self.bus_mode = self.bus_modes[-1]
         else:
-            self.bus_mode_current.set(self.bus_modes[current_index - 1])
-        setattr(self.target.mode, self.bus_mode_current.get().lower(), True)
-        self.bus_mode_label_text.set(f"Bus Mode: {self.bus_mode_current.get()}")
+            self.bus_mode = self.bus_modes[current_index - 1]
+        setattr(self.target.mode, self.bus_mode.lower(), True)
+        self.bus_mode_label_text.set(f"Bus Mode: {self.bus_mode}")
 
     def make_row1(self):
         param_buttons = [

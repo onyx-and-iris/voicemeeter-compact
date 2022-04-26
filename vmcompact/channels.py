@@ -394,9 +394,9 @@ class ChannelFrame(ttk.Frame):
 
     def update_bus_modes(self):
         [
-            self._parent.bus_modes[i].set(
-                labelframe.config_frame.bus_mode_current.get()
-            )
+            self._parent.bus_modes_cache[
+                "vban" if _base_vals.vban_connected else "vmr"
+            ][i].set(labelframe.config_frame.bus_mode)
             for i, labelframe in enumerate(self.labelframes)
             if labelframe is not None and labelframe.config_frame
         ]

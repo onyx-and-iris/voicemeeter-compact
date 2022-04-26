@@ -64,7 +64,10 @@ class App(tk.Tk):
         ]
         _base_vals.submixes = self.configuration["submixes"]["default"]
         _base_vals.mwscroll_step = self.configuration["mwscroll_step"]["size"]
-        self.bus_modes = [tk.StringVar(value="normal") for _ in range(12)]
+        self.bus_modes_cache = {
+            "vmr": list(tk.StringVar(value="normal") for _ in range(12)),
+            "vban": list(tk.StringVar(value="normal") for _ in range(12)),
+        }
 
         # create menus
         self.menus = Menus(self, vmr)
