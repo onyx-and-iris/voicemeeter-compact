@@ -364,11 +364,11 @@ class BusConfig(Config):
         self.params = ("mono", "eq", "eq_ab")
         self.param_vars = [tk.BooleanVar() for i, _ in enumerate(self.params)]
 
-        self.make_row0()
-        self.make_row1()
-
         # sync all parameters
         self.sync()
+
+        self.make_row0()
+        self.make_row1()
 
         self.col_row_configure()
 
@@ -391,9 +391,7 @@ class BusConfig(Config):
         ].set(val)
 
     def make_row0(self):
-        self.bus_mode_label_text = tk.StringVar()
-        self.bus_mode_label_text.set(f"Bus Mode: {self.bus_mode}")
-        setattr(self.target.mode, self.bus_mode.lower(), True)
+        self.bus_mode_label_text = tk.StringVar(value=f"Bus Mode: {self.bus_mode}")
         self.busmode_button = ttk.Button(self, textvariable=self.bus_mode_label_text)
         self.busmode_button.grid(column=0, row=0, columnspan=2, sticky=(tk.W))
         self.busmode_button.bind("<Button-1>", self.rotate_bus_modes_right)
@@ -452,6 +450,9 @@ class BusConfig(Config):
         ]
 
     def sync(self):
+        for i, mode in enumerate(self.bus_modes):
+            if getattr(self.target.mode, mode.lower()):
+                self.bus_mode = self.bus_modes[i]
         [
             self.param_vars[self.params.index(param)].set(self.getter(param))
             for param in self.params
