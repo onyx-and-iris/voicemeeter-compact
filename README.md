@@ -1,9 +1,14 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/onyx-and-iris/voicemeeter-compact/blob/main/LICENSE)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+![OS: Windows](https://img.shields.io/badge/os-windows-red)
 
 ![Image of app/potato size comparison](./doc_imgs/potatocomparisonsmaller.png)
 
 # Voicemeeter Compact
+
+A compact Voicemeeter remote app, works locally and over LAN.
+
+For an outline of past/future changes refer to: [CHANGELOG](CHANGELOG.md)
 
 ## Prerequisites
 
@@ -126,6 +131,22 @@ Configure certain startup states for the app.
 Configure as many vban connections as you wish. This allows the app to work over a LAN connection as well as with a local Voicemeeter installation.
 
 For vban connections to work correctly VBAN TEXT incoming stream MUST be configured correctly on the remote machine. Both pcs ought to be connected to a local private network and should be able to ping one another.
+
+A valid vban.toml might look like this:
+
+```toml
+[connection-1]
+kind = 'banana'
+ip = '192.168.1.2'
+streamname = 'streampc'
+port = 6990
+
+[connection-2]
+kind = 'potato'
+ip = '192.168.1.3'
+streamname = 'worklaptop'
+port = 6990
+```
 
 ## Profiles
 
