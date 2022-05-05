@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 -   [ ] Allow setting a bus mode from config
+-   [x] Fixed bug with gainlayer sync fetching strip label.
 
 ## [1.1.0] - 2022-05-05
 

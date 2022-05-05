@@ -165,7 +165,7 @@ class GainLayer(ttk.LabelFrame):
 
     def sync(self):
         """sync params with voicemeeter"""
-        retval = self.getter("label")
+        retval = self._parent.target.strip[self.index].label
         if len(retval) > 10:
             retval = f"{retval[:8]}.."
         self.configure(text=retval)
