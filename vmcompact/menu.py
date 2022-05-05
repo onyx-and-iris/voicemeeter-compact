@@ -8,7 +8,6 @@ import vbancmd
 
 from .configurations import configuration
 from .data import _base_vals, kind_get
-from .gainlayer import SubMixFrame
 
 
 class Menus(tk.Menu):
@@ -18,14 +17,12 @@ class Menus(tk.Menu):
         self._vmr = vmr
         if self.configuration_vban is not None:
             self.vban_conns = [None for i, _ in enumerate(self.configuration_vban)]
-        self.menubar = tk.Menu(self, tearoff=0)
-        parent["menu"] = self.menubar
         self._is_topmost = tk.BooleanVar()
         self._selected_bus = list(tk.BooleanVar() for _ in range(8))
 
         # voicemeeter menu
-        self.menu_voicemeeter = tk.Menu(self.menubar, tearoff=0)
-        self.menubar.add_cascade(menu=self.menu_voicemeeter, label="Voicemeeter")
+        self.menu_voicemeeter = tk.Menu(self, tearoff=0)
+        self.add_cascade(menu=self.menu_voicemeeter, label="Voicemeeter")
         self.menu_voicemeeter.add_checkbutton(
             label="Always On Top",
             onvalue=1,
@@ -67,8 +64,8 @@ class Menus(tk.Menu):
         )
 
         # profiles menu
-        menu_profiles = tk.Menu(self.menubar, tearoff=0)
-        self.menubar.add_cascade(menu=menu_profiles, label="Profiles")
+        menu_profiles = tk.Menu(self, tearoff=0)
+        self.add_cascade(menu=menu_profiles, label="Profiles")
         self.menu_profiles_load = tk.Menu(menu_profiles, tearoff=0)
         menu_profiles.add_cascade(menu=self.menu_profiles_load, label="Load profile")
         defaults = {"base", "blank"}
@@ -88,8 +85,8 @@ class Menus(tk.Menu):
         menu_profiles.add_command(label="Reset to defaults", command=self.load_defaults)
 
         # vban connect menu
-        self.menu_vban = tk.Menu(self.menubar, tearoff=0)
-        self.menubar.add_cascade(menu=self.menu_vban, label="VBAN Connect")
+        self.menu_vban = tk.Menu(self, tearoff=0)
+        self.add_cascade(menu=self.menu_vban, label="VBAN")
         if self.configuration_vban:
             for i, _ in enumerate(self.configuration_vban):
                 setattr(self, f"menu_vban_{i+1}", tk.Menu(self.menu_vban, tearoff=0))
@@ -105,11 +102,11 @@ class Menus(tk.Menu):
                 )
                 target_menu.entryconfig(1, state="disabled")
         else:
-            self.menubar.entryconfig(2, state="disabled")
+            self.entryconfig(3, state="disabled")
 
         # extends menu
-        self.menu_extends = tk.Menu(self.menubar, tearoff=0)
-        self.menubar.add_cascade(menu=self.menu_extends, label="Extends")
+        self.menu_extends = tk.Menu(self, tearoff=0)
+        self.add_cascade(menu=self.menu_extends, label="Extends")
         self.menu_extends.add_command(
             label="horizontal",
             underline=0,
@@ -127,8 +124,8 @@ class Menus(tk.Menu):
         # submixes menu
         # here we build menu regardless of kind but disable if not Potato
         buses = tuple(f"A{i+1}" for i in range(5)) + tuple(f"B{i+1}" for i in range(3))
-        self.menu_submixes = tk.Menu(self.menubar, tearoff=0)
-        self.menubar.add_cascade(menu=self.menu_submixes, label="Submixes")
+        self.menu_submixes = tk.Menu(self, tearoff=0)
+        self.add_cascade(menu=self.menu_submixes, label="Submixes")
         [
             self.menu_submixes.add_checkbutton(
                 label=f"Bus {buses[i]}",
@@ -142,32 +139,27 @@ class Menus(tk.Menu):
         ]
         self._selected_bus[_base_vals.submixes].set(True)
         if self._parent.kind.name != "Potato":
-            self.menubar.entryconfig(4, state="disabled")
+            self.entryconfig(5, state="disabled")
 
         # themes menu
-        self.menu_themes = tk.Menu(self.menubar, tearoff=0)
-        self.menubar.add_cascade(menu=self.menu_themes, label="Themes")
-        tcl_themes = [
-            "light",
-            "dark",
-        ]
-        [
-            self.menu_themes.add_command(
-                label=theme.capitalize(),
-                command=self.toggle_theme,
-            )
-            for theme in tcl_themes
-        ]
+        self.menu_themes = tk.Menu(self, tearoff=0)
+        self.add_cascade(menu=self.menu_themes, label="Themes")
+        self.menu_themes.add_command(
+            label="light", command=partial(self.load_theme, "light")
+        )
+        self.menu_themes.add_command(
+            label="dark", command=partial(self.load_theme, "dark")
+        )
         self.menu_themes.entryconfig(
             0 if self.configuration_app["theme"]["mode"] == "light" else 1,
             state="disabled",
         )
         if not _base_vals.themes_enabled:
-            self.menubar.entryconfig(6, state="disabled")
+            self.entryconfig(6, state="disabled")
 
         # Help menu
-        self.menu_help = tk.Menu(self.menubar, tearoff=0)
-        self.menubar.add_cascade(menu=self.menu_help, label="Help")
+        self.menu_help = tk.Menu(self, tearoff=0)
+        self.add_cascade(menu=self.menu_help, label="Help")
         self.menu_help.add_command(
             label="Voicemeeter Site",
             command=self.documentation,
@@ -237,30 +229,26 @@ class Menus(tk.Menu):
             for j, var in enumerate(self._selected_bus):
                 var.set(True if i == j else False)
 
-    def toggle_theme(self):
-        sv_ttk.toggle_theme()
-        self.configuration_app["theme"]["mode"] = sv_ttk.get_theme()
+    def load_theme(self, theme):
+        sv_ttk.set_theme(theme)
+        self.configuration_app["theme"]["mode"] = theme
         self.menu_themes.entryconfig(
             0,
-            state=f"{'disabled' if sv_ttk.get_theme() == 'light' else 'normal'}",
+            state=f"{'disabled' if theme == 'light' else 'normal'}",
         )
         self.menu_themes.entryconfig(
             1,
-            state=f"{'disabled' if sv_ttk.get_theme() == 'dark' else 'normal'}",
+            state=f"{'disabled' if theme == 'dark' else 'normal'}",
         )
         [
-            menu.config(bg=f"{'black' if sv_ttk.get_theme() == 'dark' else 'white'}")
-            for menu in self.menubar.winfo_children()
+            menu.config(bg=f"{'black' if theme == 'dark' else 'white'}")
+            for menu in self.winfo_children()
             if isinstance(menu, tk.Menu)
         ]
-        self.menu_lock.config(
-            bg=f"{'black' if sv_ttk.get_theme() == 'dark' else 'white'}"
-        )
-        self.menu_profiles_load.config(
-            bg=f"{'black' if sv_ttk.get_theme() == 'dark' else 'white'}"
-        )
+        self.menu_lock.config(bg=f"{'black' if theme == 'dark' else 'white'}")
+        self.menu_profiles_load.config(bg=f"{'black' if theme == 'dark' else 'white'}")
         [
-            menu.config(bg=f"{'black' if sv_ttk.get_theme() == 'dark' else 'white'}")
+            menu.config(bg=f"{'black' if theme == 'dark' else 'white'}")
             for menu in self.menu_vban.winfo_children()
             if isinstance(menu, tk.Menu)
         ]
@@ -287,8 +275,8 @@ class Menus(tk.Menu):
         target_menu = getattr(self, f"menu_vban_{i+1}")
         target_menu.entryconfig(0, state="disabled")
         target_menu.entryconfig(1, state="normal")
-        self.menubar.entryconfig(
-            4, state=f"{'normal' if kind.name == 'Potato' else 'disabled'}"
+        self.entryconfig(
+            5, state=f"{'normal' if kind.name == 'Potato' else 'disabled'}"
         )
 
     def vban_disconnect(self, i):
@@ -305,8 +293,8 @@ class Menus(tk.Menu):
         target_menu = getattr(self, f"menu_vban_{i+1}")
         target_menu.entryconfig(0, state="normal")
         target_menu.entryconfig(1, state="disabled")
-        self.menubar.entryconfig(
-            4, state=f"{'normal' if kind.name == 'Potato' else 'disabled'}"
+        self.entryconfig(
+            5, state=f"{'normal' if kind.name == 'Potato' else 'disabled'}"
         )
 
         self.after(15000, self.enable_vban_menus)
@@ -321,7 +309,7 @@ class Menus(tk.Menu):
         webbrowser.open_new(r"https://voicemeeter.com/")
 
     def github(self):
-        webbrowser.open_new(r"https://github.com/onyx-and-iris")
+        webbrowser.open_new(r"https://github.com/onyx-and-iris/voicemeeter-compact")
 
     def onyxandiris(self):
         webbrowser.open_new(r"https://onyxandiris.online")

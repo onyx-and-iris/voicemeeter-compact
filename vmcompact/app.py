@@ -35,6 +35,9 @@ class App(tk.Tk):
     def __init__(self, vmr):
         super().__init__()
         defaults = {
+            "profiles": {
+                "profile": None,
+            },
             "theme": {
                 "enabled": True,
                 "mode": "light",
@@ -69,8 +72,14 @@ class App(tk.Tk):
             "vban": list(tk.StringVar(value="normal") for _ in range(8)),
         }
 
+        if (
+            "profiles" in self.configuration
+            and self.configuration["profiles"]["profile"]
+        ):
+            vmr.apply_profile(self.configuration["profiles"]["profile"])
+
         # create menus
-        self.menus = Menus(self, vmr)
+        self["menu"] = Menus(self, vmr)
         self.styletable = ttk.Style()
         self._vmr = vmr
 
@@ -89,6 +98,8 @@ class App(tk.Tk):
         self.bind("<Configure>", self.dragging)
 
         self.iconbitmap(Path(__file__).parent.resolve() / "img" / "cat.ico")
+
+        self.minsize(400, False)
 
     @property
     def target(self):
