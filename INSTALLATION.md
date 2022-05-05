@@ -35,4 +35,4 @@ If the GUI looks like the image below when you first load it, then no channels a
 ## Updates
 
 If there are updates to the app, you can track them in the [CHANGELOG](CHANGELOG.md), simply repeat the
-steps above from Download|Install Code onwards.
+steps above from [Download|Install Code](https://github.com/onyx-and-iris/voicemeeter-compact/blob/main/INSTALLATION.md#downloadinstall-code) onwards.
