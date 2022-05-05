@@ -111,8 +111,11 @@ Regarding profiles, a directory for each kind should hold the profile files and 
 
 Configure certain startup states for the app.
 
+-   `profiles`
+    Configure a profile to load on app startup. Don't include the .toml extension in the profile name.
+
 -   `theme`
-    By default the app loads up the [Sun Valley light or dark theme](https://github.com/rdbende/Sun-Valley-ttk-theme) by @rdbende. When all 16 channels for Potato are labelled you may find the app becomes slower so you have the option to load up the app without any theme loaded. Simply set `enabled` to false and `mode` will take no effect.
+    By default the app loads up the [Sun Valley light or dark theme](https://github.com/rdbende/Sun-Valley-ttk-theme) by @rdbende. You have the option to load up the app without any theme loaded. Simply set `enabled` to false and `mode` will take no effect.
 
 -   `extends`
     Extending the app will show both strips and buses. In reduced mode only one or the other. This app will extend both horizontally and vertically, simply set `extends_horizontal` true or false accordingly.
@@ -162,7 +165,7 @@ Profiles may be loaded at any time via the menu.
 
 [Vincent Burel](https://github.com/vburel2018) for creating Voicemeeter, its SDK, the C Remote API, the RT Packet service and Streamer View app!
 
-[Christian Volkmann](https://github.com/chvolkmann/voicemeeter-remote-python) for the detailed work that went into creating the underlying Remote API Python Interface.
-Unfortunately, the Remote API Python Interface has `NOT` been open source licensed. I have raised an issue and asked directly and politely but so far no response. If a license is added in future I will update this section. Without an open source license there is no guarantee that in future this package may not be pulled down, without any notice.
+[Christian Volkmann](https://github.com/chvolkmann) for the detailed work that went into creating the underlying Remote API Python Interface.
+Unfortunately, the Remote API Python Interface has `NOT` been open source licensed. I have [raised an issue](https://github.com/chvolkmann/voicemeeter-remote-python/issues/13) and asked directly and politely but so far no response. If a license is added in future I will update this section. Without an open source license there is no guarantee that in future this package may not be pulled down, without any notice.
 
 [Rdbende](https://github.com/rdbende) for creating the beautiful Sun Valley Tkinter theme and adding it to Pypi!
