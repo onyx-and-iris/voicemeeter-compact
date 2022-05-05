@@ -7,8 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
--   [ ] Ability to set a profile to load on startup
--   [ ] Add more substantial example profile config files.
+-   [ ] Allow setting a bus mode from config
+
+## [1.1.0] - 2022-05-05
+
+### Added
+
+-   Ability to set a profile to load on startup
+
+### Changed
+
+-   Add more substantial example profile config files.
+-   Minor version bump
+
+### Fixed
+
+-   Fix a bug where minimize->restore is effecting the window size. Now minwidth 400, not ideal
+    but acceptable compromise.
 
 ## [1.0.0] - 2022-04-27
 
