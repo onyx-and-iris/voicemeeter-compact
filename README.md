@@ -132,7 +132,7 @@ Configure as many vban connections as you wish. This allows the app to work over
 
 For vban connections to work correctly VBAN TEXT incoming stream MUST be configured correctly on the remote machine. Both pcs ought to be connected to a local private network and should be able to ping one another.
 
-A valid vban.toml might look like this:
+A valid `vban.toml` might look like this:
 
 ```toml
 [connection-1]

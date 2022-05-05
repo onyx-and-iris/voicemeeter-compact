@@ -10,6 +10,8 @@ If you don't have Python already you can fetch it easily from the Windows Store.
 
 If you install Python straight from `python.org` instead remember to click 'Add Python environmental variables', this is important.
 
+## Download|Install Code
+
 Once you have Python and Git for Windows installed you can simply download the source files (zip) directly with the green `Code` button,
 
 ![Image of Code button](./doc_imgs/codebutton.png)
@@ -22,6 +24,8 @@ This will open a Powershell in the current directory.
 
 Then use the command `pip install .` and wait for the required packages to install.
 
+## Use
+
 Finally, run the GUI with the command `pythonw .`
 
 If the GUI looks like the image below when you first load it, then no channels are labelled. From the menu, Profiles->Load Profile you may load an example config. Save your current Voicemeeter settings first :).
@@ -31,4 +35,4 @@ If the GUI looks like the image below when you first load it, then no channels a
 ## Updates
 
 If there are updates to the app, you can track them in the [CHANGELOG](CHANGELOG.md), simply repeat the
-steps above from the download with green `Code` button onwards.
+steps above from Download|Install Code onwards.
