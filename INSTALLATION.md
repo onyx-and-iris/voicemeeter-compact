@@ -1,6 +1,6 @@
 ## Git Installation
 
-https://git-scm.com/download/win
+https://gitforwindows.org/
 
 ## Python Installation
 
@@ -22,8 +22,13 @@ This will open a Powershell in the current directory.
 
 Then use the command `pip install .` and wait for the required packages to install.
 
-Finally, run the GUI with the command `python .` or `pythonw .`
+Finally, run the GUI with the command `pythonw .`
 
 If the GUI looks like the image below when you first load it, then no channels are labelled. From the menu, Profiles->Load Profile you may load an example config. Save your current Voicemeeter settings first :).
 
 ![Image of no labels example](./doc_imgs/nolabels.png)
+
+## Updates
+
+If there are updates to the app, you can track them in the [CHANGELOG](CHANGELOG.md), simply repeat the
+steps above from the download with green `Code` button onwards.
