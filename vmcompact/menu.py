@@ -81,7 +81,6 @@ class Menus(tk.Menu):
             ]
         else:
             menu_profiles.entryconfig(0, state="disabled")
-        menu_profiles.add_separator()
         menu_profiles.add_command(label="Reset to defaults", command=self.load_defaults)
 
         # vban connect menu
@@ -104,9 +103,14 @@ class Menus(tk.Menu):
         else:
             self.entryconfig(3, state="disabled")
 
-        # extends menu
-        self.menu_extends = tk.Menu(self, tearoff=0)
-        self.add_cascade(menu=self.menu_extends, label="Extends")
+        # layout menu
+        self.menu_layout = tk.Menu(self, tearoff=0)
+        self.add_cascade(menu=self.menu_layout, label="Layout")
+        # layout/extends
+        self.menu_extends = tk.Menu(self.menu_layout, tearoff=0)
+        self.menu_layout.add_cascade(
+            menu=self.menu_extends, label="Extends", underline=0
+        )
         self.menu_extends.add_command(
             label="horizontal",
             underline=0,
@@ -120,12 +124,26 @@ class Menus(tk.Menu):
         self.menu_extends.entryconfig(
             0 if _base_vals.extends_horizontal else 1, state="disabled"
         )
-
-        # submixes menu
+        # layout/themes
+        self.menu_themes = tk.Menu(self.menu_layout, tearoff=0)
+        self.menu_layout.add_cascade(menu=self.menu_themes, label="Themes")
+        self.menu_themes.add_command(
+            label="light", command=partial(self.load_theme, "light")
+        )
+        self.menu_themes.add_command(
+            label="dark", command=partial(self.load_theme, "dark")
+        )
+        self.menu_themes.entryconfig(
+            0 if self.configuration_app["theme"]["mode"] == "light" else 1,
+            state="disabled",
+        )
+        if not _base_vals.themes_enabled:
+            self.entryconfig(6, state="disabled")
+        # layout/submixes
         # here we build menu regardless of kind but disable if not Potato
         buses = tuple(f"A{i+1}" for i in range(5)) + tuple(f"B{i+1}" for i in range(3))
-        self.menu_submixes = tk.Menu(self, tearoff=0)
-        self.add_cascade(menu=self.menu_submixes, label="Submixes")
+        self.menu_submixes = tk.Menu(self.menu_layout, tearoff=0)
+        self.menu_layout.add_cascade(menu=self.menu_submixes, label="Submixes")
         [
             self.menu_submixes.add_checkbutton(
                 label=f"Bus {buses[i]}",
@@ -139,23 +157,7 @@ class Menus(tk.Menu):
         ]
         self._selected_bus[_base_vals.submixes].set(True)
         if self._parent.kind.name != "Potato":
-            self.entryconfig(5, state="disabled")
-
-        # themes menu
-        self.menu_themes = tk.Menu(self, tearoff=0)
-        self.add_cascade(menu=self.menu_themes, label="Themes")
-        self.menu_themes.add_command(
-            label="light", command=partial(self.load_theme, "light")
-        )
-        self.menu_themes.add_command(
-            label="dark", command=partial(self.load_theme, "dark")
-        )
-        self.menu_themes.entryconfig(
-            0 if self.configuration_app["theme"]["mode"] == "light" else 1,
-            state="disabled",
-        )
-        if not _base_vals.themes_enabled:
-            self.entryconfig(6, state="disabled")
+            self.menu_layout.entryconfig(2, state="disabled")
 
         # Help menu
         self.menu_help = tk.Menu(self, tearoff=0)
@@ -252,6 +254,11 @@ class Menus(tk.Menu):
             for menu in self.menu_vban.winfo_children()
             if isinstance(menu, tk.Menu)
         ]
+        [
+            menu.config(bg=f"{'black' if theme == 'dark' else 'white'}")
+            for menu in self.menu_layout.winfo_children()
+            if isinstance(menu, tk.Menu)
+        ]
 
     def vban_connect(self, i):
         [
@@ -275,8 +282,8 @@ class Menus(tk.Menu):
         target_menu = getattr(self, f"menu_vban_{i+1}")
         target_menu.entryconfig(0, state="disabled")
         target_menu.entryconfig(1, state="normal")
-        self.entryconfig(
-            5, state=f"{'normal' if kind.name == 'Potato' else 'disabled'}"
+        self.menu_layout.entryconfig(
+            2, state=f"{'normal' if kind.name == 'Potato' else 'disabled'}"
         )
 
     def vban_disconnect(self, i):
@@ -293,8 +300,8 @@ class Menus(tk.Menu):
         target_menu = getattr(self, f"menu_vban_{i+1}")
         target_menu.entryconfig(0, state="normal")
         target_menu.entryconfig(1, state="disabled")
-        self.entryconfig(
-            5, state=f"{'normal' if kind.name == 'Potato' else 'disabled'}"
+        self.menu_layout.entryconfig(
+            2, state=f"{'normal' if kind.name == 'Potato' else 'disabled'}"
         )
 
         self.after(15000, self.enable_vban_menus)

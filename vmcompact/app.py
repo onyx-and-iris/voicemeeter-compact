@@ -99,7 +99,7 @@ class App(tk.Tk):
 
         self.iconbitmap(Path(__file__).parent.resolve() / "img" / "cat.ico")
 
-        self.minsize(400, False)
+        self.minsize(275, False)
 
     @property
     def target(self):
