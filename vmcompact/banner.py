@@ -1,15 +1,15 @@
 import tkinter as tk
 from tkinter import ttk
 
-from .data import _base_vals
+from .data import _base_values
 
 
 class Banner(ttk.Frame):
     def __init__(self, parent):
         super().__init__()
-        self._parent = parent
+        self.parent = parent
         self.submix = tk.StringVar()
-        self.submix.set(self.target.bus[_base_vals.submixes].label)
+        self.submix.set(self.target.bus[_base_values.submixes].label)
 
         self.label = ttk.Label(
             self,
@@ -22,13 +22,13 @@ class Banner(ttk.Frame):
     @property
     def target(self):
         """use the correct interface"""
-        return self._parent.target
+        return self.parent.target
 
     def upd_submix(self):
         self.after(1, self.upd_submix_step)
 
     def upd_submix_step(self):
-        if not _base_vals.dragging:
-            self.submix.set(self.target.bus[_base_vals.submixes].label)
+        if not _base_values.dragging:
+            self.submix.set(self.target.bus[_base_values.submixes].label)
             self.label["text"] = f"SUBMIX: {self.submix.get().upper()}"
         self.after(100, self.upd_submix_step)

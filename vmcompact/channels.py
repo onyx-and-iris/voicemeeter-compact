@@ -1,34 +1,31 @@
 import tkinter as tk
 from tkinter import ttk
-from functools import partial
 from math import log
 
-from .data import _base_vals
-from .config import StripConfig, BusConfig
+from . import builders
+from .data import _base_values, _configuration
 
 
-class Channel(ttk.LabelFrame):
+class ChannelLabelFrame(ttk.LabelFrame):
     """Base class for a single channel"""
 
     def __init__(self, parent, index, id):
         super().__init__(parent)
-        self._parent = parent
+        self.parent = parent
         self.index = index
         self.id = id
-        self.s = self._parent._parent.styletable
-        self.config_frame = None
+        self.styletable = self.parent.parent.styletable
 
-        self.gain = tk.DoubleVar()
-        self.level = tk.DoubleVar()
-        self.mute = tk.BooleanVar()
-        self.conf = tk.BooleanVar()
-
+        self.builder = builders.ChannelLabelFrameBuilder(self, index, id)
+        self.builder.setup()
+        self.builder.add_progressbar()
+        self.builder.add_scale()
+        self.builder.add_mute_button()
+        self.builder.add_conf_button()
         self.sync()
-        self._make_widgets()
+        self.grid_configure()
 
-        self.col_row_configure()
-        self.watch_pdirty()
-        self.watch_levels()
+        self.configbuilder = builders.MainFrameBuilder(self.parent.parent)
 
     @property
     def identifier(self):
@@ -36,8 +33,9 @@ class Channel(ttk.LabelFrame):
 
     @property
     def target(self):
-        """use the correct interface"""
-        return self._parent.target
+        """returns the current interface"""
+
+        return self.parent.target
 
     def getter(self, param):
         if param in dir(self.target):
@@ -47,10 +45,16 @@ class Channel(ttk.LabelFrame):
         if param in dir(self.target):
             setattr(self.target, param, value)
 
+    def scale_callback(self, *args):
+        """callback function for scale widget"""
+
+        self.setter("gain", self.gain.get())
+        self.parent.parent.nav_frame.info_text.set(round(self.gain.get(), 1))
+
     def toggle_mute(self, *args):
         self.target.mute = self.mute.get()
-        if not _base_vals.using_theme:
-            self.s.configure(
+        if not _configuration.themes_enabled:
+            self.styletable.configure(
                 f"{self.identifier}Mute{self.index}.TButton",
                 background=f'{"red" if self.mute.get() else "white"}',
             )
@@ -58,27 +62,27 @@ class Channel(ttk.LabelFrame):
     def reset_gain(self, *args):
         self.setter("gain", 0)
         self.gain.set(0)
-        self._parent._parent.nav_frame.info_text.set(0)
+        self.parent.parent.nav_frame.info_text.set(0)
 
     def scale_enter(self, *args):
-        self._parent._parent.nav_frame.info_text.set(round(self.gain.get(), 1))
+        self.parent.parent.nav_frame.info_text.set(round(self.gain.get(), 1))
 
     def scale_leave(self, *args):
-        self._parent._parent.nav_frame.info_text.set("")
+        self.parent.parent.nav_frame.info_text.set("")
 
     def scale_press(self, *args):
-        _base_vals.in_scale_button_1 = True
+        _base_values.in_scale_button_1 = True
 
     def scale_release(self, *args):
-        _base_vals.in_scale_button_1 = False
+        _base_values.in_scale_button_1 = False
 
     def _on_mousewheel(self, event):
         self.gain.set(
             self.gain.get()
             + (
-                _base_vals.mwscroll_step
+                _configuration.mwscroll_step
                 if event.delta > 0
-                else -_base_vals.mwscroll_step
+                else -_configuration.mwscroll_step
             )
         )
         if self.gain.get() > 12:
@@ -86,94 +90,46 @@ class Channel(ttk.LabelFrame):
         elif self.gain.get() < -60:
             self.gain.set(-60)
         self.setter("gain", self.gain.get())
-        self._parent._parent.nav_frame.info_text.set(round(self.gain.get(), 1))
+        self.parent.parent.nav_frame.info_text.set(round(self.gain.get(), 1))
 
-    def scale_callback(self, *args):
-        """callback function for scale widget"""
-        self.setter("gain", self.gain.get())
-        self._parent._parent.nav_frame.info_text.set(round(self.gain.get(), 1))
-
-    def convert_level(self, val):
-        if _base_vals.vban_connected:
-            return round(-val * 0.01, 1)
-        return round(20 * log(val, 10), 1) if val > 0 else -200.0
-
-    def _make_widgets(self):
-        """Creates a progressbar, scale, mute button and config button for a single channel"""
-        # Progress bar
-        self.pb = ttk.Progressbar(
-            self,
-            maximum=100,
-            orient="vertical",
-            mode="determinate",
-            variable=self.level,
-        )
-        self.pb.grid(column=0, row=0)
-
-        # Scale
-        self.scale = ttk.Scale(
-            self,
-            from_=12.0,
-            to=-60.0,
-            orient="vertical",
-            variable=self.gain,
-            command=self.scale_callback,
-            length=self._parent.height,
-        )
-        self.scale.grid(column=1, row=0)
-        self.scale.bind("<Double-Button-1>", self.reset_gain)
-        self.scale.bind("<Button-1>", self.scale_press)
-        self.scale.bind("<Enter>", self.scale_enter)
-        self.scale.bind("<ButtonRelease-1>", self.scale_release)
-        self.scale.bind("<Leave>", self.scale_leave)
-        self.scale.bind("<MouseWheel>", self._on_mousewheel)
-
-        # Mute button
-        self.button_mute = ttk.Checkbutton(
-            self,
-            text="MUTE",
-            command=partial(self.toggle_mute, "mute"),
-            style=f"{'Toggle.TButton' if _base_vals.using_theme else f'{self.identifier}Mute{self.index}.TButton'}",
-            variable=self.mute,
-        )
-        self.button_mute.grid(column=0, row=1, columnspan=2)
-
-        self.button_conf = ttk.Checkbutton(
-            self,
-            text="CONFIG",
-            command=self.open_config,
-            style=f"{'Toggle.TButton' if _base_vals.using_theme else f'{self.identifier}Conf{self.index}.TButton'}",
-            variable=self.conf,
-        )
-        self.button_conf.grid(column=0, row=2, columnspan=2)
-
-    def watch_pdirty(self):
-        self.after(1, self.watch_pdirty_step)
-
-    def watch_pdirty_step(self):
-        """keeps params synced but ensures sliders are responsive"""
-        if self._parent._parent.pdirty and not _base_vals.in_scale_button_1:
-            self.sync()
-        self.after(_base_vals.pdelay, self.watch_pdirty_step)
+    def open_config(self):
+        if self.conf.get():
+            self.configbuilder.create_configframe(self.identifier, self.index, self.id)
+        else:
+            self.parent.parent.config_frame.teardown()
+        if not _configuration.themes_enabled:
+            self.styletable.configure(
+                f"{self.identifier}Conf{self.index}.TButton",
+                background=f'{"yellow" if self.conf.get() else "white"}',
+            )
 
     def sync(self):
-        """sync params with voicemeeter"""
+        """sync parameters"""
         retval = self.getter("label")
         if len(retval) > 10:
             retval = f"{retval[:8]}.."
+        if not retval:
+            self.parent.columnconfigure(self.index, minsize=0)
+            self.parent.parent.subject_ldirty.remove(self)
+            self.grid_remove()
+        else:
+            self.parent.parent.subject_ldirty.add(self)
+            self.grid()
         self.configure(text=retval)
         self.gain.set(self.getter("gain"))
         self.mute.set(self.getter("mute"))
-        if not _base_vals.using_theme:
-            self.s.configure(
+        if not _configuration.themes_enabled:
+            self.styletable.configure(
                 f"{self.identifier}Mute{self.index}.TButton",
                 background=f'{"red" if  self.mute.get() else "white"}',
             )
-            self.s.configure(
-                f"{self.identifier}Conf{self.index}.TButton", background="white"
-            )
 
-    def col_row_configure(self):
+    def convert_level(self, val):
+        if _base_values.vban_connected:
+            return round(-val * 0.01, 1)
+        return round(20 * log(val, 10), 1) if val > 0 else -200.0
+
+    def grid_configure(self):
         self.grid(sticky=(tk.N, tk.S))
         [
             child.grid_configure(padx=1, pady=1, sticky=(tk.W, tk.E))
@@ -187,8 +143,8 @@ class Channel(ttk.LabelFrame):
         ]
 
 
-class Strip(Channel):
-    """Concrete class representing a single"""
+class Strip(ChannelLabelFrame):
+    """Concrete class representing a single strip"""
 
     def __init__(self, parent, index, id):
         super().__init__(parent, index, id)
@@ -199,251 +155,153 @@ class Strip(Channel):
 
     @property
     def target(self):
-        """use the correct interface"""
+        """returns the strip class for this labelframe in the current interface"""
+
         _target = super(Strip, self).target
         return getattr(_target, self.identifier)[self.index]
 
-    def open_config(self):
-        if self.conf.get():
-            self.config_frame = StripConfig(
-                self._parent._parent,
-                self.index,
-                self.identifier,
-            )
-            self.config_frame.grid(column=0, row=1, columnspan=4)
-            self._parent._parent.channel_frame.reset_config_buttons(self)
-            if self._parent._parent.bus_frame is not None:
-                self._parent._parent.bus_frame.reset_config_buttons(self)
-        else:
-            self.config_frame.destroy()
-
-        if not _base_vals.using_theme:
-            self.s.configure(
-                f"{self.identifier}Conf{self.index}.TButton",
-                background=f'{"yellow" if self.conf.get() else "white"}',
-            )
-
-    def watch_levels(self):
-        self.after(1, self.watch_levels_step)
-
-    def watch_levels_step(self):
-        if not _base_vals.dragging:
-            if (
-                self._parent._parent.ldirty
-                and any(
-                    self._parent._parent.comp_strip[
-                        self.level_offset : self.level_offset + 1
-                    ]
-                )
-                and _base_vals.strip_level_array_size
-                == len(self._parent._parent.comp_strip)
-            ):
-                vals = (
-                    self.convert_level(
-                        self._parent._parent.strip_levels[self.level_offset]
-                    ),
-                    self.convert_level(
-                        self._parent._parent.strip_levels[self.level_offset + 1]
-                    ),
-                )
-                self.level.set(
-                    (0 if self.mute.get() else 100 + (max(vals) - 18) + self.gain.get())
-                )
-        self.after(
-            _base_vals.ldelay if not _base_vals.in_scale_button_1 else 100,
-            self.watch_levels_step,
+    def update(self):
+        """update levels"""
+        vals = (
+            self.convert_level(self.parent.target.strip_levels[self.level_offset]),
+            self.convert_level(self.parent.target.strip_levels[self.level_offset + 1]),
+        )
+        self.level.set(
+            (0 if self.mute.get() else 100 + (max(vals) - 18) + self.gain.get())
         )
 
 
-class Bus(Channel):
+class Bus(ChannelLabelFrame):
     """Concrete bus class representing a single bus"""
 
     def __init__(self, parent, index, id):
         super().__init__(parent, index, id)
-        self.level_offset = self.index * 8
+        self.level_offset = index * 8
 
     @property
     def target(self):
-        """use the correct interface"""
+        """returns the bus class for this labelframe in the current interface"""
+
         _target = super(Bus, self).target
         return getattr(_target, self.identifier)[self.index]
 
-    def open_config(self):
-        if self.conf.get():
-            self.config_frame = BusConfig(
-                self._parent._parent,
-                self.index,
-                self.identifier,
-            )
-            if _base_vals.extends_horizontal:
-                self.config_frame.grid(column=0, row=1, columnspan=4)
-            else:
-                self.config_frame.grid(column=0, row=3, columnspan=4)
-            self._parent._parent.channel_frame.reset_config_buttons(self)
-            self._parent._parent.bus_frame.update_bus_modes()
-            self._parent._parent.bus_frame.reset_config_buttons(self)
-        else:
-            self._parent._parent.bus_modes_cache[
-                "vban" if _base_vals.vban_connected else "vmr"
-            ][self.index].set(self.config_frame.bus_mode)
-            self.config_frame.destroy()
+    def update(self):
+        """update levels"""
 
-        if not _base_vals.using_theme:
-            self.s.configure(
-                f"{self.identifier}Conf{self.index}.TButton",
-                background=f'{"yellow" if self.conf.get() else "white"}',
-            )
-
-    def watch_levels(self):
-        self.after(1, self.watch_levels_step)
-
-    def watch_levels_step(self):
-        if not _base_vals.dragging:
-            if (
-                self._parent._parent.ldirty
-                and any(
-                    self._parent._parent.comp_bus[
-                        self.level_offset : self.level_offset + 1
-                    ]
-                )
-                and _base_vals.bus_level_array_size
-                == len(self._parent._parent.comp_bus)
-            ):
-                vals = (
-                    self.convert_level(
-                        self._parent._parent.bus_levels[self.level_offset]
-                    ),
-                    self.convert_level(
-                        self._parent._parent.bus_levels[self.level_offset + 1]
-                    ),
-                )
-                self.level.set((0 if self.mute.get() else 100 + (max(vals) - 18)))
-        self.after(
-            _base_vals.ldelay if not _base_vals.in_scale_button_1 else 100,
-            self.watch_levels_step,
+        vals = (
+            self.convert_level(self.parent.target.bus_levels[self.level_offset]),
+            self.convert_level(self.parent.target.bus_levels[self.level_offset + 1]),
         )
+        self.level.set((0 if self.mute.get() else 100 + (max(vals) - 18)))
 
 
 class ChannelFrame(ttk.Frame):
-    @classmethod
-    def make_strips(cls, parent):
-        return cls(parent, is_strip=True)
-
-    @classmethod
-    def make_buses(cls, parent):
-        return cls(parent, is_strip=False)
-
-    def __init__(self, parent, is_strip: bool = True):
+    def init(self, parent, id):
         super().__init__(parent)
-        self._parent = parent
-        self._is_strip = is_strip
+        self.parent = parent
+        self.id = id
         self.phys_in, self.virt_in = parent.kind.ins
         self.phys_out, self.virt_out = parent.kind.outs
-        _base_vals.strip_level_array_size = 2 * self.phys_in + 8 * self.virt_in
-        _base_vals.bus_level_array_size = 8 * (self.phys_out + self.virt_out)
 
-        defaults = {
-            "width": 80,
-            "height": 150,
-        }
-        self.configuration = defaults | self.configuration
-        self.width = self.configuration["width"]
-        self.height = self.configuration["height"]
-
-        # create labelframes
-        if is_strip:
-            self.strips = tuple(
-                Strip(self, i, self.identifier)
-                for i in range(self.phys_in + self.virt_in)
-            )
-        else:
-            self.buses = tuple(
-                Bus(self, i, self.identifier)
-                for i in range(self.phys_out + self.virt_out)
-            )
-
-        # position label frames. destroy any without label text
-        self.labelframes = self.strips if is_strip else self.buses
-
-        self.col_row_configure()
-
-        for i, labelframe in enumerate(self.labelframes):
-            labelframe.grid(row=0, column=i)
-            if not labelframe.cget("text"):
-                self.columnconfigure(i, minsize=0)
-                labelframe.grid_remove()
-
-        self.watch_pdirty()
+        # registers channelframe as pdirty observer
+        self.parent.subject_pdirty.add(self)
 
     @property
     def target(self):
         """returns the current interface"""
-        return self._parent.target
 
-    @property
-    def configuration(self):
-        return self._parent.configuration["channel"]
-
-    @configuration.setter
-    def configuration(self, val):
-        self._parent.configuration["channel"] = val
+        return self.parent.target
 
     @property
     def identifier(self):
-        return "strip" if self._is_strip else "bus"
+        return self.id
 
-    def update_bus_modes(self):
-        [
-            self._parent.bus_modes_cache[
-                "vban" if _base_vals.vban_connected else "vmr"
-            ][i].set(labelframe.config_frame.bus_mode)
-            for i, labelframe in enumerate(self.labelframes)
-            if labelframe is not None and labelframe.config_frame
-        ]
+    @property
+    def labelframes(self):
+        """returns a tuple of current channel labelframe addresses"""
 
-    def reset_config_buttons(self, current):
-        if not _base_vals.using_theme:
-            [
-                labelframe.s.configure(
-                    f"{labelframe.identifier}Conf{labelframe.index}.TButton",
-                    background="white",
-                )
-                for labelframe in self.labelframes
-                if labelframe is not None
-            ]
-        [
-            labelframe.conf.set(False)
-            for labelframe in self.labelframes
-            if labelframe is not None and labelframe != current
-        ]
-        [
-            labelframe.config_frame.destroy()
-            for labelframe in self.labelframes
-            if labelframe is not None
-            and labelframe.config_frame
-            and labelframe != current
-        ]
+        return tuple(
+            frame
+            for frame in self.winfo_children()
+            if isinstance(frame, ttk.LabelFrame)
+        )
 
-    def col_row_configure(self):
+    def grid_configure(self):
         [
-            self.columnconfigure(i, minsize=self.width)
+            self.columnconfigure(i, minsize=_configuration.level_width)
             for i, _ in enumerate(self.labelframes)
         ]
-        [self.rowconfigure(0, minsize=130) for i, _ in enumerate(self.labelframes)]
+        [
+            self.rowconfigure(0, minsize=_configuration.level_height)
+            for i, _ in enumerate(self.labelframes)
+        ]
 
-    def watch_pdirty(self):
-        self.after(1, self.watch_pdirty_step)
+    def update(self):
+        for labelframe in self.labelframes:
+            labelframe.sync()
 
-    def watch_pdirty_step(self):
-        if self._parent.pdirty:
-            self.watch_labels()
-        self.after(_base_vals.pdelay, self.watch_pdirty_step)
+    def teardown(self):
+        # deregisters channelframe as pdirty observer
 
-    def watch_labels(self):
-        for i, labelframe in enumerate(self.labelframes):
-            if not labelframe.getter("label"):
+        self.parent.subject_pdirty.remove(self)
+        self.destroy()
+
+
+def _make_channelframe(parent, id):
+    """
+    Creates a Channel Frame class of type strip or bus
+    """
+
+    phys_in, virt_in = parent.kind.ins
+    phys_out, virt_out = parent.kind.outs
+
+    def init_labels(self, id):
+        """
+        Grids each labelframe, grid_removes any without a label
+        """
+
+        for i, labelframe in enumerate(
+            getattr(self, "strips" if id == "strip" else "buses")
+        ):
+            labelframe.grid(row=0, column=i)
+            if not labelframe.target.label:
                 self.columnconfigure(i, minsize=0)
                 labelframe.grid_remove()
+
+    def init_strip(self, *args, **kwargs):
+        self.init(parent, id)
+        self.strips = tuple(Strip(self, i, id) for i in range(phys_in + virt_in))
+        self.grid(row=0, column=0, sticky=(tk.W))
+        self.grid_configure()
+        init_labels(self, id)
+
+    def init_bus(self, *args, **kwargs):
+        self.init(parent, id)
+        self.buses = tuple(Bus(self, i, id) for i in range(phys_out + virt_out))
+        if _configuration.extended:
+            if _configuration.extends_horizontal:
+                self.grid(row=0, column=2)
             else:
-                self.columnconfigure(i, minsize=self.width)
-                labelframe.grid()
+                self.grid(row=2, column=0, sticky=(tk.W))
+        else:
+            self.grid(row=0, column=0)
+        self.grid_configure()
+        init_labels(self, id)
+
+    if id == "strip":
+        CHANNELFRAME_cls = type(
+            f"ChannelFrame{id.capitalize}",
+            (ChannelFrame,),
+            {
+                "__init__": init_strip,
+            },
+        )
+    else:
+        CHANNELFRAME_cls = type(
+            f"ChannelFrame{id.capitalize}",
+            (ChannelFrame,),
+            {
+                "__init__": init_bus,
+            },
+        )
+    return CHANNELFRAME_cls(parent)

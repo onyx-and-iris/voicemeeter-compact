@@ -2,27 +2,27 @@ import tkinter as tk
 from tkinter import ttk
 from typing import NamedTuple
 from pathlib import Path
-import sv_ttk
 
 from .errors import VMCompactErrors
-from .data import _base_vals, _kinds_all
-from .channels import ChannelFrame
-from .navigation import Navigation
+from .data import _kinds_all, _configuration, _base_values
+from .subject import Subject
+from .builders import MainFrameBuilder
 from .menu import Menus
-from .banner import Banner
-from .configurations import configuration
 
 
 class App(tk.Tk):
-    """Topmost Level of App"""
+    """App mainframe"""
+
+    _instances = {}
 
     @classmethod
     def make(cls, kind: NamedTuple):
         """
-        Factory function for App
+        Factory function for App.
 
-        Returns an App class of a kind
+        Returns an App class of a kind.
         """
+
         APP_cls = type(
             f"Voicemeeter{kind.name}.Compact",
             (cls,),
@@ -34,106 +34,34 @@ class App(tk.Tk):
 
     def __init__(self, vmr):
         super().__init__()
-        defaults = {
-            "profiles": {
-                "profile": None,
-            },
-            "theme": {
-                "enabled": True,
-                "mode": "light",
-            },
-            "extends": {
-                "extended": True,
-                "extends_horizontal": True,
-            },
-            "channel": {
-                "width": 80,
-                "height": 130,
-            },
-            "mwscroll_step": {
-                "size": 3,
-            },
-            "submixes": {
-                "default": 0,
-            },
-        }
-        if configuration:
-            self.configuration = defaults | self.configuration
-        else:
-            configuration["app"] = defaults
-        _base_vals.themes_enabled = self.configuration["theme"]["enabled"]
-        _base_vals.extends_horizontal = self.configuration["extends"][
-            "extends_horizontal"
-        ]
-        _base_vals.submixes = self.configuration["submixes"]["default"]
-        _base_vals.mwscroll_step = self.configuration["mwscroll_step"]["size"]
-        self.bus_modes_cache = {
-            "vmr": list(tk.StringVar(value="normal") for _ in range(8)),
-            "vban": list(tk.StringVar(value="normal") for _ in range(8)),
-        }
-
-        if (
-            "profiles" in self.configuration
-            and self.configuration["profiles"]["profile"]
-        ):
-            vmr.apply_profile(self.configuration["profiles"]["profile"])
-
-        # create menus
+        self._vmr = vmr
+        icon_path = Path(__file__).parent.resolve() / "img" / "cat.ico"
+        if icon_path.is_file():
+            self.iconbitmap(str(icon_path))
+        self.minsize(275, False)
+        self.subject_pdirty = Subject()
+        self.subject_ldirty = Subject()
         self["menu"] = Menus(self, vmr)
         self.styletable = ttk.Style()
-        self._vmr = vmr
+        if _configuration.profile:
+            vmr.apply_profile(_configuration.profile)
 
-        # start watchers, initialize level arrays
-        self.upd_pdirty()
-        self.strip_levels = self.target.strip_levels
-        self.bus_levels = self.target.bus_levels
-        self.watch_levels()
-
-        self.resizable(False, False)
-        if _base_vals.themes_enabled:
-            self.apply_theme()
-        self._make_app(self.kind)
+        self.build_app()
 
         self.drag_id = ""
         self.bind("<Configure>", self.dragging)
 
-        self.iconbitmap(Path(__file__).parent.resolve() / "img" / "cat.ico")
-
-        self.minsize(275, False)
-
     @property
     def target(self):
         """returns the current interface"""
-        return self._vban if _base_vals.vban_connected else self._vmr
 
-    @property
-    def pdirty(self):
-        return self._pdirty
-
-    @pdirty.setter
-    def pdirty(self, val):
-        self._pdirty = val
-
-    @property
-    def ldirty(self):
-        return self._ldirty
-
-    @ldirty.setter
-    def ldirty(self, val):
-        self._ldirty = val
-
-    @property
-    def configuration(self):
-        return configuration["app"]
-
-    @configuration.setter
-    def configuration(self, val):
-        self.configuration["app"] = val
+        return self._vban if _base_values.vban_connected else self._vmr
 
     @property
     def configframes(self):
-        """returns a tuple of current config frame addresses"""
-        return tuple(
+        """returns the current configframes"""
+
+        return (
             frame
             for frame in self.winfo_children()
             if isinstance(frame, ttk.Frame)
@@ -141,86 +69,73 @@ class App(tk.Tk):
             or "!busconfig" in str(frame)
         )
 
-    def apply_theme(self):
-        _base_vals.using_theme = True
-        sv_ttk.set_theme(self.configuration["theme"]["mode"])
-
-    def _make_app(self, kind, vban=None):
-        self.title(
-            f'Voicemeeter{kind.name}.Compact [{"Local" if not vban else "Network"} Connection]'
-        )
+    def build_app(self, kind=None, vban=None):
+        """builds the app frames according to a kind"""
         self._vban = vban
-        self.kind = kind
-        self.strip_levels = self.target.strip_levels
-        self.bus_levels = self.target.bus_levels
+        if kind:
+            self.kind = kind
+        # register as observer
+        self.target.subject.add(self)
 
-        self._make_top_level_frames()
-
-    def _make_top_level_frames(self):
-        # initialize bus frame variable
         self.bus_frame = None
-        # channel_frame, left aligned
-        self.channel_frame = ChannelFrame.make_strips(self)
-        self.channel_frame.grid(row=0, column=0, sticky=(tk.W))
-        # separator
-        self.sep = ttk.Separator(self, orient="vertical")
-        self.sep.grid(row=0, column=1, sticky=(tk.N, tk.S))
-        self.columnconfigure(1, minsize=15)
-
-        # navigation frame
-        self.nav_frame = Navigation(self)
-        self.nav_frame.grid(row=0, column=3, sticky=(tk.E))
-
-        if self.configuration["extends"]["extended"]:
+        self.submix_frame = None
+        self.builder = MainFrameBuilder(self)
+        self.builder.setup()
+        self.builder.create_channelframe("strip")
+        self.builder.create_separator()
+        self.builder.create_navframe()
+        if _configuration.extended:
             self.nav_frame.extend.set(True)
             self.nav_frame.extend_frame()
-
         if self.kind.name == "Potato":
-            self.banner = Banner(self)
-            self.banner.grid(row=4, column=0, columnspan=3)
+            self.builder.create_banner()
+
+    def update(self, subject):
+        """
+        called whenever notified of update
+
+        after 1 to prevent vmr,vban interface waiting.
+        """
+        if subject == "pdirty" and not _base_values.in_scale_button_1:
+            self.after(1, self.notify_pdirty)
+        elif subject == "ldirty" and not _base_values.dragging:
+            self.after(1, self.notify_ldirty)
+
+    def notify_pdirty(self):
+        self.subject_pdirty.notify()
+
+    def notify_ldirty(self):
+        self.subject_ldirty.notify()
 
     def _destroy_top_level_frames(self):
+        """
+        Clear observables.
+
+        Unregister app as observer.
+
+        Destroy all top level frames.
+        """
+        self.subject_pdirty.clear()
+        self.subject_ldirty.clear()
+        self.target.subject.remove(self)
         [
             frame.destroy()
             for frame in self.winfo_children()
             if isinstance(frame, ttk.Frame)
         ]
 
-    def upd_pdirty(self):
-        self.after(1, self.upd_pdirty_step)
-
-    def upd_pdirty_step(self):
-        self.pdirty = self.target.pdirty
-        self.after(_base_vals.pdelay, self.upd_pdirty_step)
-
-    def watch_levels(self):
-        self.after(1, self.watch_levels_step)
-
-    def watch_levels_step(self):
-        """Continuously fetch level arrays, only update if ldirty"""
-        _strip_levels = self.target.strip_levels
-        _bus_levels = self.target.bus_levels
-        self.comp_strip = [not a == b for a, b in zip(self.strip_levels, _strip_levels)]
-        self.comp_bus = [not a == b for a, b in zip(self.bus_levels, _bus_levels)]
-
-        self.ldirty = any(any(l) for l in (self.comp_strip, self.comp_bus))
-        if self.ldirty:
-            self.strip_levels = _strip_levels
-            self.bus_levels = _bus_levels
-        self.after(_base_vals.ldelay, self.watch_levels_step)
-
     def dragging(self, event, *args):
         if event.widget is self:
             if self.drag_id == "":
-                _base_vals.in_scale_button_1 = True
-                _base_vals.dragging = True
+                _base_values.in_scale_button_1 = True
+                _base_values.dragging = True
             else:
                 self.after_cancel(self.drag_id)
             self.drag_id = self.after(100, self.stop_drag)
 
     def stop_drag(self):
-        _base_vals.dragging = False
-        _base_vals.in_scale_button_1 = False
+        _base_values.dragging = False
+        _base_values.in_scale_button_1 = False
         self.drag_id = ""
 
 
@@ -229,6 +144,7 @@ _apps = {kind.id: App.make(kind) for kind in _kinds_all}
 
 def connect(kind_id: str, vmr) -> App:
     """return App of the kind requested"""
+
     try:
         VMMIN_cls = _apps[kind_id]
         return VMMIN_cls(vmr)

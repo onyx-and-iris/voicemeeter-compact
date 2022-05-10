@@ -3,20 +3,23 @@ from tkinter import ttk, messagebox
 from functools import partial
 import webbrowser
 import sv_ttk
-
 import vbancmd
 
-from .configurations import configuration
-from .data import _base_vals, kind_get
+from .data import (
+    get_configuration,
+    _base_values,
+    _configuration,
+    kind_get,
+)
 
 
 class Menus(tk.Menu):
     def __init__(self, parent, vmr):
         super().__init__()
-        self._parent = parent
-        self._vmr = vmr
-        if self.configuration_vban is not None:
-            self.vban_conns = [None for i, _ in enumerate(self.configuration_vban)]
+        self.parent = parent
+        self.vmr = vmr
+        self.vban_config = get_configuration("vban")
+        self.app_config = get_configuration("app")
         self._is_topmost = tk.BooleanVar()
         self._selected_bus = list(tk.BooleanVar() for _ in range(8))
 
@@ -69,76 +72,23 @@ class Menus(tk.Menu):
         self.menu_profiles_load = tk.Menu(menu_profiles, tearoff=0)
         menu_profiles.add_cascade(menu=self.menu_profiles_load, label="Load profile")
         defaults = {"base", "blank"}
-        if len(vmr.profiles) > len(defaults) and all(
-            key in vmr.profiles for key in defaults
+        if len(self.target.profiles) > len(defaults) and all(
+            key in self.target.profiles for key in defaults
         ):
             [
                 self.menu_profiles_load.add_command(
                     label=profile, command=partial(self.load_profile, profile)
                 )
-                for profile in vmr.profiles.keys()
+                for profile in self.target.profiles.keys()
                 if profile not in defaults
             ]
         else:
             menu_profiles.entryconfig(0, state="disabled")
         menu_profiles.add_command(label="Reset to defaults", command=self.load_defaults)
 
-        # vban connect menu
-        self.menu_vban = tk.Menu(self, tearoff=0)
-        self.add_cascade(menu=self.menu_vban, label="VBAN")
-        if self.configuration_vban:
-            for i, _ in enumerate(self.configuration_vban):
-                setattr(self, f"menu_vban_{i+1}", tk.Menu(self.menu_vban, tearoff=0))
-                target_menu = getattr(self, f"menu_vban_{i+1}")
-                self.menu_vban.add_cascade(
-                    menu=target_menu, label=f"VBAN Connect #{i+1}", underline=0
-                )
-                target_menu.add_command(
-                    label="Connect", command=partial(self.vban_connect, i)
-                )
-                target_menu.add_command(
-                    label="Disconnect", command=partial(self.vban_disconnect, i)
-                )
-                target_menu.entryconfig(1, state="disabled")
-        else:
-            self.entryconfig(3, state="disabled")
-
         # layout menu
         self.menu_layout = tk.Menu(self, tearoff=0)
         self.add_cascade(menu=self.menu_layout, label="Layout")
-        # layout/extends
-        self.menu_extends = tk.Menu(self.menu_layout, tearoff=0)
-        self.menu_layout.add_cascade(
-            menu=self.menu_extends, label="Extends", underline=0
-        )
-        self.menu_extends.add_command(
-            label="horizontal",
-            underline=0,
-            command=partial(self.switch_orientation, extends_horizontal=True),
-        )
-        self.menu_extends.add_command(
-            label="vertical",
-            underline=0,
-            command=partial(self.switch_orientation, extends_horizontal=False),
-        )
-        self.menu_extends.entryconfig(
-            0 if _base_vals.extends_horizontal else 1, state="disabled"
-        )
-        # layout/themes
-        self.menu_themes = tk.Menu(self.menu_layout, tearoff=0)
-        self.menu_layout.add_cascade(menu=self.menu_themes, label="Themes")
-        self.menu_themes.add_command(
-            label="light", command=partial(self.load_theme, "light")
-        )
-        self.menu_themes.add_command(
-            label="dark", command=partial(self.load_theme, "dark")
-        )
-        self.menu_themes.entryconfig(
-            0 if self.configuration_app["theme"]["mode"] == "light" else 1,
-            state="disabled",
-        )
-        if not _base_vals.themes_enabled:
-            self.entryconfig(6, state="disabled")
         # layout/submixes
         # here we build menu regardless of kind but disable if not Potato
         buses = tuple(f"A{i+1}" for i in range(5)) + tuple(f"B{i+1}" for i in range(3))
@@ -155,9 +105,64 @@ class Menus(tk.Menu):
             )
             for i in range(8)
         ]
-        self._selected_bus[_base_vals.submixes].set(True)
-        if self._parent.kind.name != "Potato":
-            self.menu_layout.entryconfig(2, state="disabled")
+        self._selected_bus[_base_values.submixes].set(True)
+        if self.parent.kind.name != "Potato":
+            self.menu_layout.entryconfig(0, state="disabled")
+        # layout/extends
+        self.menu_extends = tk.Menu(self.menu_layout, tearoff=0)
+        self.menu_layout.add_cascade(
+            menu=self.menu_extends, label="Extends", underline=0
+        )
+        self.menu_extends.add_command(
+            label="horizontal",
+            underline=0,
+            command=partial(self.switch_orientation, extends_horizontal=True),
+        )
+        self.menu_extends.add_command(
+            label="vertical",
+            underline=0,
+            command=partial(self.switch_orientation, extends_horizontal=False),
+        )
+        self.menu_extends.entryconfig(
+            0 if _configuration.extends_horizontal else 1, state="disabled"
+        )
+        # layout/themes
+        self.menu_themes = tk.Menu(self.menu_layout, tearoff=0)
+        self.menu_layout.add_cascade(menu=self.menu_themes, label="Themes")
+        self.menu_themes.add_command(
+            label="light", command=partial(self.load_theme, "light")
+        )
+        self.menu_themes.add_command(
+            label="dark", command=partial(self.load_theme, "dark")
+        )
+        self.menu_themes.entryconfig(
+            0 if self.app_config["theme"]["mode"] == "light" else 1,
+            state="disabled",
+        )
+        if not _configuration.themes_enabled:
+            self.entryconfig(6, state="disabled")
+
+        # vban connect menu
+        self.menu_vban = tk.Menu(self, tearoff=0)
+        self.add_cascade(menu=self.menu_vban, label="VBAN")
+        if self.vban_config:
+            for i, _ in enumerate(self.vban_config):
+                setattr(self, f"menu_vban_{i+1}", tk.Menu(self.menu_vban, tearoff=0))
+                target_menu = getattr(self, f"menu_vban_{i+1}")
+                self.menu_vban.add_cascade(
+                    menu=target_menu,
+                    label=f"{self.vban_config[f'connection-{i+1}']['streamname']}",
+                    underline=0,
+                )
+                target_menu.add_command(
+                    label="Connect", command=partial(self.vban_connect, i)
+                )
+                target_menu.add_command(
+                    label="Disconnect", command=partial(self.vban_disconnect, i)
+                )
+                target_menu.entryconfig(1, state="disabled")
+        else:
+            self.entryconfig(3, state="disabled")
 
         # Help menu
         self.menu_help = tk.Menu(self, tearoff=0)
@@ -178,20 +183,13 @@ class Menus(tk.Menu):
     @property
     def target(self):
         """use the correct interface"""
-        return self._parent.target
+        return self.parent.target
 
-    @property
-    def configuration_app(self):
-        return configuration["app"]
-
-    @configuration_app.setter
-    def configuration_app(self, val):
-        self.configuration_app = val
-
-    @property
-    def configuration_vban(self):
-        if "vban" in configuration:
-            return configuration["vban"]
+    def enable_vban_menus(self):
+        [
+            self.menu_vban.entryconfig(j, state="normal")
+            for j, _ in enumerate(self.menu_vban.winfo_children())
+        ]
 
     def action_invoke_voicemeeter(self, cmd):
         getattr(self.target.command, cmd)()
@@ -210,11 +208,10 @@ class Menus(tk.Menu):
             self.target.apply_profile("base")
 
     def always_on_top(self):
-        self._parent.attributes("-topmost", self._is_topmost.get())
-        self._parent.update()
+        self.parent.attributes("-topmost", self._is_topmost.get())
 
     def switch_orientation(self, extends_horizontal: bool = True, *args):
-        _base_vals.extends_horizontal = extends_horizontal
+        _configuration.extends_horizontal = extends_horizontal
         if extends_horizontal:
             self.menu_extends.entryconfig(0, state="disabled")
             self.menu_extends.entryconfig(1, state="normal")
@@ -223,17 +220,17 @@ class Menus(tk.Menu):
             self.menu_extends.entryconfig(0, state="normal")
 
     def set_submix(self, i):
-        if _base_vals.submixes != i:
-            _base_vals.submixes = i
-            if self._parent.submix_frame is not None:
-                self._parent.submix_frame.destroy()
-                self._parent.nav_frame.show_submix()
+        if _base_values.submixes != i:
+            _base_values.submixes = i
+            if self.parent.submix_frame is not None:
+                self.parent.submix_frame.teardown()
+                self.parent.nav_frame.show_submix()
             for j, var in enumerate(self._selected_bus):
                 var.set(True if i == j else False)
 
     def load_theme(self, theme):
         sv_ttk.set_theme(theme)
-        self.configuration_app["theme"]["mode"] = theme
+        self.app_config["theme"]["mode"] = theme
         self.menu_themes.entryconfig(
             0,
             state=f"{'disabled' if theme == 'light' else 'normal'}",
@@ -268,49 +265,41 @@ class Menus(tk.Menu):
         ]
 
         opts = {}
-        opts |= self.configuration_vban[f"connection-{i+1}"]
+        opts |= self.vban_config[f"connection-{i+1}"]
         kind_id = opts.pop("kind")
-        self.vban_conns[i] = vbancmd.connect(kind_id, **opts)
+        self.vban = vbancmd.connect(kind_id, **opts)
         # login to vban interface
-        self.vban_conns[i].login()
+        self.vban.login()
         # destroy the current App frames
-        self._parent._destroy_top_level_frames()
-        _base_vals.vban_connected = True
+        self.parent._destroy_top_level_frames()
+        _base_values.vban_connected = True
         # build new app frames according to a kind
         kind = kind_get(kind_id)
-        self._parent._make_app(kind, self.vban_conns[i])
+        self.parent.build_app(kind, self.vban)
         target_menu = getattr(self, f"menu_vban_{i+1}")
         target_menu.entryconfig(0, state="disabled")
         target_menu.entryconfig(1, state="normal")
         self.menu_layout.entryconfig(
-            2, state=f"{'normal' if kind.name == 'Potato' else 'disabled'}"
+            0, state=f"{'normal' if kind.name == 'Potato' else 'disabled'}"
         )
 
     def vban_disconnect(self, i):
         # destroy the current App frames
-        self._parent._destroy_top_level_frames()
-        _base_vals.vban_connected = False
+        self.parent._destroy_top_level_frames()
+        _base_values.vban_connected = False
         # logout of vban interface
-        i_to_close = self.vban_conns[i]
-        self.vban_conns[i] = None
-        i_to_close.logout()
+        self.vban.logout()
         # build new app frames according to a kind
-        kind = kind_get(self._vmr.type)
-        self._parent._make_app(kind, None)
+        kind = kind_get(self.vmr.type)
+        self.parent.build_app(kind, None)
         target_menu = getattr(self, f"menu_vban_{i+1}")
         target_menu.entryconfig(0, state="normal")
         target_menu.entryconfig(1, state="disabled")
         self.menu_layout.entryconfig(
-            2, state=f"{'normal' if kind.name == 'Potato' else 'disabled'}"
+            0, state=f"{'normal' if kind.name == 'Potato' else 'disabled'}"
         )
 
         self.after(15000, self.enable_vban_menus)
-
-    def enable_vban_menus(self):
-        [
-            self.menu_vban.entryconfig(j, state="normal")
-            for j, _ in enumerate(self.menu_vban.winfo_children())
-        ]
 
     def documentation(self):
         webbrowser.open_new(r"https://voicemeeter.com/")
