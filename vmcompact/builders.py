@@ -182,7 +182,7 @@ class NavigationFrameBuilder(AbstractBuilder):
             if isinstance(child, ttk.Checkbutton)
         ]
         if _configuration.themes_enabled:
-            self.navframe.rowconfigure(1, minsize=_configuration.level_height - 16)
+            self.navframe.rowconfigure(1, minsize=_configuration.level_height)
         else:
             self.navframe.rowconfigure(1, minsize=_configuration.level_height - 5)
 
@@ -276,7 +276,7 @@ class ChannelLabelFrameBuilder(AbstractBuilder):
             style=f"{'Toggle.TButton' if _configuration.themes_enabled else f'{self.identifier}On{self.index}.TButton'}",
             variable=self.labelframe.on,
         )
-        self.button_on.grid(column=0, row=1, columnspan=2)
+        self.button_on.grid(column=0, row=2, columnspan=2)
 
     def teardown(self):
         self.labelframe.grid_remove()

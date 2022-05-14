@@ -24,6 +24,7 @@ class GainLayer(ttk.LabelFrame):
         self.builder.setup()
         self.builder.add_progressbar()
         self.builder.add_scale()
+        self.builder.add_gain_label()
         self.builder.add_on_button()
         self.sync()
         self.grid_configure()
@@ -50,13 +51,13 @@ class GainLayer(ttk.LabelFrame):
     def reset_gain(self, *args):
         self.setter("gain", 0)
         self.gain.set(0)
-        self.parent.parent.nav_frame.info_text.set(0)
+        self.gainlabel.set(0)
 
     def scale_callback(self, *args):
         """callback function for scale widget"""
 
         self.setter("gain", self.gain.get())
-        self.parent.parent.nav_frame.info_text.set(round(self.gain.get(), 1))
+        self.gainlabel.set(round(self.gain.get(), 1))
 
     def scale_press(self, *args):
         _base_values.in_scale_button_1 = True
@@ -106,6 +107,7 @@ class GainLayer(ttk.LabelFrame):
 
     def sync_params(self):
         self.gain.set(self.getter("gain"))
+        self.gainlabel.set(round(self.gain.get(), 1))
         self.on.set(
             getattr(
                 self.parent.target.strip[self.index],
@@ -184,9 +186,9 @@ class GainLayer(ttk.LabelFrame):
         self.columnconfigure(1, minsize=36)
         # on button
         if _configuration.themes_enabled:
-            self.rowconfigure(1, minsize=70)
+            self.rowconfigure(2, minsize=70)
         else:
-            self.rowconfigure(1, minsize=55)
+            self.rowconfigure(2, minsize=55)
 
 
 class SubMixFrame(ttk.Frame):
