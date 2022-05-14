@@ -235,9 +235,7 @@ class ChannelLabelFrameBuilder(AbstractBuilder):
         self.scale.grid(column=1, row=0)
         self.scale.bind("<Double-Button-1>", self.labelframe.reset_gain)
         self.scale.bind("<Button-1>", self.labelframe.scale_press)
-        self.scale.bind("<Enter>", self.labelframe.scale_enter)
         self.scale.bind("<ButtonRelease-1>", self.labelframe.scale_release)
-        self.scale.bind("<Leave>", self.labelframe.scale_leave)
         self.scale.bind("<MouseWheel>", self.labelframe._on_mousewheel)
 
     def add_gain_label(self):

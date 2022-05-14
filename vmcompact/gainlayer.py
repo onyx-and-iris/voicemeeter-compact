@@ -41,11 +41,11 @@ class GainLayer(ttk.LabelFrame):
         return "gainlayer"
 
     def getter(self, param):
-        if param in dir(self.target):
+        if hasattr(self.target, param):
             return getattr(self.target, param)
 
     def setter(self, param, value):
-        if param in dir(self.target):
+        if hasattr(self.target, param):
             setattr(self.target, param, value)
 
     def reset_gain(self, *args):
@@ -65,19 +65,13 @@ class GainLayer(ttk.LabelFrame):
     def scale_release(self, *args):
         _base_values.in_scale_button_1 = False
 
-    def scale_enter(self, *args):
-        pass
-
-    def scale_leave(self, *args):
-        pass
-
     def _on_mousewheel(self, event):
         self.gain.set(
             self.gain.get()
             + (
-                _base_values.mwscroll_step
+                _configuration.mwscroll_step
                 if event.delta > 0
-                else -_base_values.mwscroll_step
+                else -_configuration.mwscroll_step
             )
         )
         if self.gain.get() > 12:
@@ -85,7 +79,6 @@ class GainLayer(ttk.LabelFrame):
         elif self.gain.get() < -60:
             self.gain.set(-60)
         self.setter("gain", self.gain.get())
-        self.parent.parent.nav_frame.info_text.set(round(self.gain.get(), 1))
 
     def set_on(self):
         """enables a gainlayer. sets its button colour"""

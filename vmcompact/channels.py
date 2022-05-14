@@ -39,11 +39,11 @@ class ChannelLabelFrame(ttk.LabelFrame):
         return self.parent.target
 
     def getter(self, param):
-        if param in dir(self.target):
+        if hasattr(self.target, param):
             return getattr(self.target, param)
 
     def setter(self, param, value):
-        if param in dir(self.target):
+        if hasattr(self.target, param):
             setattr(self.target, param, value)
 
     def scale_callback(self, *args):
@@ -63,12 +63,6 @@ class ChannelLabelFrame(ttk.LabelFrame):
     def reset_gain(self, *args):
         self.setter("gain", 0)
         self.gain.set(0)
-
-    def scale_enter(self, *args):
-        pass
-
-    def scale_leave(self, *args):
-        pass
 
     def scale_press(self, *args):
         _base_values.in_scale_button_1 = True
@@ -90,7 +84,6 @@ class ChannelLabelFrame(ttk.LabelFrame):
         elif self.gain.get() < -60:
             self.gain.set(-60)
         self.setter("gain", self.gain.get())
-        self.parent.parent.nav_frame.info_text.set(round(self.gain.get(), 1))
 
     def open_config(self):
         if self.conf.get():

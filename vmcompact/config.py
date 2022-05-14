@@ -29,11 +29,11 @@ class Config(ttk.Frame):
         return self.parent.target
 
     def getter(self, param):
-        if param in dir(self.target):
+        if hasattr(self.target, param):
             return getattr(self.target, param)
 
     def setter(self, param, value):
-        if param in dir(self.target):
+        if hasattr(self.target, param):
             setattr(self.target, param, value)
 
     def scale_press(self, *args):
