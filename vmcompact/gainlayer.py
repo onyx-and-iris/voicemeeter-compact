@@ -66,10 +66,10 @@ class GainLayer(ttk.LabelFrame):
         _base_values.in_scale_button_1 = False
 
     def scale_enter(self, *args):
-        self.parent.parent.nav_frame.info_text.set(round(self.gain.get(), 1))
+        pass
 
     def scale_leave(self, *args):
-        self.parent.parent.nav_frame.info_text.set("")
+        pass
 
     def _on_mousewheel(self, event):
         self.gain.set(
