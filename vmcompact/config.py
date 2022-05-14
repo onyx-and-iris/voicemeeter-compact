@@ -29,16 +29,24 @@ class Config(ttk.Frame):
         return self.parent.target
 
     def getter(self, param):
-        return getattr(self.target, param)
+        if param in dir(self.target):
+            return getattr(self.target, param)
 
     def setter(self, param, value):
-        setattr(self.target, param, value)
+        if param in dir(self.target):
+            setattr(self.target, param, value)
 
-    def scale_enter(self, *args):
+    def scale_press(self, *args):
         _base_values.in_scale_button_1 = True
 
-    def scale_leave(self, *args):
+    def scale_release(self, *args):
         _base_values.in_scale_button_1 = False
+
+    def scale_enter(self, param, *args):
+        val = self.slider_vars[self.slider_params.index(param)].get()
+        self.parent.nav_frame.info_text.set(round(val, 1))
+
+    def scale_leave(self, *args):
         self.parent.nav_frame.info_text.set("")
 
     def scale_callback(self, param, *args):
@@ -60,14 +68,16 @@ class Config(ttk.Frame):
                 f"{param}.TButton", background=f'{"green" if val else "white"}'
             )
 
-    def update(self):
-        self.sync()
+    def on_update(self):
+        """update parameters"""
+
+        self.after(_base_values.pdelay, self.sync)
 
 
 class StripConfig(Config):
     def __init__(self, parent, index, _id):
         super().__init__(parent, index, _id)
-        self.grid(column=0, row=1, columnspan=4)
+        self.grid(column=0, row=1, columnspan=4, padx=(2,))
         self.builder = builders.StripConfigFrameBuilder(self)
         self.builder.setup()
         self.make_row_0()
@@ -121,43 +131,39 @@ class StripConfig(Config):
 
     def sync(self):
         [
-            self.phys_out_params_vars[self.phys_out_params.index(param)].set(
-                self.getter(param)
-            )
-            for param in self.phys_out_params
+            self.phys_out_params_vars[i].set(self.getter(param))
+            for i, param in enumerate(self.phys_out_params)
         ]
         [
-            self.virt_out_params_vars[self.virt_out_params.index(param)].set(
-                self.getter(param)
-            )
-            for param in self.virt_out_params
+            self.virt_out_params_vars[i].set(self.getter(param))
+            for i, param in enumerate(self.virt_out_params)
         ]
         [
-            self.param_vars[self.params.index(param)].set(self.getter(param))
-            for param in self.params
+            self.param_vars[i].set(self.getter(param))
+            for i, param in enumerate(self.params)
         ]
 
         if not _configuration.themes_enabled:
             [
                 self.styletable.configure(
                     f"{param}.TButton",
-                    background=f'{"green" if self.phys_out_params_vars[self.phys_out_params.index(param)].get() else "white"}',
+                    background=f'{"green" if self.phys_out_params_vars[i].get() else "white"}',
                 )
-                for param in self.phys_out_params
+                for i, param in enumerate(self.phys_out_params)
             ]
             [
                 self.styletable.configure(
                     f"{param}.TButton",
-                    background=f'{"green" if self.virt_out_params_vars[self.virt_out_params.index(param)].get() else "white"}',
+                    background=f'{"green" if self.virt_out_params_vars[i].get() else "white"}',
                 )
-                for param in self.virt_out_params
+                for i, param in enumerate(self.virt_out_params)
             ]
             [
                 self.styletable.configure(
                     f"{param}.TButton",
-                    background=f'{"green" if self.param_vars[self.params.index(param)].get() else "white"}',
+                    background=f'{"green" if self.param_vars[i].get() else "white"}',
                 )
-                for param in self.params
+                for i, param in enumerate(self.params)
             ]
 
 
@@ -165,9 +171,9 @@ class BusConfig(Config):
     def __init__(self, parent, index, _id):
         super().__init__(parent, index, _id)
         if _configuration.extends_horizontal:
-            self.grid(column=0, row=1, columnspan=4)
+            self.grid(column=0, row=1, columnspan=4, padx=(2,))
         else:
-            self.grid(column=0, row=3, columnspan=4)
+            self.grid(column=0, row=3, columnspan=4, padx=(2,))
         self.builder = builders.BusConfigFrameBuilder(self)
         self.builder.setup()
         self.make_row_0()
@@ -227,19 +233,15 @@ class BusConfig(Config):
 
     def sync(self):
         [
-            self.param_vars[self.params.index(param)].set(self.getter(param))
-            for param in self.params
+            self.param_vars[i].set(self.getter(param))
+            for i, param in enumerate(self.params)
         ]
         self.bus_mode_label_text.set(self.bus_mode_map[self.current_bus_mode()])
         if not _configuration.themes_enabled:
             [
                 self.styletable.configure(
                     f"{param}.TButton",
-                    background=f'{"green" if self.param_vars[self.params.index(param)].get() else "white"}',
+                    background=f'{"green" if self.param_vars[i].get() else "white"}',
                 )
-                for param in self.params
+                for i, param in enumerate(self.params)
             ]
-
-
-class Iterator:
-    pass

@@ -19,9 +19,9 @@ class SingletonMeta(type):
 @dataclass
 class Configurations(metaclass=SingletonMeta):
     # width of a single labelframe
-    level_width: int = 75
+    level_width: int = configuration["channel"]["width"]
     # height of a single labelframe
-    level_height: int = 100
+    level_height: int = configuration["channel"]["height"]
 
     # is the gui extended
     extended: bool = configuration["extends"]["extended"]
@@ -53,11 +53,7 @@ class BaseValues(metaclass=SingletonMeta):
     # pdirty delay
     pdelay: int = 5
     # ldirty delay
-    ldelay: int = 50
-    # size of strip level array for a kind
-    strip_level_array_size: int = None
-    # size of bus level array for a kind
-    bus_level_array_size: int = None
+    ldelay: int = 5
 
 
 _base_values = BaseValues()

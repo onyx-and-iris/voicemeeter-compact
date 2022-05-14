@@ -2,8 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 from math import log
 
-from .data import _base_values, _configuration
 from . import builders
+from .data import _base_values, _configuration
 
 
 class GainLayer(ttk.LabelFrame):
@@ -34,6 +34,10 @@ class GainLayer(ttk.LabelFrame):
 
         _target = self.parent.target
         return _target.strip[self.index].gainlayer[self.j]
+
+    @property
+    def identifier(self):
+        return "gainlayer"
 
     def getter(self, param):
         if param in dir(self.target):
@@ -92,9 +96,77 @@ class GainLayer(ttk.LabelFrame):
         )
         if not _configuration.themes_enabled:
             self.styletable.configure(
-                f"On.TButton",
+                f"{self.identifier}On{self.index}.TButton",
                 background=f'{"green" if self.on.get() else "white"}',
             )
+
+    def sync(self):
+        self.after(_base_values.pdelay, self.sync_params)
+        self.after(100, self.sync_labels)
+
+    def sync_params(self):
+        self.gain.set(self.getter("gain"))
+        self.on.set(
+            getattr(
+                self.parent.target.strip[self.index],
+                self.parent.buses[self.j],
+            )
+        )
+        if not _configuration.themes_enabled:
+            self.styletable.configure(
+                f"{self.identifier}On{self.index}.TButton",
+                background=f'{"green" if self.on.get() else "white"}',
+            )
+
+    def sync_labels(self):
+        """sync params with voicemeeter"""
+        retval = self.parent.target.strip[self.index].label
+        if len(retval) > 10:
+            retval = f"{retval[:8]}.."
+        if not retval:
+            self.parent.columnconfigure(self.index, minsize=0)
+            self.parent.parent.subject_ldirty.remove(self)
+            self.grid_remove()
+        else:
+            self.parent.parent.subject_ldirty.add(self)
+            self.grid()
+        self.configure(text=retval)
+
+    def convert_level(self, val):
+        if _base_values.vban_connected:
+            return round(-val * 0.01, 1)
+        return round(20 * log(val, 10), 1) if val > 0 else -200.0
+
+    def upd_levels(self):
+        """
+        Updates level values.
+
+        Checks offset against expected level array size to avoid a race condition
+        """
+        if self.level_offset + 1 < len(self.parent.parent.strip_levels):
+            if any(
+                self.parent.parent.strip_comp[self.level_offset : self.level_offset + 1]
+            ):
+                val = self.convert_level(
+                    max(
+                        self.parent.parent.strip_levels[
+                            self.level_offset : self.level_offset + 1
+                        ]
+                    )
+                )
+                self.level.set(
+                    (
+                        0
+                        if self.parent.target.strip[self.index].mute
+                        or not self.on.get()
+                        else 100 + val - 18 + self.gain.get()
+                    )
+                )
+
+    def on_update(self):
+        """update levels"""
+
+        self.after(_base_values.ldelay, self.upd_levels)
 
     def grid_configure(self):
         [
@@ -115,47 +187,6 @@ class GainLayer(ttk.LabelFrame):
             self.rowconfigure(1, minsize=70)
         else:
             self.rowconfigure(1, minsize=55)
-
-    def sync(self):
-        """sync params with voicemeeter"""
-        retval = self.parent.target.strip[self.index].label
-        if len(retval) > 10:
-            retval = f"{retval[:8]}.."
-        if not retval:
-            self.parent.columnconfigure(self.index, minsize=0)
-            self.parent.parent.subject_ldirty.remove(self)
-            self.grid_remove()
-        else:
-            self.parent.parent.subject_ldirty.add(self)
-            self.grid()
-        self.configure(text=retval)
-        self.gain.set(self.getter("gain"))
-        self.on.set(
-            getattr(
-                self.parent.target.strip[self.index],
-                self.parent.buses[self.j],
-            )
-        )
-
-    def convert_level(self, val):
-        if _base_values.vban_connected:
-            return round(-val * 0.01, 1)
-        return round(20 * log(val, 10), 1) if val > 0 else -200.0
-
-    def update(self):
-        """update levels"""
-        vals = (
-            self.convert_level(self.parent.target.strip_levels[self.level_offset]),
-            self.convert_level(self.parent.target.strip_levels[self.level_offset + 1]),
-        )
-        self.level.set(
-            (
-                0
-                if self.parent.parent.strip_frame.strips[self.index].mute.get()
-                or not self.on.get()
-                else 100 + (max(vals) - 18) + self.gain.get()
-            )
-        )
 
 
 class SubMixFrame(ttk.Frame):
@@ -182,12 +213,26 @@ class SubMixFrame(ttk.Frame):
             if parent.bus_frame:
                 parent.bus_frame.grid_remove()
         else:
-            self._parent.submix_frame.grid(row=2, column=0)
             if parent.bus_frame:
+                self.grid(
+                    row=parent.bus_frame.grid_info()["row"], column=0, sticky=(tk.W)
+                )
                 parent.bus_frame.grid_remove()
+            else:
+                self.grid(row=2, column=0, sticky=(tk.W))
 
         # registers submixframe as pdirty observer
         self.parent.subject_pdirty.add(self)
+
+        self.grid_configure()
+        """
+        Grids each labelframe, grid_removes any without a label
+        """
+        for i, labelframe in enumerate(self.labelframes):
+            labelframe.grid(row=0, column=i)
+            if not self.target.strip[i].label:
+                self.columnconfigure(i, minsize=0)
+                labelframe.grid_remove()
 
     @property
     def target(self):
@@ -215,9 +260,12 @@ class SubMixFrame(ttk.Frame):
             for i, _ in enumerate(self.labelframes)
         ]
 
-    def update(self):
+    def upd_labelframe(self, labelframe):
+        labelframe.sync()
+
+    def on_update(self):
         for labelframe in self.labelframes:
-            labelframe.sync()
+            self.after(1, self.upd_labelframe, labelframe)
 
     def teardown(self):
         # deregisters submixframe as pdirty observer

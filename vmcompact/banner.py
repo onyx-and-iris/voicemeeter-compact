@@ -21,7 +21,8 @@ class Banner(ttk.Frame):
 
     @property
     def target(self):
-        """use the correct interface"""
+        """returns the current interface"""
+
         return self.parent.target
 
     def upd_submix(self):

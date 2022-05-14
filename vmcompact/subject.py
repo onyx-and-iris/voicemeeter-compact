@@ -5,10 +5,10 @@ class Subject:
         self._observables = []
 
     def notify(self, modifier=None):
-        """Alert the observers"""
+        """run callbacks on update"""
 
         for observer in self._observables:
-            observer.update()
+            observer.on_update()
 
     def add(self, observer):
         """adds an observer to observables"""
@@ -26,7 +26,10 @@ class Subject:
 
     def get(self) -> list:
         """returns the current observables"""
+
         return self._observables
 
     def clear(self):
+        """clears the observables list"""
+
         self._observables.clear()

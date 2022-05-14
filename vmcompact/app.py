@@ -13,8 +13,6 @@ from .menu import Menus
 class App(tk.Tk):
     """App mainframe"""
 
-    _instances = {}
-
     @classmethod
     def make(cls, kind: NamedTuple):
         """
@@ -34,6 +32,7 @@ class App(tk.Tk):
 
     def __init__(self, vmr):
         super().__init__()
+
         self._vmr = vmr
         icon_path = Path(__file__).parent.resolve() / "img" / "cat.ico"
         if icon_path.is_file():
@@ -41,6 +40,8 @@ class App(tk.Tk):
         self.minsize(275, False)
         self.subject_pdirty = Subject()
         self.subject_ldirty = Subject()
+        self.strip_levels = None
+        self.bus_levels = None
         self["menu"] = Menus(self, vmr)
         self.styletable = ttk.Style()
         if _configuration.profile:
@@ -74,7 +75,8 @@ class App(tk.Tk):
         self._vban = vban
         if kind:
             self.kind = kind
-        # register as observer
+
+        # register app as observer
         self.target.subject.add(self)
 
         self.bus_frame = None
@@ -90,16 +92,20 @@ class App(tk.Tk):
         if self.kind.name == "Potato":
             self.builder.create_banner()
 
-    def update(self, subject):
-        """
-        called whenever notified of update
+    def on_update(self, subject, data):
+        """called whenever notified of update"""
 
-        after 1 to prevent vmr,vban interface waiting.
-        """
-        if subject == "pdirty" and not _base_values.in_scale_button_1:
-            self.after(1, self.notify_pdirty)
-        elif subject == "ldirty" and not _base_values.dragging:
-            self.after(1, self.notify_ldirty)
+        if not _base_values.in_scale_button_1:
+            if subject == "pdirty":
+                self.after(1, self.notify_pdirty)
+            elif subject == "ldirty" and not _base_values.dragging:
+                (
+                    self.strip_levels,
+                    self.strip_comp,
+                    self.bus_levels,
+                    self.bus_comp,
+                ) = data
+                self.after(1, self.notify_ldirty)
 
     def notify_pdirty(self):
         self.subject_pdirty.notify()
@@ -111,13 +117,13 @@ class App(tk.Tk):
         """
         Clear observables.
 
-        Unregister app as observer.
+        Deregister app as observer.
 
         Destroy all top level frames.
         """
+        self.target.subject.remove(self)
         self.subject_pdirty.clear()
         self.subject_ldirty.clear()
-        self.target.subject.remove(self)
         [
             frame.destroy()
             for frame in self.winfo_children()

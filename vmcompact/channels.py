@@ -22,6 +22,7 @@ class ChannelLabelFrame(ttk.LabelFrame):
         self.builder.add_scale()
         self.builder.add_mute_button()
         self.builder.add_conf_button()
+        self.builder.add_gain_label()
         self.sync()
         self.grid_configure()
 
@@ -49,7 +50,7 @@ class ChannelLabelFrame(ttk.LabelFrame):
         """callback function for scale widget"""
 
         self.setter("gain", self.gain.get())
-        self.parent.parent.nav_frame.info_text.set(round(self.gain.get(), 1))
+        self.gainlabel.set(round(self.gain.get(), 1))
 
     def toggle_mute(self, *args):
         self.target.mute = self.mute.get()
@@ -62,13 +63,12 @@ class ChannelLabelFrame(ttk.LabelFrame):
     def reset_gain(self, *args):
         self.setter("gain", 0)
         self.gain.set(0)
-        self.parent.parent.nav_frame.info_text.set(0)
 
     def scale_enter(self, *args):
-        self.parent.parent.nav_frame.info_text.set(round(self.gain.get(), 1))
+        pass
 
     def scale_leave(self, *args):
-        self.parent.parent.nav_frame.info_text.set("")
+        pass
 
     def scale_press(self, *args):
         _base_values.in_scale_button_1 = True
@@ -104,7 +104,22 @@ class ChannelLabelFrame(ttk.LabelFrame):
             )
 
     def sync(self):
-        """sync parameters"""
+        self.after(_base_values.pdelay, self.sync_params)
+        self.after(100, self.sync_labels)
+
+    def sync_params(self):
+        """sync parameter states, update button colours"""
+        self.gain.set(self.getter("gain"))
+        self.gainlabel.set(round(self.gain.get(), 1))
+        self.mute.set(self.getter("mute"))
+        if not _configuration.themes_enabled:
+            self.styletable.configure(
+                f"{self.identifier}Mute{self.index}.TButton",
+                background=f'{"red" if  self.mute.get() else "white"}',
+            )
+
+    def sync_labels(self):
+        """sync labelframes according to label text"""
         retval = self.getter("label")
         if len(retval) > 10:
             retval = f"{retval[:8]}.."
@@ -116,13 +131,6 @@ class ChannelLabelFrame(ttk.LabelFrame):
             self.parent.parent.subject_ldirty.add(self)
             self.grid()
         self.configure(text=retval)
-        self.gain.set(self.getter("gain"))
-        self.mute.set(self.getter("mute"))
-        if not _configuration.themes_enabled:
-            self.styletable.configure(
-                f"{self.identifier}Mute{self.index}.TButton",
-                background=f'{"red" if  self.mute.get() else "white"}',
-            )
 
     def convert_level(self, val):
         if _base_values.vban_connected:
@@ -160,15 +168,31 @@ class Strip(ChannelLabelFrame):
         _target = super(Strip, self).target
         return getattr(_target, self.identifier)[self.index]
 
-    def update(self):
+    def upd_levels(self):
+        """
+        Updates level values.
+
+        Checks offset against expected level array size to avoid a race condition
+        """
+        if self.level_offset + 1 < len(self.parent.parent.strip_levels):
+            if any(
+                self.parent.parent.strip_comp[self.level_offset : self.level_offset + 1]
+            ):
+                val = self.convert_level(
+                    max(
+                        self.parent.parent.strip_levels[
+                            self.level_offset : self.level_offset + 1
+                        ]
+                    )
+                )
+                self.level.set(
+                    (0 if self.mute.get() else 100 + val - 18 + self.gain.get())
+                )
+
+    def on_update(self):
         """update levels"""
-        vals = (
-            self.convert_level(self.parent.target.strip_levels[self.level_offset]),
-            self.convert_level(self.parent.target.strip_levels[self.level_offset + 1]),
-        )
-        self.level.set(
-            (0 if self.mute.get() else 100 + (max(vals) - 18) + self.gain.get())
-        )
+
+        self.after(_base_values.ldelay, self.upd_levels)
 
 
 class Bus(ChannelLabelFrame):
@@ -185,14 +209,24 @@ class Bus(ChannelLabelFrame):
         _target = super(Bus, self).target
         return getattr(_target, self.identifier)[self.index]
 
-    def update(self):
+    def upd_levels(self):
+        if self.level_offset + 1 < len(self.parent.parent.bus_levels):
+            if any(
+                self.parent.parent.bus_comp[self.level_offset : self.level_offset + 1]
+            ):
+                val = self.convert_level(
+                    max(
+                        self.parent.parent.bus_levels[
+                            self.level_offset : self.level_offset + 1
+                        ]
+                    )
+                )
+                self.level.set((0 if self.mute.get() else 100 + val - 18))
+
+    def on_update(self):
         """update levels"""
 
-        vals = (
-            self.convert_level(self.parent.target.bus_levels[self.level_offset]),
-            self.convert_level(self.parent.target.bus_levels[self.level_offset + 1]),
-        )
-        self.level.set((0 if self.mute.get() else 100 + (max(vals) - 18)))
+        self.after(_base_values.ldelay, self.upd_levels)
 
 
 class ChannelFrame(ttk.Frame):
@@ -231,20 +265,23 @@ class ChannelFrame(ttk.Frame):
             self.columnconfigure(i, minsize=_configuration.level_width)
             for i, _ in enumerate(self.labelframes)
         ]
-        [
-            self.rowconfigure(0, minsize=_configuration.level_height)
-            for i, _ in enumerate(self.labelframes)
-        ]
+        [self.rowconfigure(0, minsize=100) for i, _ in enumerate(self.labelframes)]
 
-    def update(self):
+    def upd_labelframe(self, labelframe):
+        labelframe.sync()
+
+    def on_update(self):
+        """update parameters"""
+
         for labelframe in self.labelframes:
-            labelframe.sync()
+            self.after(1, self.upd_labelframe, labelframe)
 
     def teardown(self):
         # deregisters channelframe as pdirty observer
 
         self.parent.subject_pdirty.remove(self)
         self.destroy()
+        setattr(self.parent, f"{self.identifier}_frame", None)
 
 
 def _make_channelframe(parent, id):
@@ -280,7 +317,7 @@ def _make_channelframe(parent, id):
         self.buses = tuple(Bus(self, i, id) for i in range(phys_out + virt_out))
         if _configuration.extended:
             if _configuration.extends_horizontal:
-                self.grid(row=0, column=2)
+                self.grid(row=0, column=2, sticky=(tk.W))
             else:
                 self.grid(row=2, column=0, sticky=(tk.W))
         else:

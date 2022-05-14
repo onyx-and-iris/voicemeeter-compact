@@ -21,6 +21,8 @@ class Menus(tk.Menu):
         self.vban_config = get_configuration("vban")
         self.app_config = get_configuration("app")
         self._is_topmost = tk.BooleanVar()
+        self._lock = tk.BooleanVar()
+        self._unlock = tk.BooleanVar()
         self._selected_bus = list(tk.BooleanVar() for _ in range(8))
 
         # voicemeeter menu
@@ -59,11 +61,19 @@ class Menus(tk.Menu):
         self.menu_voicemeeter.add_cascade(
             menu=self.menu_lock, label="GUI Lock", underline=0
         )
-        self.menu_lock.add_command(
-            label="Lock", command=partial(self.action_set_voicemeeter, "lock")
+        self.menu_lock.add_checkbutton(
+            label="Lock",
+            onvalue=1,
+            offvalue=0,
+            variable=self._lock,
+            command=partial(self.action_set_voicemeeter, "lock"),
         )
-        self.menu_lock.add_command(
-            label="Unlock", command=partial(self.action_set_voicemeeter, "lock", False)
+        self.menu_lock.add_checkbutton(
+            label="Unlock",
+            onvalue=1,
+            offvalue=0,
+            variable=self._unlock,
+            command=partial(self.action_set_voicemeeter, "lock", False),
         )
 
         # profiles menu
@@ -140,7 +150,7 @@ class Menus(tk.Menu):
             state="disabled",
         )
         if not _configuration.themes_enabled:
-            self.entryconfig(6, state="disabled")
+            self.menu_layout.entryconfig(2, state="disabled")
 
         # vban connect menu
         self.menu_vban = tk.Menu(self, tearoff=0)
@@ -162,7 +172,7 @@ class Menus(tk.Menu):
                 )
                 target_menu.entryconfig(1, state="disabled")
         else:
-            self.entryconfig(3, state="disabled")
+            self.entryconfig(4, state="disabled")
 
         # Help menu
         self.menu_help = tk.Menu(self, tearoff=0)
@@ -195,6 +205,9 @@ class Menus(tk.Menu):
         getattr(self.target.command, cmd)()
 
     def action_set_voicemeeter(self, cmd, val=True):
+        if cmd == "lock":
+            self._lock.set(val)
+            self._unlock.set(not self._lock.get())
         setattr(self.target.command, cmd, val)
 
     def load_profile(self, profile):
@@ -226,11 +239,11 @@ class Menus(tk.Menu):
                 self.parent.submix_frame.teardown()
                 self.parent.nav_frame.show_submix()
             for j, var in enumerate(self._selected_bus):
-                var.set(True if i == j else False)
+                var.set(i == j)
 
     def load_theme(self, theme):
         sv_ttk.set_theme(theme)
-        self.app_config["theme"]["mode"] = theme
+        _configuration.theme_mode = theme
         self.menu_themes.entryconfig(
             0,
             state=f"{'disabled' if theme == 'light' else 'normal'}",
@@ -273,6 +286,7 @@ class Menus(tk.Menu):
         # destroy the current App frames
         self.parent._destroy_top_level_frames()
         _base_values.vban_connected = True
+        self.vmr.end_thread()
         # build new app frames according to a kind
         kind = kind_get(kind_id)
         self.parent.build_app(kind, self.vban)
@@ -288,6 +302,7 @@ class Menus(tk.Menu):
         self.parent._destroy_top_level_frames()
         _base_values.vban_connected = False
         # logout of vban interface
+        self.vmr.init_thread()
         self.vban.logout()
         # build new app frames according to a kind
         kind = kind_get(self.vmr.type)
