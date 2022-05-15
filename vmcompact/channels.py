@@ -168,8 +168,13 @@ class Strip(ChannelLabelFrame):
         Checks offset against expected level array size to avoid a race condition
         """
         if self.level_offset + 1 < len(self.parent.parent.strip_levels):
-            if any(
-                self.parent.parent.strip_comp[self.level_offset : self.level_offset + 1]
+            if (
+                any(
+                    self.parent.parent.strip_comp[
+                        self.level_offset : self.level_offset + 1
+                    ]
+                )
+                or self.level.get() > 0
             ):
                 val = self.convert_level(
                     max(
@@ -204,8 +209,13 @@ class Bus(ChannelLabelFrame):
 
     def upd_levels(self):
         if self.level_offset + 1 < len(self.parent.parent.bus_levels):
-            if any(
-                self.parent.parent.bus_comp[self.level_offset : self.level_offset + 1]
+            if (
+                any(
+                    self.parent.parent.bus_comp[
+                        self.level_offset : self.level_offset + 1
+                    ]
+                )
+                or self.level.get() > 0
             ):
                 val = self.convert_level(
                     max(

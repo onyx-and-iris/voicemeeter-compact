@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="vmcompact",
-    version="1.2.4",
+    version="1.2.5",
     author="Onyx and Iris",
     author_email="code@onyxandiris.online",
     description="Compact Tkinter Voicemeeter Remote App",
