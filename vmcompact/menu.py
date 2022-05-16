@@ -115,7 +115,7 @@ class Menus(tk.Menu):
             )
             for i in range(8)
         ]
-        self._selected_bus[_base_values.submixes].set(True)
+        self._selected_bus[_configuration.submixes].set(True)
         if self.parent.kind.name != "Potato":
             self.menu_layout.entryconfig(0, state="disabled")
         # layout/extends
@@ -233,8 +233,8 @@ class Menus(tk.Menu):
             self.menu_extends.entryconfig(0, state="normal")
 
     def set_submix(self, i):
-        if _base_values.submixes != i:
-            _base_values.submixes = i
+        if _configuration.submixes != i:
+            _configuration.submixes = i
             if self.parent.submix_frame is not None:
                 self.parent.submix_frame.teardown()
                 self.parent.nav_frame.show_submix()

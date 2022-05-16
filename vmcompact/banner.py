@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
-from .data import _base_values
+from .data import _base_values, _configuration
 
 
 class Banner(ttk.Frame):
@@ -9,7 +9,7 @@ class Banner(ttk.Frame):
         super().__init__()
         self.parent = parent
         self.submix = tk.StringVar()
-        self.submix.set(self.target.bus[_base_values.submixes].label)
+        self.submix.set(self.target.bus[_configuration.submixes].label)
 
         self.label = ttk.Label(
             self,
@@ -30,6 +30,6 @@ class Banner(ttk.Frame):
 
     def upd_submix_step(self):
         if not _base_values.dragging:
-            self.submix.set(self.target.bus[_base_values.submixes].label)
+            self.submix.set(self.target.bus[_configuration.submixes].label)
             self.label["text"] = f"SUBMIX: {self.submix.get().upper()}"
         self.after(100, self.upd_submix_step)

@@ -18,11 +18,6 @@ class SingletonMeta(type):
 
 @dataclass
 class Configurations(metaclass=SingletonMeta):
-    # width of a single labelframe
-    level_width: int = configuration["channel"]["width"]
-    # height of a single labelframe
-    level_height: int = configuration["channel"]["height"]
-
     # is the gui extended
     extended: bool = configuration["extends"]["extended"]
     # direction the gui extends
@@ -33,6 +28,13 @@ class Configurations(metaclass=SingletonMeta):
     theme_mode: str = configuration["theme"]["mode"]
     # size of mousewheel scroll step
     mwscroll_step: int = configuration["mwscroll_step"]["size"]
+    # bus assigned as current submix
+    submixes: int = configuration["submixes"]["default"]
+
+    # width of a single labelframe
+    level_width: int = configuration["channel"]["width"]
+    # height of a single labelframe
+    level_height: int = configuration["channel"]["height"]
 
     @property
     def profile(self):
@@ -48,8 +50,6 @@ class BaseValues(metaclass=SingletonMeta):
     dragging: bool = False
     # a vban connection established
     vban_connected: bool = False
-    # bus assigned as current submix
-    submixes: int = 0
     # pdirty delay
     pdelay: int = 5
     # ldirty delay

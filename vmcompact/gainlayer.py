@@ -200,7 +200,7 @@ class SubMixFrame(ttk.Frame):
         )
 
         self.gainlayers = [
-            GainLayer(self, index, _base_values.submixes) for index in range(8)
+            GainLayer(self, index, _configuration.submixes) for index in range(8)
         ]
         for i, labelframe in enumerate(self.labelframes):
             labelframe.grid(row=0, column=i)
