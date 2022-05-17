@@ -37,6 +37,7 @@ class MainFrameBuilder(AbstractBuilder):
         )
         self.app.resizable(False, False)
         if _configuration.themes_enabled:
+            print("Applying Sunvalley Theme")
             sv_ttk.set_theme(_configuration.theme_mode)
 
     def create_channelframe(self, type_):
@@ -184,7 +185,7 @@ class NavigationFrameBuilder(AbstractBuilder):
         if _configuration.themes_enabled:
             self.navframe.rowconfigure(1, minsize=_configuration.level_height)
         else:
-            self.navframe.rowconfigure(1, minsize=_configuration.level_height - 5)
+            self.navframe.rowconfigure(1, minsize=_configuration.level_height + 10)
 
     def teardown(self):
         pass

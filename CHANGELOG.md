@@ -8,8 +8,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 -   [ ] Allow setting a bus mode from config
--   [x] Fixed bug with gainlayer sync failing to fetch strip label.
--   [x] Changes to menus, extends, themes and submixes merged into layout.
+-   [ ] Reload profiles from memory into app if switching kind between connections.
+
+## [1.2.6] - 2022-05-16
+
+### Added
+
+-   Added a gain label to each channel labelframe.
+
+### Changed
+
+-   Changes to menus, extends, themes and submixes merged into layout.
+-   A number of changes to code organisation:
+    -   builders module added, widget creation delegated to builder classes.
+    -   app now subscribes to lower level interfaces as an observer for updates.
+    -   Min width of app reduced to 275. Should only effect if less than 3 combined strips/buses.
+-   VBAN Connections named by 'streamname' in VBAN menu, ie.. 'workpc', 'gamingpc' etc..
+-   GUI Lock menu commands 'Lock', 'Unlock' are now checkbuttons.
+
+### Fixed
+
+-   Fixed bug setting default submix
+-   Fixed bug with gainlayer sync failing to fetch strip label.
 
 ## [1.1.0] - 2022-05-05
 
