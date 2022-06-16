@@ -1,16 +1,12 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
-from functools import partial
 import webbrowser
-import sv_ttk
-import vbancmd
+from functools import partial
+from tkinter import messagebox, ttk
 
-from .data import (
-    get_configuration,
-    _base_values,
-    _configuration,
-    kind_get,
-)
+import sv_ttk
+import vban_cmd
+
+from .data import _base_values, _configuration, get_configuration, kind_get
 
 
 class Menus(tk.Menu):
@@ -76,31 +72,31 @@ class Menus(tk.Menu):
             command=partial(self.action_set_voicemeeter, "lock", False),
         )
 
-        # profiles menu
-        menu_profiles = tk.Menu(self, tearoff=0)
-        self.add_cascade(menu=menu_profiles, label="Profiles")
-        self.menu_profiles_load = tk.Menu(menu_profiles, tearoff=0)
-        menu_profiles.add_cascade(menu=self.menu_profiles_load, label="Load profile")
-        defaults = {"base", "blank"}
-        if len(self.target.profiles) > len(defaults) and all(
-            key in self.target.profiles for key in defaults
+        # configs menu
+        menu_configs = tk.Menu(self, tearoff=0)
+        self.add_cascade(menu=menu_configs, label="Configs")
+        self.menu_configs_load = tk.Menu(menu_configs, tearoff=0)
+        menu_configs.add_cascade(menu=self.menu_configs_load, label="Load profile")
+        defaults = {"reset"}
+        if len(self.target.configs) > len(defaults) and all(
+            key in self.target.configs for key in defaults
         ):
             [
-                self.menu_profiles_load.add_command(
+                self.menu_configs_load.add_command(
                     label=profile, command=partial(self.load_profile, profile)
                 )
-                for profile in self.target.profiles.keys()
+                for profile in self.target.configs.keys()
                 if profile not in defaults
             ]
         else:
-            menu_profiles.entryconfig(0, state="disabled")
-        menu_profiles.add_command(label="Reset to defaults", command=self.load_defaults)
+            menu_configs.entryconfig(0, state="disabled")
+        menu_configs.add_command(label="Reset to defaults", command=self.load_defaults)
 
         # layout menu
         self.menu_layout = tk.Menu(self, tearoff=0)
         self.add_cascade(menu=self.menu_layout, label="Layout")
         # layout/submixes
-        # here we build menu regardless of kind but disable if not Potato
+        # here we build menu regardless of kind but disable if not potato
         buses = tuple(f"A{i+1}" for i in range(5)) + tuple(f"B{i+1}" for i in range(3))
         self.menu_submixes = tk.Menu(self.menu_layout, tearoff=0)
         self.menu_layout.add_cascade(menu=self.menu_submixes, label="Submixes")
@@ -116,7 +112,7 @@ class Menus(tk.Menu):
             for i in range(8)
         ]
         self._selected_bus[_configuration.submixes].set(True)
-        if self.parent.kind.name != "Potato":
+        if self.parent.kind.name != "potato":
             self.menu_layout.entryconfig(0, state="disabled")
         # layout/extends
         self.menu_extends = tk.Menu(self.menu_layout, tearoff=0)
@@ -211,14 +207,14 @@ class Menus(tk.Menu):
         setattr(self.target.command, cmd, val)
 
     def load_profile(self, profile):
-        self.target.apply_profile(profile)
+        self.target.apply_config(profile)
 
     def load_defaults(self):
         resp = messagebox.askyesno(
             message="Are you sure you want to Reset values to defaults?\nPhysical strips B1, Virtual strips A1\nMono, Solo, Mute, EQ all OFF"
         )
         if resp:
-            self.target.apply_profile("base")
+            self.target.apply_config("reset")
 
     def always_on_top(self):
         self.parent.attributes("-topmost", self._is_topmost.get())
@@ -258,7 +254,7 @@ class Menus(tk.Menu):
             if isinstance(menu, tk.Menu)
         ]
         self.menu_lock.config(bg=f"{'black' if theme == 'dark' else 'white'}")
-        self.menu_profiles_load.config(bg=f"{'black' if theme == 'dark' else 'white'}")
+        self.menu_configs_load.config(bg=f"{'black' if theme == 'dark' else 'white'}")
         [
             menu.config(bg=f"{'black' if theme == 'dark' else 'white'}")
             for menu in self.menu_vban.winfo_children()
@@ -280,7 +276,7 @@ class Menus(tk.Menu):
         opts = {}
         opts |= self.vban_config[f"connection-{i+1}"]
         kind_id = opts.pop("kind")
-        self.vban = vbancmd.connect(kind_id, **opts)
+        self.vban = vban_cmd.api(kind_id, **opts)
         # login to vban interface
         self.vban.login()
         # destroy the current App frames
@@ -294,7 +290,7 @@ class Menus(tk.Menu):
         target_menu.entryconfig(0, state="disabled")
         target_menu.entryconfig(1, state="normal")
         self.menu_layout.entryconfig(
-            0, state=f"{'normal' if kind.name == 'Potato' else 'disabled'}"
+            0, state=f"{'normal' if kind.name == 'potato' else 'disabled'}"
         )
 
     def vban_disconnect(self, i):
@@ -311,7 +307,7 @@ class Menus(tk.Menu):
         target_menu.entryconfig(0, state="normal")
         target_menu.entryconfig(1, state="disabled")
         self.menu_layout.entryconfig(
-            0, state=f"{'normal' if kind.name == 'Potato' else 'disabled'}"
+            0, state=f"{'normal' if kind.name == 'potato' else 'disabled'}"
         )
 
         self.after(15000, self.enable_vban_menus)

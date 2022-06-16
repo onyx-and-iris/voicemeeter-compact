@@ -1,5 +1,6 @@
-import toml
 from pathlib import Path
+
+import tomllib
 
 configuration = {}
 
@@ -11,8 +12,9 @@ for path in config_path:
         for filename in filenames:
             name = filename.with_suffix("").stem
             try:
-                configs[name] = toml.load(filename)
-            except toml.TomlDecodeError:
+                with open(filename, "rb") as f:
+                    configs[name] = tomllib.load(f)
+            except tomllib.TOMLDecodeError:
                 print(f"Invalid TOML profile: configs/{filename.stem}")
 
         for name, cfg in configs.items():

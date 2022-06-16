@@ -1,15 +1,15 @@
-import tkinter as tk
-from tkinter import ttk
-from functools import partial
 import abc
+import tkinter as tk
+from functools import partial
+from tkinter import ttk
+
 import sv_ttk
 
-
-from .data import _base_values, _configuration
-from .channels import _make_channelframe
-from .navigation import Navigation
-from .config import StripConfig, BusConfig
 from .banner import Banner
+from .channels import _make_channelframe
+from .config import BusConfig, StripConfig
+from .data import _base_values, _configuration
+from .navigation import Navigation
 
 
 class AbstractBuilder(abc.ABC):
@@ -144,7 +144,7 @@ class NavigationFrameBuilder(AbstractBuilder):
             variable=self.navframe.submix,
         )
         self.navframe.submix_button.grid(column=0, row=0)
-        if self.navframe.parent.kind.name != "Potato":
+        if self.navframe.parent.kind.name != "potato":
             self.navframe.submix_button["state"] = "disabled"
 
     def create_channel_button(self):
@@ -321,7 +321,7 @@ class StripConfigFrameBuilder(ChannelConfigFrameBuilder):
     """Responsible for building channel configframe widgets"""
 
     def setup(self):
-        if self.configframe.parent.kind.name == "Basic":
+        if self.configframe.parent.kind.name == "basic":
             self.configframe.slider_params = ("audibility",)
             self.configframe.slider_vars = (tk.DoubleVar(),)
         else:
@@ -349,12 +349,12 @@ class StripConfigFrameBuilder(ChannelConfigFrameBuilder):
             tk.BooleanVar() for _ in self.configframe.params
         )
 
-        if self.configframe.parent.kind.name in ("Banana", "Potato"):
+        if self.configframe.parent.kind.name in ("banana", "potato"):
             if self.configframe.index == self.configframe.phys_in:
                 self.configframe.params = list(
                     map(lambda x: x.replace("mono", "mc"), self.configframe.params)
                 )
-            if self.configframe.parent.kind.name == "Banana":
+            if self.configframe.parent.kind.name == "banana":
                 pass
                 # karaoke modes not in RT Packet yet. May implement in future
                 """

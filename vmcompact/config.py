@@ -1,9 +1,9 @@
 import tkinter as tk
-from tkinter import ttk
 from functools import partial
+from tkinter import ttk
 
 from . import builders
-from .data import _configuration, _base_values
+from .data import _base_values, _configuration
 
 
 class Config(ttk.Frame):
@@ -96,7 +96,7 @@ class StripConfig(Config):
 
     def make_row_0(self):
         if self.index < self.phys_in:
-            if self.parent.kind.name == "Basic":
+            if self.parent.kind.name == "basic":
                 self.builder.create_audibility_slider()
             else:
                 self.builder.create_comp_slider()

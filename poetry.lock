@@ -1,0 +1,42 @@
+[[package]]
+name = "sv-ttk"
+version = "0.1"
+description = "Python module to easily use the Sun Valley ttk theme"
+category = "main"
+optional = false
+python-versions = ">=3.4"
+
+[[package]]
+name = "vban-cmd"
+version = "1.0.5"
+description = "Python interface for the VBAN RT Packet Service (Sendtext)"
+category = "main"
+optional = false
+python-versions = ">=3.11,<4.0"
+
+[[package]]
+name = "voicemeeter-api"
+version = "0.1.6"
+description = "A Python wrapper for the Voiceemeter API"
+category = "main"
+optional = false
+python-versions = ">=3.11,<4.0"
+
+[metadata]
+lock-version = "1.1"
+python-versions = "^3.11"
+content-hash = "3b50c0fa4701fbf590b50609cf3d56a8f97b274ebb9e259ba52ce6771b106d0c"
+
+[metadata.files]
+sv-ttk = [
+    {file = "sv_ttk-0.1-py3-none-any.whl", hash = "sha256:c47ab1c70aad0333bc7f5063ab55e8a16b562e700e89e7853e577a1e2fdaa091"},
+    {file = "sv_ttk-0.1.tar.gz", hash = "sha256:342754618292b6d224060307eccaa35b6f6c284b34b4da1d0cf0484b652ffb0f"},
+]
+vban-cmd = [
+    {file = "vban-cmd-1.0.5.tar.gz", hash = "sha256:e50efd373816c01fb7e62f9ad90c33113b26cc12fbb46866b952b1946030282b"},
+    {file = "vban_cmd-1.0.5-py3-none-any.whl", hash = "sha256:c51008049652fec61a94fb1b8ccd173cb0296684eee6249e9865f395340d32c5"},
+]
+voicemeeter-api = [
+    {file = "voicemeeter-api-0.1.6.tar.gz", hash = "sha256:354fe37aea680f2431d428c9bd489d7d9c9e143cbd84a769c567dd657e63370d"},
+    {file = "voicemeeter_api-0.1.6-py3-none-any.whl", hash = "sha256:20a3072b0379862254d5ee3cf4ec96f6c839291faa4ecbd29d3c1ed66a5492cb"},
+]

@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from voicemeeter import kinds
+
+from voicemeeterlib import kinds
 
 from .configurations import get_configuration
 
@@ -51,7 +52,7 @@ class BaseValues(metaclass=SingletonMeta):
     # a vban connection established
     vban_connected: bool = False
     # pdirty delay
-    pdelay: int = 5
+    pdelay: int = 1
     # ldirty delay
     ldelay: int = 5
 
@@ -59,7 +60,7 @@ class BaseValues(metaclass=SingletonMeta):
 _base_values = BaseValues()
 _configuration = Configurations()
 
-_kinds = {kind.id: kind for kind in kinds.all}
+_kinds = {kind.name: kind for kind in kinds.kinds_all}
 
 _kinds_all = _kinds.values()
 

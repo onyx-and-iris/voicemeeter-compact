@@ -1,13 +1,13 @@
 import tkinter as tk
+from pathlib import Path
 from tkinter import ttk
 from typing import NamedTuple
-from pathlib import Path
 
-from .errors import VMCompactErrors
-from .data import _kinds_all, _configuration, _base_values
-from .subject import Subject
 from .builders import MainFrameBuilder
+from .data import _base_values, _configuration, _kinds_all
+from .errors import VMCompactErrors
 from .menu import Menus
+from .subject import Subject
 
 
 class App(tk.Tk):
@@ -89,7 +89,7 @@ class App(tk.Tk):
         if _configuration.extended:
             self.nav_frame.extend.set(True)
             self.nav_frame.extend_frame()
-        if self.kind.name == "Potato":
+        if self.kind.name == "potato":
             self.builder.create_banner()
 
     def on_update(self, subject, data):
@@ -145,7 +145,7 @@ class App(tk.Tk):
         self.drag_id = ""
 
 
-_apps = {kind.id: App.make(kind) for kind in _kinds_all}
+_apps = {kind.name: App.make(kind) for kind in _kinds_all}
 
 
 def connect(kind_id: str, vmr) -> App:

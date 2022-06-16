@@ -1,6 +1,6 @@
 import tkinter as tk
-from tkinter import ttk
 from math import log
+from tkinter import ttk
 
 from . import builders
 from .data import _base_values, _configuration

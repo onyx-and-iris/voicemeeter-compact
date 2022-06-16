@@ -13,17 +13,14 @@ For an outline of past/future changes refer to: [CHANGELOG](CHANGELOG.md)
 ## Prerequisites
 
 -   [Voicemeeter](https://voicemeeter.com/) (Basic v1.0.8.2), (Banana v2.0.6.2) or (Potato v3.0.2.2)
--   [Git for Windows](https://gitforwindows.org/)
--   Python 3.9+
+-   Python 3.11+
 
 ## Installation
 
 For a step-by-step guide [click here](INSTALLATION.md)
 
 ```
-git clone https://github.com/onyx-and-iris/voicemeeter-compact
-cd voicemeeter-compact
-pip install .
+pip install voicemeeter-compact
 ```
 
 ## Usage
@@ -31,13 +28,13 @@ pip install .
 Example `__main__.py` file:
 
 ```python
-import voicemeeter
+import voicemeeterlib
 import vmcompact
 
 
 def main():
     # pass the kind_id and the vmr object to the app
-    with voicemeeter.remote(kind_id) as vmr:
+    with voicemeeterlib.api(kind_id) as vmr:
         app = vmcompact.connect(kind_id, vmr)
         app.mainloop()
 
@@ -45,8 +42,6 @@ def main():
 if __name__ == "__main__":
     # choose the kind of Voicemeeter (Local connection)
     kind_id = "banana"
-
-    voicemeeter.launch(kind_id, hide=False)
 
     main()
 ```
@@ -141,13 +136,13 @@ A valid `vban.toml` might look like this:
 [connection-1]
 kind = 'banana'
 ip = '192.168.1.2'
-streamname = 'streampc'
-port = 6990
+streamname = 'worklaptop'
+port = 6980
 
 [connection-2]
 kind = 'potato'
 ip = '192.168.1.3'
-streamname = 'worklaptop'
+streamname = 'streampc'
 port = 6990
 ```
 
@@ -164,8 +159,5 @@ Profiles may be loaded at any time via the menu.
 ## Special Thanks
 
 [Vincent Burel](https://github.com/vburel2018) for creating Voicemeeter, its SDK, the C Remote API, the RT Packet service and Streamer View app!
-
-[Christian Volkmann](https://github.com/chvolkmann) for the detailed work that went into creating the underlying Remote API Python Interface.
-Unfortunately, the Remote API Python Interface has `NOT` been open source licensed. I have [raised an issue](https://github.com/chvolkmann/voicemeeter-remote-python/issues/13) and asked directly and politely but so far no response. If a license is added in future I will update this section. Without an open source license there is no guarantee that in future this package may not be pulled down, without any notice.
 
 [Rdbende](https://github.com/rdbende) for creating the beautiful Sun Valley Tkinter theme and adding it to Pypi!
