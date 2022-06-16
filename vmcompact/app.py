@@ -45,7 +45,7 @@ class App(tk.Tk):
         self["menu"] = Menus(self, vmr)
         self.styletable = ttk.Style()
         if _configuration.profile:
-            vmr.apply_profile(_configuration.profile)
+            vmr.apply_config(_configuration.profile)
 
         self.build_app()
 
