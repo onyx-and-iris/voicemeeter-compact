@@ -62,9 +62,9 @@ A _kind_id_ specifies a major Voicemeeter version. This may be one of:
 
 ## TOML Files
 
-This is how your files should be organised. Wherever your `__main__.py` file is located (after install this can be any location), `config` and `profiles` directories
-should be in the same location.
-Regarding profiles, a directory for each kind should hold the profile files and in each there can be any number of config files. Example, a config for streaming, a config for general listening/movie watching or any other type of config.
+This is how your files should be organised. Wherever your `__main__.py` file is located (after install this can be any location), `configs` should be in the same location.
+Directly inside of configs directory you may place an app.toml, vban.toml and a directory for each kind.
+Inside each kind directory you may place as many custom toml configurations as you wish.
 
 .
 
@@ -76,7 +76,6 @@ Regarding profiles, a directory for each kind should hold the profile files and 
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── vban.toml
 
-├── profiles
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── basic
 

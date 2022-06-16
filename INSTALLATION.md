@@ -1,28 +1,20 @@
-## Git Installation
-
-https://gitforwindows.org/
-
 ## Python Installation
 
-If you don't have Python already you can fetch it easily from the Windows Store. Simply type `store` into the windows search bar, and select the latest version. At the time of writing that is Python 3.10.
-
-![Image of Python in Windows Store](./doc_imgs/wspython310.png)
+If you don't have Python already you can fetch it easily from the Windows Store. Simply type `store` into the windows search bar. To run this GUI you'll need the latest version, Python 3.11.0b3.
 
 If you install Python straight from `python.org` instead remember to click 'Add Python environmental variables', this is important.
 
 ## Download|Install Code
 
-Once you have Python and Git for Windows installed you can simply download the source files (zip) directly with the green `Code` button,
+Once Python is installed:
 
-![Image of Code button](./doc_imgs/codebutton.png)
-
-Once extracted enter voicemeeter-compact directory and type `powershell.exe` into the explorer bar as shown in the image below.
+Enter voicemeeter-compact directory and type `powershell.exe` into the explorer bar as shown in the image below.
 
 ![Image of PS in Explorer](./doc_imgs/powershellinexplorerbar.png)
 
 This will open a Powershell in the current directory.
 
-Then use the command `pip install .` and wait for the required packages to install.
+Then use the command `pip install voicemeeter-compact` and wait for the required packages to install.
 
 ## Use
 
