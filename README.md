@@ -33,9 +33,9 @@ import vmcompact
 
 
 def main():
-    # pass the kind_id and the vmr object to the app
-    with voicemeeterlib.api(kind_id) as vmr:
-        app = vmcompact.connect(kind_id, vmr)
+    # pass the kind_id and the vm object to the app
+    with voicemeeterlib.api(kind_id) as vm:
+        app = vmcompact.connect(kind_id, vm)
         app.mainloop()
 
 
@@ -50,11 +50,11 @@ It's important to know that only labelled strips and buses will appear in the Ch
 
 ![Image of unlabelled app](./doc_imgs/nolabels.png)
 
-If the GUI looks like the above when you first load it, then no channels are labelled. From the menu, `Profiles->Load Profile` you may load an example config. Save your current Voicemeeter settings first :).
+If the GUI looks like the above when you first load it, then no channels are labelled. From the menu, `Configs->Load config` you may load an example config. Save your current Voicemeeter settings first :).
 
 ### kind_id
 
-A _kind_id_ specifies a major Voicemeeter version. This may be one of:
+Set the kind of Voicemeeter, kind_id may be:
 
 -   `basic`
 -   `banana`
@@ -75,7 +75,6 @@ Inside each kind directory you may place as many custom toml configurations as y
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── app.toml
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── vban.toml
-
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── basic
 

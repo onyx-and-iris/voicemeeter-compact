@@ -76,7 +76,7 @@ class Menus(tk.Menu):
         menu_configs = tk.Menu(self, tearoff=0)
         self.add_cascade(menu=menu_configs, label="Configs")
         self.menu_configs_load = tk.Menu(menu_configs, tearoff=0)
-        menu_configs.add_cascade(menu=self.menu_configs_load, label="Load profile")
+        menu_configs.add_cascade(menu=self.menu_configs_load, label="Load config")
         defaults = {"reset"}
         if len(self.target.configs) > len(defaults) and all(
             key in self.target.configs for key in defaults
