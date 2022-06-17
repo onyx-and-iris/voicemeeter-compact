@@ -1,6 +1,6 @@
 # load a specific profile on start (file name without .toml ext)
-# [profiles]
-# profile="example"
+# [configs]
+# config="example"
 # load with themes enabled? set the default mode
 [theme]
 enabled=true

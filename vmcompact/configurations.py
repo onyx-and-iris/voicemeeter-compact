@@ -15,15 +15,15 @@ for path in config_path:
                 with open(filename, "rb") as f:
                     configs[name] = tomllib.load(f)
             except tomllib.TOMLDecodeError:
-                print(f"Invalid TOML profile: configs/{filename.stem}")
+                print(f"Invalid TOML config: configs/{filename.stem}")
 
         for name, cfg in configs.items():
             print(f"Loaded configuration configs/{name}")
             configuration[name] = cfg
 
 _defaults = {
-    "profiles": {
-        "profile": None,
+    "configs": {
+        "config": None,
     },
     "theme": {
         "enabled": True,

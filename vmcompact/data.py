@@ -38,9 +38,9 @@ class Configurations(metaclass=SingletonMeta):
     level_height: int = configuration["channel"]["height"]
 
     @property
-    def profile(self):
-        if "profiles" in configuration:
-            return configuration["profiles"]["profile"]
+    def config(self):
+        if "configs" in configuration:
+            return configuration["configs"]["config"]
 
 
 @dataclass
