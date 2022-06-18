@@ -144,13 +144,13 @@ streamname = 'streampc'
 port = 6990
 ```
 
-## Profiles
+### basic/ banana/ potato/
 
-Three example profiles are included with the package, one for each kind of Voicemeeter. Use these to configure parameter startup states. Any parameter supported by the underlying interfaces may be used. For a detailed description of parameter coverage see:
+Three example user configs are included with the package, one for each kind of Voicemeeter. Use these to configure parameter startup states. Any parameter supported by the underlying interfaces may be used. Check the 'multiple-parameters' section for more info:
 
-[Voicemeeter Remote API Python](https://github.com/onyx-and-iris/voicemeeter-api-python)
+[Python Interface for Voicemeeter API](https://github.com/onyx-and-iris/voicemeeter-api-python#multiple-parameters)
 
-[VBAN CMD API Python](https://github.com/onyx-and-iris/vban-cmd-python)
+[Python Interface for VBAN CMD](https://github.com/onyx-and-iris/vban-cmd-python#multiple-parameters)
 
 Profiles may be loaded at any time via the menu.
 
