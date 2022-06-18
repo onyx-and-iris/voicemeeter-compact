@@ -152,7 +152,7 @@ Three example user configs are included with the package, one for each kind of V
 
 [Python Interface for VBAN CMD](https://github.com/onyx-and-iris/vban-cmd-python#multiple-parameters)
 
-Profiles may be loaded at any time via the menu.
+User configs may be loaded at any time via the menu.
 
 ## Special Thanks
 
