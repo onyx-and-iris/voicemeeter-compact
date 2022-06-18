@@ -33,7 +33,7 @@ class MainFrameBuilder(AbstractBuilder):
 
     def setup(self):
         self.app.title(
-            f'Voicemeeter{self.kind.name}.Compact [{"Local" if not _base_values.vban_connected else "Network"} Connection]'
+            f'Voicemeeter{self.kind}.Compact [{"Local" if not _base_values.vban_connected else "Network"} Connection]'
         )
         self.app.resizable(False, False)
         if _configuration.themes_enabled:
