@@ -16,7 +16,7 @@ class Config(ttk.Frame):
         self.phys_in, self.virt_in = parent.kind.ins
         self.phys_out, self.virt_out = parent.kind.outs
 
-        self.parent.subject_pdirty.add(self)
+        self.parent.subject.add(self)
 
     @property
     def identifier(self):
@@ -68,10 +68,10 @@ class Config(ttk.Frame):
                 f"{param}.TButton", background=f'{"green" if val else "white"}'
             )
 
-    def on_update(self):
+    def on_update(self, subject):
         """update parameters"""
-
-        self.after(_base_values.pdelay, self.sync)
+        if subject == "pdirty":
+            self.after(_base_values.pdelay, self.sync)
 
 
 class StripConfig(Config):

@@ -37,8 +37,9 @@ class MainFrameBuilder(AbstractBuilder):
         )
         self.app.resizable(False, False)
         if _configuration.themes_enabled:
-            print("Applying Sunvalley Theme")
-            sv_ttk.set_theme(_configuration.theme_mode)
+            if sv_ttk.get_theme() not in ("light", "dark"):
+                sv_ttk.set_theme(_configuration.theme_mode)
+                print(f"Sunvalley {sv_ttk.get_theme().capitalize()} Theme applied")
 
     def create_channelframe(self, type_):
         if type_ == "strip":
@@ -301,7 +302,7 @@ class ChannelConfigFrameBuilder(AbstractBuilder):
 
     def teardown(self):
         """Deregister as observable, then destroy frame"""
-        self.configframe.parent.subject_pdirty.remove(self.configframe)
+        self.configframe.parent.subject.remove(self.configframe)
         self.configframe.destroy()
 
     def grid_configure(self):

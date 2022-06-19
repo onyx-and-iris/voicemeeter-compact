@@ -22,7 +22,7 @@ class App(tk.Tk):
         """
 
         APP_cls = type(
-            f"Voicemeeter{kind.name}.Compact",
+            f"Voicemeeter{kind}.Compact",
             (cls,),
             {
                 "kind": kind,
@@ -38,8 +38,7 @@ class App(tk.Tk):
         if icon_path.is_file():
             self.iconbitmap(str(icon_path))
         self.minsize(275, False)
-        self.subject_pdirty = Subject()
-        self.subject_ldirty = Subject()
+        self.subject = Subject()
         self.strip_levels = None
         self.bus_levels = None
         self["menu"] = Menus(self, vmr)
@@ -92,26 +91,14 @@ class App(tk.Tk):
         if self.kind.name == "potato":
             self.builder.create_banner()
 
-    def on_update(self, subject, data):
+    def on_update(self, subject):
         """called whenever notified of update"""
 
         if not _base_values.in_scale_button_1:
             if subject == "pdirty":
-                self.after(1, self.notify_pdirty)
+                self.subject.notify("pdirty")
             elif subject == "ldirty" and not _base_values.dragging:
-                (
-                    self.strip_levels,
-                    self.strip_comp,
-                    self.bus_levels,
-                    self.bus_comp,
-                ) = data
-                self.after(1, self.notify_ldirty)
-
-    def notify_pdirty(self):
-        self.subject_pdirty.notify()
-
-    def notify_ldirty(self):
-        self.subject_ldirty.notify()
+                self.subject.notify("ldirty")
 
     def _destroy_top_level_frames(self):
         """
@@ -122,8 +109,7 @@ class App(tk.Tk):
         Destroy all top level frames.
         """
         self.target.subject.remove(self)
-        self.subject_pdirty.clear()
-        self.subject_ldirty.clear()
+        self.subject.clear()
         [
             frame.destroy()
             for frame in self.winfo_children()

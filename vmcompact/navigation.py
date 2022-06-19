@@ -10,7 +10,7 @@ class Navigation(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent
-        self.grid(row=0, column=3, padx=(0, 5), pady=(5, 5), sticky=(tk.W, tk.E))
+        self.grid(row=0, column=3, padx=(0, 2), pady=(5, 5), sticky=(tk.W, tk.E))
         self.styletable = self.parent.styletable
 
         self.builder = builders.NavigationFrameBuilder(self)

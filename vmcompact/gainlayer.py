@@ -120,10 +120,10 @@ class GainLayer(ttk.LabelFrame):
             retval = f"{retval[:8]}.."
         if not retval:
             self.parent.columnconfigure(self.index, minsize=0)
-            self.parent.parent.subject_ldirty.remove(self)
+            self.parent.parent.subject.remove(self)
             self.grid_remove()
         else:
-            self.parent.parent.subject_ldirty.add(self)
+            self.parent.parent.subject.add(self)
             self.grid()
         self.configure(text=retval)
 
@@ -138,10 +138,10 @@ class GainLayer(ttk.LabelFrame):
 
         Checks offset against expected level array size to avoid a race condition
         """
-        if self.level_offset + 1 < len(self.parent.parent.strip_levels):
+        if self.level_offset + 1 < len(self.parent.target.strip_levels):
             if (
                 any(
-                    self.parent.parent.strip_comp[
+                    self.parent.target._strip_comp[
                         self.level_offset : self.level_offset + 1
                     ]
                 )
@@ -149,7 +149,7 @@ class GainLayer(ttk.LabelFrame):
             ):
                 val = self.convert_level(
                     max(
-                        self.parent.parent.strip_levels[
+                        self.parent.target.strip_levels[
                             self.level_offset : self.level_offset + 1
                         ]
                     )
@@ -163,10 +163,10 @@ class GainLayer(ttk.LabelFrame):
                     )
                 )
 
-    def on_update(self):
+    def on_update(self, subject):
         """update levels"""
-
-        self.after(_base_values.ldelay, self.upd_levels)
+        if subject == "ldirty":
+            self.after(_base_values.ldelay, self.upd_levels)
 
     def grid_configure(self):
         [
@@ -222,7 +222,7 @@ class SubMixFrame(ttk.Frame):
                 self.grid(row=2, column=0, sticky=(tk.W))
 
         # registers submixframe as pdirty observer
-        self.parent.subject_pdirty.add(self)
+        self.parent.subject.add(self)
 
         self.grid_configure()
         """
@@ -263,11 +263,12 @@ class SubMixFrame(ttk.Frame):
     def upd_labelframe(self, labelframe):
         labelframe.sync()
 
-    def on_update(self):
-        for labelframe in self.labelframes:
-            self.after(1, self.upd_labelframe, labelframe)
+    def on_update(self, subject):
+        if subject == "pdirty":
+            for labelframe in self.labelframes:
+                self.after(1, self.upd_labelframe, labelframe)
 
     def teardown(self):
         # deregisters submixframe as pdirty observer
-        self.parent.subject_pdirty.remove(self)
+        self.parent.subject.remove(self)
         self.destroy()

@@ -118,10 +118,10 @@ class ChannelLabelFrame(ttk.LabelFrame):
             retval = f"{retval[:8]}.."
         if not retval:
             self.parent.columnconfigure(self.index, minsize=0)
-            self.parent.parent.subject_ldirty.remove(self)
+            self.parent.parent.subject.remove(self)
             self.grid_remove()
         else:
-            self.parent.parent.subject_ldirty.add(self)
+            self.parent.parent.subject.add(self)
             self.grid()
         self.configure(text=retval)
 
@@ -167,10 +167,10 @@ class Strip(ChannelLabelFrame):
 
         Checks offset against expected level array size to avoid a race condition
         """
-        if self.level_offset + 1 < len(self.parent.parent.strip_levels):
+        if self.level_offset + 1 < len(self.parent.target.strip_levels):
             if (
                 any(
-                    self.parent.parent.strip_comp[
+                    self.parent.target._strip_comp[
                         self.level_offset : self.level_offset + 1
                     ]
                 )
@@ -178,7 +178,7 @@ class Strip(ChannelLabelFrame):
             ):
                 val = self.convert_level(
                     max(
-                        self.parent.parent.strip_levels[
+                        self.parent.target.strip_levels[
                             self.level_offset : self.level_offset + 1
                         ]
                     )
@@ -187,10 +187,10 @@ class Strip(ChannelLabelFrame):
                     (0 if self.mute.get() else 100 + val - 18 + self.gain.get())
                 )
 
-    def on_update(self):
+    def on_update(self, subject):
         """update levels"""
-
-        self.after(_base_values.ldelay, self.upd_levels)
+        if subject == "ldirty":
+            self.after(_base_values.ldelay, self.upd_levels)
 
 
 class Bus(ChannelLabelFrame):
@@ -208,10 +208,10 @@ class Bus(ChannelLabelFrame):
         return getattr(_target, self.identifier)[self.index]
 
     def upd_levels(self):
-        if self.level_offset + 1 < len(self.parent.parent.bus_levels):
+        if self.level_offset + 1 < len(self.parent.target.bus_levels):
             if (
                 any(
-                    self.parent.parent.bus_comp[
+                    self.parent.target._bus_comp[
                         self.level_offset : self.level_offset + 1
                     ]
                 )
@@ -219,17 +219,17 @@ class Bus(ChannelLabelFrame):
             ):
                 val = self.convert_level(
                     max(
-                        self.parent.parent.bus_levels[
+                        self.parent.target.bus_levels[
                             self.level_offset : self.level_offset + 1
                         ]
                     )
                 )
                 self.level.set((0 if self.mute.get() else 100 + val - 18))
 
-    def on_update(self):
+    def on_update(self, subject):
         """update levels"""
-
-        self.after(_base_values.ldelay, self.upd_levels)
+        if subject == "ldirty":
+            self.after(_base_values.ldelay, self.upd_levels)
 
 
 class ChannelFrame(ttk.Frame):
@@ -241,7 +241,7 @@ class ChannelFrame(ttk.Frame):
         self.phys_out, self.virt_out = parent.kind.outs
 
         # registers channelframe as pdirty observer
-        self.parent.subject_pdirty.add(self)
+        self.parent.subject.add(self)
 
     @property
     def target(self):
@@ -273,16 +273,16 @@ class ChannelFrame(ttk.Frame):
     def upd_labelframe(self, labelframe):
         labelframe.sync()
 
-    def on_update(self):
+    def on_update(self, subject):
         """update parameters"""
-
-        for labelframe in self.labelframes:
-            self.after(1, self.upd_labelframe, labelframe)
+        if subject == "pdirty":
+            for labelframe in self.labelframes:
+                self.after(1, self.upd_labelframe, labelframe)
 
     def teardown(self):
         # deregisters channelframe as pdirty observer
 
-        self.parent.subject_pdirty.remove(self)
+        self.parent.subject.remove(self)
         self.destroy()
         setattr(self.parent, f"{self.identifier}_frame", None)
 
