@@ -127,41 +127,22 @@ class GainLayer(ttk.LabelFrame):
             self.grid()
         self.configure(text=retval)
 
-    def convert_level(self, val):
-        if _base_values.vban_connected:
-            return round(-val * 0.01, 1)
-        return round(20 * log(val, 10), 1) if val > 0 else -200.0
-
     def upd_levels(self):
         """
         Updates level values.
 
         Checks offset against expected level array size to avoid a race condition
         """
-        if self.level_offset + 1 < len(self.parent.target.strip_levels):
-            if (
-                any(
-                    self.parent.target._strip_comp[
-                        self.level_offset : self.level_offset + 1
-                    ]
+
+        if self.parent.target.strip[self.index].levels.is_updated:
+            val = max(self.parent.target.strip[self.index].levels.prefader)
+            self.level.set(
+                (
+                    0
+                    if self.parent.target.strip[self.index].mute or not self.on.get()
+                    else 100 + val - 18 + self.gain.get()
                 )
-                or self.level.get() > 0
-            ):
-                val = self.convert_level(
-                    max(
-                        self.parent.target.strip_levels[
-                            self.level_offset : self.level_offset + 1
-                        ]
-                    )
-                )
-                self.level.set(
-                    (
-                        0
-                        if self.parent.target.strip[self.index].mute
-                        or not self.on.get()
-                        else 100 + val - 18 + self.gain.get()
-                    )
-                )
+            )
 
     def on_update(self, subject):
         """update levels"""

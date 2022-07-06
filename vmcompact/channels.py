@@ -125,11 +125,6 @@ class ChannelLabelFrame(ttk.LabelFrame):
             self.grid()
         self.configure(text=retval)
 
-    def convert_level(self, val):
-        if _base_values.vban_connected:
-            return round(-val * 0.01, 1)
-        return round(20 * log(val, 10), 1) if val > 0 else -200.0
-
     def grid_configure(self):
         self.grid(sticky=(tk.N, tk.S))
         [
@@ -167,25 +162,9 @@ class Strip(ChannelLabelFrame):
 
         Checks offset against expected level array size to avoid a race condition
         """
-        if self.level_offset + 1 < len(self.parent.target.strip_levels):
-            if (
-                any(
-                    self.parent.target._strip_comp[
-                        self.level_offset : self.level_offset + 1
-                    ]
-                )
-                or self.level.get() > 0
-            ):
-                val = self.convert_level(
-                    max(
-                        self.parent.target.strip_levels[
-                            self.level_offset : self.level_offset + 1
-                        ]
-                    )
-                )
-                self.level.set(
-                    (0 if self.mute.get() else 100 + val - 18 + self.gain.get())
-                )
+        if self.target.levels.is_updated:
+            val = max(self.target.levels.prefader)
+            self.level.set((0 if self.mute.get() else 100 + val - 18 + self.gain.get()))
 
     def on_update(self, subject):
         """update levels"""
@@ -208,23 +187,9 @@ class Bus(ChannelLabelFrame):
         return getattr(_target, self.identifier)[self.index]
 
     def upd_levels(self):
-        if self.level_offset + 1 < len(self.parent.target.bus_levels):
-            if (
-                any(
-                    self.parent.target._bus_comp[
-                        self.level_offset : self.level_offset + 1
-                    ]
-                )
-                or self.level.get() > 0
-            ):
-                val = self.convert_level(
-                    max(
-                        self.parent.target.bus_levels[
-                            self.level_offset : self.level_offset + 1
-                        ]
-                    )
-                )
-                self.level.set((0 if self.mute.get() else 100 + val - 18))
+        if self.target.levels.is_updated:
+            val = max(self.target.levels.all)
+            self.level.set((0 if self.mute.get() else 100 + val - 18))
 
     def on_update(self, subject):
         """update levels"""
