@@ -83,7 +83,7 @@ python-versions = ">=3.11,<4.0"
 
 [[package]]
 name = "voicemeeter-api"
-version = "0.2.0"
+version = "0.2.1"
 description = "A Python wrapper for the Voiceemeter API"
 category = "main"
 optional = false
@@ -92,7 +92,7 @@ python-versions = ">=3.11,<4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.11"
-content-hash = "dcaa0301e8c57fdfe23813d6f094cc115cdf9fd7e252379a1b9258e1ae4ee54d"
+content-hash = "9b4c384d6e006ad51d4bad8ac9ea54f4a7646ace703f2320d8b6435270d3875d"
 
 [metadata.files]
 black = [
@@ -149,6 +149,6 @@ vban-cmd = [
     {file = "vban_cmd-1.1.0-py3-none-any.whl", hash = "sha256:a2b1ab3c3f5c307f12efc11863eb4e77d6f74dfccc21996c0eb2d1bd4abbc747"},
 ]
 voicemeeter-api = [
-    {file = "voicemeeter-api-0.2.0.tar.gz", hash = "sha256:fcaf21096d54278cf16cc7fe1fd1fee51cc9ab7bdba7f81a39e155c8ec24ef3a"},
-    {file = "voicemeeter_api-0.2.0-py3-none-any.whl", hash = "sha256:2cd943ab271df9f1646d5cd76928ba74aa5568a843736a80908db373037fc753"},
+    {file = "voicemeeter-api-0.2.1.tar.gz", hash = "sha256:51f3ccd4603c7247e7eca62de93546df464e562a40c228b36ea2fa94c4bfb5db"},
+    {file = "voicemeeter_api-0.2.1-py3-none-any.whl", hash = "sha256:24d234f61452822de958f870673b4d935c8fed91c1fbea01e9c6e6cf38fe9a60"},
 ]
