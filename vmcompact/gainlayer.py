@@ -130,8 +130,6 @@ class GainLayer(ttk.LabelFrame):
     def upd_levels(self):
         """
         Updates level values.
-
-        Checks offset against expected level array size to avoid a race condition
         """
 
         if self.parent.target.strip[self.index].levels.is_updated:

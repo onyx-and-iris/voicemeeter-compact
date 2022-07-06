@@ -159,8 +159,6 @@ class Strip(ChannelLabelFrame):
     def upd_levels(self):
         """
         Updates level values.
-
-        Checks offset against expected level array size to avoid a race condition
         """
         if self.target.levels.is_updated:
             val = max(self.target.levels.prefader)
