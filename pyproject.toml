@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "voicemeeter-compact"
-version = "1.0.8"
+version = "1.0.9"
 description = "A Compact Voicemeeter Remote App"
 authors = ["onyx-and-iris <code@onyxandiris.online>"]
 license = "MIT"
@@ -16,7 +16,7 @@ include = ["vmcompact/img/cat.ico"]
 python = "^3.11"
 sv-ttk = "^0.1"
 voicemeeter-api = { version = "^0.2.1", python = "^3.10" }
-vban-cmd = { version = "^1.1.1", python = "^3.10" }
+vban-cmd = { version = "^1.1.2", python = "^3.10" }
 
 [tool.poetry.dev-dependencies]
 black = {version = "^22.6.0", allow-prereleases = true}
