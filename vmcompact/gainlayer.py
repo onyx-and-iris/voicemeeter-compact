@@ -26,7 +26,8 @@ class GainLayer(ttk.LabelFrame):
         self.builder.add_scale()
         self.builder.add_gain_label()
         self.builder.add_on_button()
-        self.sync()
+        self.sync_params()
+        self.sync_labels()
         self.grid_configure()
 
     @property
@@ -94,9 +95,13 @@ class GainLayer(ttk.LabelFrame):
                 background=f'{"green" if self.on.get() else "white"}',
             )
 
-    def sync(self):
-        self.after(_base_values.pdelay, self.sync_params)
-        self.after(100, self.sync_labels)
+    def on_update(self, subject):
+        if subject == "ldirty":
+            self.upd_levels()
+        elif subject == "pdirty":
+            self.sync_params()
+        elif subject == "labelframe":
+            self.after(5, self.sync_labels)
 
     def sync_params(self):
         self.gain.set(self.getter("gain"))
@@ -141,11 +146,6 @@ class GainLayer(ttk.LabelFrame):
                     else 100 + val - 18 + self.gain.get()
                 )
             )
-
-    def on_update(self, subject):
-        """update levels"""
-        if subject == "ldirty":
-            self.after(_base_values.ldelay, self.upd_levels)
 
     def grid_configure(self):
         [
@@ -200,9 +200,6 @@ class SubMixFrame(ttk.Frame):
             else:
                 self.grid(row=2, column=0, sticky=(tk.W))
 
-        # registers submixframe as pdirty observer
-        self.parent.subject.add(self)
-
         self.grid_configure()
         """
         Grids each labelframe, grid_removes any without a label
@@ -212,6 +209,8 @@ class SubMixFrame(ttk.Frame):
             if not self.target.strip[i].label:
                 self.columnconfigure(i, minsize=0)
                 labelframe.grid_remove()
+
+        self.parent.subject.add(self)
 
     @property
     def target(self):
@@ -229,6 +228,11 @@ class SubMixFrame(ttk.Frame):
             if isinstance(frame, ttk.LabelFrame)
         )
 
+    def on_update(self, subject):
+        if subject == "pdirty":
+            for labelframe in self.labelframes:
+                labelframe.on_update("labelframe")
+
     def grid_configure(self):
         [
             self.columnconfigure(i, minsize=_configuration.level_width)
@@ -239,15 +243,8 @@ class SubMixFrame(ttk.Frame):
             for i, _ in enumerate(self.labelframes)
         ]
 
-    def upd_labelframe(self, labelframe):
-        labelframe.sync()
-
-    def on_update(self, subject):
-        if subject == "pdirty":
-            for labelframe in self.labelframes:
-                self.after(1, self.upd_labelframe, labelframe)
-
     def teardown(self):
         # deregisters submixframe as pdirty observer
+        [self.parent.subject.remove(frame) for frame in self.gainlayers]
         self.parent.subject.remove(self)
         self.destroy()

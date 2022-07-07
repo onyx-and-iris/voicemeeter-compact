@@ -75,13 +75,13 @@ class Navigation(ttk.Frame):
             self.parent.bus_frame = None
             self.channel_button["state"] = "normal"
 
-        if self.parent.submix_frame:
-            self.parent.submix_frame.teardown()
-            self.submix.set(False)
-            if not _configuration.themes_enabled:
-                self.styletable.configure(
-                    f"Submix.TButton",
-                    background=f'{"purple" if self.submix.get() else "white"}',
-                )
+            if self.parent.submix_frame:
+                self.parent.submix_frame.teardown()
+                self.submix.set(False)
+                if not _configuration.themes_enabled:
+                    self.styletable.configure(
+                        f"Submix.TButton",
+                        background=f'{"purple" if self.submix.get() else "white"}',
+                    )
 
-        self.extend_text.set("REDUCE" if self.extend.get() else "EXTEND")
+            self.extend_text.set("REDUCE" if self.extend.get() else "EXTEND")

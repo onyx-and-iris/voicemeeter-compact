@@ -71,7 +71,7 @@ class Config(ttk.Frame):
     def on_update(self, subject):
         """update parameters"""
         if subject == "pdirty":
-            self.after(_base_values.pdelay, self.sync)
+            self.sync()
 
 
 class StripConfig(Config):

@@ -23,7 +23,8 @@ class ChannelLabelFrame(ttk.LabelFrame):
         self.builder.add_mute_button()
         self.builder.add_conf_button()
         self.builder.add_gain_label()
-        self.sync()
+        self.sync_params()
+        self.sync_labels()
         self.grid_configure()
 
         self.configbuilder = builders.MainFrameBuilder(self.parent.parent)
@@ -96,9 +97,13 @@ class ChannelLabelFrame(ttk.LabelFrame):
                 background=f'{"yellow" if self.conf.get() else "white"}',
             )
 
-    def sync(self):
-        self.after(_base_values.pdelay, self.sync_params)
-        self.after(100, self.sync_labels)
+    def on_update(self, subject):
+        if subject == "ldirty":
+            self.upd_levels()
+        elif subject == "pdirty":
+            self.sync_params()
+        elif subject == "labelframe":
+            self.after(5, self.sync_labels)
 
     def sync_params(self):
         """sync parameter states, update button colours"""
@@ -160,14 +165,12 @@ class Strip(ChannelLabelFrame):
         """
         Updates level values.
         """
-        if self.target.levels.is_updated:
-            val = max(self.target.levels.prefader)
-            self.level.set((0 if self.mute.get() else 100 + val - 18 + self.gain.get()))
-
-    def on_update(self, subject):
-        """update levels"""
-        if subject == "ldirty":
-            self.after(_base_values.ldelay, self.upd_levels)
+        if self.index < self.parent.parent.kind.num_strip:
+            if self.target.levels.is_updated:
+                val = max(self.target.levels.prefader)
+                self.level.set(
+                    (0 if self.mute.get() else 100 + val - 18 + self.gain.get())
+                )
 
 
 class Bus(ChannelLabelFrame):
@@ -185,14 +188,10 @@ class Bus(ChannelLabelFrame):
         return getattr(_target, self.identifier)[self.index]
 
     def upd_levels(self):
-        if self.target.levels.is_updated:
-            val = max(self.target.levels.all)
-            self.level.set((0 if self.mute.get() else 100 + val - 18))
-
-    def on_update(self, subject):
-        """update levels"""
-        if subject == "ldirty":
-            self.after(_base_values.ldelay, self.upd_levels)
+        if self.index < self.parent.parent.kind.num_bus:
+            if self.target.levels.is_updated:
+                val = max(self.target.levels.all)
+                self.level.set((0 if self.mute.get() else 100 + val - 18))
 
 
 class ChannelFrame(ttk.Frame):
@@ -202,8 +201,6 @@ class ChannelFrame(ttk.Frame):
         self.id = id
         self.phys_in, self.virt_in = parent.kind.ins
         self.phys_out, self.virt_out = parent.kind.outs
-
-        # registers channelframe as pdirty observer
         self.parent.subject.add(self)
 
     @property
@@ -226,6 +223,11 @@ class ChannelFrame(ttk.Frame):
             if isinstance(frame, ttk.LabelFrame)
         )
 
+    def on_update(self, subject):
+        if subject == "pdirty":
+            for labelframe in self.labelframes:
+                labelframe.on_update("labelframe")
+
     def grid_configure(self):
         [
             self.columnconfigure(i, minsize=_configuration.level_width)
@@ -233,18 +235,8 @@ class ChannelFrame(ttk.Frame):
         ]
         [self.rowconfigure(0, minsize=100) for i, _ in enumerate(self.labelframes)]
 
-    def upd_labelframe(self, labelframe):
-        labelframe.sync()
-
-    def on_update(self, subject):
-        """update parameters"""
-        if subject == "pdirty":
-            for labelframe in self.labelframes:
-                self.after(1, self.upd_labelframe, labelframe)
-
     def teardown(self):
-        # deregisters channelframe as pdirty observer
-
+        [self.parent.subject.remove(frame) for frame in self.labelframes]
         self.parent.subject.remove(self)
         self.destroy()
         setattr(self.parent, f"{self.identifier}_frame", None)
@@ -293,7 +285,7 @@ def _make_channelframe(parent, id):
 
     if id == "strip":
         CHANNELFRAME_cls = type(
-            f"ChannelFrame{id.capitalize}",
+            f"ChannelFrame{id.capitalize()}",
             (ChannelFrame,),
             {
                 "__init__": init_strip,
@@ -301,7 +293,7 @@ def _make_channelframe(parent, id):
         )
     else:
         CHANNELFRAME_cls = type(
-            f"ChannelFrame{id.capitalize}",
+            f"ChannelFrame{id.capitalize()}",
             (ChannelFrame,),
             {
                 "__init__": init_bus,

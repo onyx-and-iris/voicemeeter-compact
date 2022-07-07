@@ -51,10 +51,6 @@ class BaseValues(metaclass=SingletonMeta):
     dragging: bool = False
     # a vban connection established
     vban_connected: bool = False
-    # pdirty delay
-    pdelay: int = 1
-    # ldirty delay
-    ldelay: int = 5
 
 
 _base_values = BaseValues()
