@@ -96,9 +96,9 @@ class App(tk.Tk):
 
         if not _base_values.in_scale_button_1:
             if subject == "pdirty":
-                self.subject.notify("pdirty")
+                self.after(1, self.subject.notify, "pdirty")
             elif subject == "ldirty" and not _base_values.dragging:
-                self.subject.notify("ldirty")
+                self.after(1, self.subject.notify, "ldirty")
 
     def _destroy_top_level_frames(self):
         """

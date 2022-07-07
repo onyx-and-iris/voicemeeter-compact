@@ -75,7 +75,7 @@ python-versions = ">=3.4"
 
 [[package]]
 name = "vban-cmd"
-version = "1.1.1"
+version = "1.1.2"
 description = "Python interface for the VBAN RT Packet Service (Sendtext)"
 category = "main"
 optional = false
@@ -83,7 +83,7 @@ python-versions = ">=3.11,<4.0"
 
 [[package]]
 name = "voicemeeter-api"
-version = "0.2.1"
+version = "0.2.2"
 description = "A Python wrapper for the Voiceemeter API"
 category = "main"
 optional = false
@@ -92,7 +92,7 @@ python-versions = ">=3.11,<4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.11"
-content-hash = "2a2ef52597d4ef3a2a29d33eff56bee024c0ce9b77177c92d98ab21383bb036c"
+content-hash = "7c6d01ce5f5ab52681421dd3755620a5a8ec14f4dd86fe92f1198383adc869bd"
 
 [metadata.files]
 black = [
@@ -145,10 +145,10 @@ sv-ttk = [
     {file = "sv_ttk-0.1.tar.gz", hash = "sha256:342754618292b6d224060307eccaa35b6f6c284b34b4da1d0cf0484b652ffb0f"},
 ]
 vban-cmd = [
-    {file = "vban-cmd-1.1.1.tar.gz", hash = "sha256:9bd32ea59a209b783e4507ded9aeddf52e21d8427b9d9e84d39b670fb0cbeb4d"},
-    {file = "vban_cmd-1.1.1-py3-none-any.whl", hash = "sha256:9a86d4a7351403bf4d47a64d2fc5915a49b80626a89da5d5e40759e3bfadfc01"},
+    {file = "vban-cmd-1.1.2.tar.gz", hash = "sha256:c119fedfe180591a7ce9f8d0ca0a8bd08e730c96aa73428056bfa41f2baecb4b"},
+    {file = "vban_cmd-1.1.2-py3-none-any.whl", hash = "sha256:78afa1690e221e21b7436d6259c31e39bdd8166e7064702e8707379e6cac84c8"},
 ]
 voicemeeter-api = [
-    {file = "voicemeeter-api-0.2.1.tar.gz", hash = "sha256:51f3ccd4603c7247e7eca62de93546df464e562a40c228b36ea2fa94c4bfb5db"},
-    {file = "voicemeeter_api-0.2.1-py3-none-any.whl", hash = "sha256:24d234f61452822de958f870673b4d935c8fed91c1fbea01e9c6e6cf38fe9a60"},
+    {file = "voicemeeter-api-0.2.2.tar.gz", hash = "sha256:5a1ae1f8f4ccd6bf452aac6fcc3076994c794e2329f0d25a2a4375287fd43389"},
+    {file = "voicemeeter_api-0.2.2-py3-none-any.whl", hash = "sha256:359ae93cccc7d553233718a475ae0c16f5ffa7bff566087c3f09355e1cbbeb39"},
 ]
