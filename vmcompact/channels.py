@@ -189,7 +189,7 @@ class Bus(ChannelLabelFrame):
 
     def upd_levels(self):
         if self.index < self.parent.parent.kind.num_bus:
-            if self.target.levels.is_updated:
+            if self.target.levels.is_updated or self.level.get() != -118:
                 val = max(self.target.levels.all)
                 self.level.set((0 if self.mute.get() else 100 + val - 18))
 
