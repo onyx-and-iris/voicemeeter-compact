@@ -73,24 +73,26 @@ class Menus(tk.Menu):
         )
 
         # configs menu
-        menu_configs = tk.Menu(self, tearoff=0)
-        self.add_cascade(menu=menu_configs, label="Configs")
-        self.menu_configs_load = tk.Menu(menu_configs, tearoff=0)
-        menu_configs.add_cascade(menu=self.menu_configs_load, label="Load config")
-        defaults = {"reset"}
-        if len(self.target.configs) > len(defaults) and all(
-            key in self.target.configs for key in defaults
+        self.menu_configs = tk.Menu(self, tearoff=0)
+        self.add_cascade(menu=self.menu_configs, label="Configs")
+        self.menu_configs_load = tk.Menu(self.menu_configs, tearoff=0)
+        self.menu_configs.add_cascade(menu=self.menu_configs_load, label="Load config")
+        self.config_defaults = {"reset"}
+        if len(self.target.configs) > len(self.config_defaults) and all(
+            key in self.target.configs for key in self.config_defaults
         ):
             [
                 self.menu_configs_load.add_command(
                     label=profile, command=partial(self.load_profile, profile)
                 )
                 for profile in self.target.configs.keys()
-                if profile not in defaults
+                if profile not in self.config_defaults
             ]
         else:
-            menu_configs.entryconfig(0, state="disabled")
-        menu_configs.add_command(label="Reset to defaults", command=self.load_defaults)
+            self.menu_configs.entryconfig(0, state="disabled")
+        self.menu_configs.add_command(
+            label="Reset to defaults", command=self.load_defaults
+        )
 
         # layout menu
         self.menu_layout = tk.Menu(self, tearoff=0)
@@ -267,6 +269,13 @@ class Menus(tk.Menu):
         ]
 
     def vban_connect(self, i):
+        # remove config load menus
+        [
+            self.menu_configs_load.delete(key)
+            for key in self.vmr.configs.keys()
+            if key not in self.config_defaults
+        ]
+
         [
             self.menu_vban.entryconfig(j, state="disabled")
             for j, _ in enumerate(self.menu_vban.winfo_children())
@@ -283,6 +292,7 @@ class Menus(tk.Menu):
         self.parent._destroy_top_level_frames()
         _base_values.vban_connected = True
         self.vmr.end_thread()
+
         # build new app frames according to a kind
         kind = kind_get(kind_id)
         self.parent.build_app(kind, self.vban)
@@ -292,8 +302,28 @@ class Menus(tk.Menu):
         self.menu_layout.entryconfig(
             0, state=f"{'normal' if kind.name == 'potato' else 'disabled'}"
         )
+        # rebuild config load menus
+        if len(self.target.configs) > len(self.config_defaults) and all(
+            key in self.target.configs for key in self.config_defaults
+        ):
+            [
+                self.menu_configs_load.add_command(
+                    label=profile, command=partial(self.load_profile, profile)
+                )
+                for profile in self.target.configs.keys()
+                if profile not in self.config_defaults
+            ]
+        else:
+            self.menu_configs.entryconfig(0, state="disabled")
 
     def vban_disconnect(self, i):
+        # remove config load menus
+        [
+            self.menu_configs_load.delete(key)
+            for key in self.vban.configs.keys()
+            if key not in self.config_defaults
+        ]
+
         # destroy the current App frames
         self.parent._destroy_top_level_frames()
         _base_values.vban_connected = False
@@ -309,6 +339,19 @@ class Menus(tk.Menu):
         self.menu_layout.entryconfig(
             0, state=f"{'normal' if kind.name == 'potato' else 'disabled'}"
         )
+        # rebuild config load menus
+        if len(self.target.configs) > len(self.config_defaults) and all(
+            key in self.target.configs for key in self.config_defaults
+        ):
+            [
+                self.menu_configs_load.add_command(
+                    label=profile, command=partial(self.load_profile, profile)
+                )
+                for profile in self.target.configs.keys()
+                if profile not in self.config_defaults
+            ]
+        else:
+            self.menu_configs.entryconfig(0, state="disabled")
 
         self.after(15000, self.enable_vban_menus)
 
