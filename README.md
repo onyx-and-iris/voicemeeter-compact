@@ -104,8 +104,8 @@ Inside each kind directory you may place as many custom toml configurations as y
 
 Configure certain startup states for the app.
 
--   `profiles`
-    Configure a profile to load on app startup. Don't include the .toml extension in the profile name.
+-   `configs`
+    Configure a user config to load on app startup. Don't include the .toml extension in the config name.
 
 -   `theme`
     By default the app loads up the [Sun Valley light or dark theme](https://github.com/rdbende/Sun-Valley-ttk-theme) by @rdbende. You have the option to load up the app without any theme loaded. Simply set `enabled` to false and `mode` will take no effect.
