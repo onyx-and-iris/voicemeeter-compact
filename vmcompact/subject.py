@@ -12,25 +12,25 @@ class Subject:
         [o.on_update(modifier) for o in self._observers]
 
     def add(self, observer):
-        """adds an observer to observables"""
+        """adds an observer to _observers"""
 
         if observer not in self._observers:
             self._observers.append(observer)
 
     def remove(self, observer):
-        """removes an observer from observables"""
+        """removes an observer from _observers"""
 
         try:
             self._observers.remove(observer)
         except ValueError:
-            pass
+            print(f"{observer} not in observers (ungridded)")
 
     def get(self) -> list:
-        """returns the current observables"""
+        """returns the current _observers"""
 
         return self._observers
 
     def clear(self):
-        """clears the observables list"""
+        """clears the _observers list"""
 
         self._observers.clear()
