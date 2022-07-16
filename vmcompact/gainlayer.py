@@ -192,7 +192,7 @@ class SubMixFrame(ttk.Frame):
             if parent.bus_frame:
                 parent.bus_frame.grid_remove()
         else:
-            if parent.bus_frame:
+            if parent.bus_frame and parent.bus_frame.grid_info():
                 self.grid(
                     row=parent.bus_frame.grid_info()["row"], column=0, sticky=(tk.W)
                 )
