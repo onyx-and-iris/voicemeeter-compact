@@ -7,8 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
--   [ ] Allow setting a bus mode from config
--   [ ] Reload profiles from memory into app if switching kind between connections.
+-   [ ] Add support for forest theme (should be coming soon)
+
+## [1.3.0] - 2022-07-14
+
+### Added
+
+-   GUI now packaged with poetry and available on Pypi.
+-   Bus modes may now be set in user config (see example configs)
+
+### Changed
+
+-   Reload profiles from memory into app if switching kind between connections.
+-   Levels rework, now using is_updated in callback.
+-   Some logic regarding callbacks reworked, timings reduced for updates.
+-   Directory structure changed, no more profiles/. All configs should go into configs/
+-   Configs section in readme updated to reflect changes.
+-   Installation instructions updated for python 311 and pypi.
+-   Git dependency removed.
+
+### Fixed
+
+-   Fixed bug causing bus level to hang when toggling composite mode
+-   Fixed bug with submix frames failing to redraw when selected from menu.
+-   Version fastforward in pyproject to match changelog.
 
 ## [1.2.6] - 2022-05-16
 
