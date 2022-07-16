@@ -72,6 +72,7 @@ class ChannelLabelFrame(ttk.LabelFrame):
         _base_values.in_scale_button_1 = False
 
     def _on_mousewheel(self, event):
+        _base_values.in_scale_button_1 = True
         self.gain.set(
             self.gain.get()
             + (
@@ -85,6 +86,7 @@ class ChannelLabelFrame(ttk.LabelFrame):
         elif self.gain.get() < -60:
             self.gain.set(-60)
         self.setter("gain", self.gain.get())
+        _base_values.in_scale_button_1 = False
 
     def open_config(self):
         if self.conf.get():
@@ -119,6 +121,7 @@ class ChannelLabelFrame(ttk.LabelFrame):
     def sync_labels(self):
         """sync labelframes according to label text"""
         retval = self.getter("label")
+        self.parent.label_cache[self.id].insert(self.index, retval)
         if len(retval) > 10:
             retval = f"{retval[:8]}.."
         if not retval:
@@ -195,6 +198,8 @@ class Bus(ChannelLabelFrame):
 
 
 class ChannelFrame(ttk.Frame):
+    label_cache = {"strip": list(), "bus": list()}
+
     def init(self, parent, id):
         super().__init__(parent)
         self.parent = parent
@@ -225,8 +230,11 @@ class ChannelFrame(ttk.Frame):
 
     def on_update(self, subject):
         if subject == "pdirty":
-            for labelframe in self.labelframes:
-                labelframe.on_update("labelframe")
+            target = getattr(self.target, self.id)
+            num = getattr(self.parent.kind, f"num_{self.id}")
+            if self.label_cache[self.id] != [target[i].label for i in range(num)]:
+                for labelframe in self.labelframes:
+                    labelframe.on_update("labelframe")
 
     def grid_configure(self):
         [
