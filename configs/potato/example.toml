@@ -54,9 +54,11 @@ eq = true
 
 [bus-3]
 label = "PhysBus3"
+mode = "upmix61"
 
 [bus-4]
 label = "PhysBus4"
+mode = "composite"
 
 [bus-5]
 label = "VirtBus0"

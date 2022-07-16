@@ -35,10 +35,12 @@ mono = true
 [bus-2]
 label = "PhysBus2"
 eq = true
+mode = "composite"
 
 [bus-3]
 label = "VirtBus0"
 eq_ab = true
+mode = "upmix61"
 
 [bus-4]
 label = "VirtBus1"

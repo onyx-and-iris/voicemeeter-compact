@@ -17,6 +17,7 @@ treble = 2.1
 [bus-0]
 label = "PhysBus0"
 mute = true
+mode = "composite"
 
 [bus-1]
 label = "PhysBus1"
