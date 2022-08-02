@@ -288,6 +288,7 @@ class Menus(tk.Menu):
         self.vban = vban_cmd.api(kind_id, **opts)
         # login to vban interface
         self.vban.login()
+        self.vban.event.add("ldirty")
         # destroy the current App frames
         self.parent._destroy_top_level_frames()
         _base_values.vban_connected = True

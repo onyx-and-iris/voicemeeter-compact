@@ -34,13 +34,12 @@ class App(tk.Tk):
         super().__init__()
 
         self._vmr = vmr
+        self._vmr.event.add("ldirty")
         icon_path = Path(__file__).parent.resolve() / "img" / "cat.ico"
         if icon_path.is_file():
             self.iconbitmap(str(icon_path))
         self.minsize(275, False)
         self.subject = Subject()
-        self.strip_levels = None
-        self.bus_levels = None
         self["menu"] = Menus(self, vmr)
         self.styletable = ttk.Style()
         if _configuration.config:
@@ -139,6 +138,6 @@ def connect(kind_id: str, vmr) -> App:
 
     try:
         VMMIN_cls = _apps[kind_id]
-        return VMMIN_cls(vmr)
     except KeyError:
         raise VMCompactErrors(f"Invalid kind: {kind_id}")
+    return VMMIN_cls(vmr)

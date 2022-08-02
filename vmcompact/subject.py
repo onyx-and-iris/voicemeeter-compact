@@ -20,10 +20,8 @@ class Subject:
     def remove(self, observer):
         """removes an observer from _observers"""
 
-        try:
+        if observer in self._observers:
             self._observers.remove(observer)
-        except ValueError:
-            print(f"{observer} not in observers (ungridded)")
 
     def get(self) -> list:
         """returns the current _observers"""
