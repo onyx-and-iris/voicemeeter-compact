@@ -1,6 +1,6 @@
 ## Python Installation
 
-If you don't have Python already you can fetch it easily from the Windows Store. Simply type `store` into the windows search bar. To run this GUI you'll need the latest version, Python 3.11 (Beta).
+If you don't have Python already you can fetch it easily from the Windows Store. Simply type `store` into the windows search bar. To run this GUI you'll need the latest version, Python 3.11 (RC).
 
 ![Image of Python 311 in Windows Store](./doc_imgs/python311.png)
 
@@ -25,6 +25,7 @@ Then use the command `pip install voicemeeter-compact` and wait for the required
 ## Use
 
 You will need to set the kind of Voicemeeter you want to run in the `__main__.py` file. Just edit the kind_id line to one of the following:
+
 -   basic
 -   banana
 -   potato
