@@ -107,7 +107,7 @@ tomli = {version = ">=2.0.1,<3.0.0", markers = "python_version < \"3.11\""}
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "e394ba24b57751b55643bfb50680e19c3f4733064da5027dd026e28976a63935"
+content-hash = "4ffa0dfa37f0db98eb78bdb7e13de065c3f0a0e9c3fa5ddb10c9c749ad74b5d8"
 
 [metadata.files]
 black = []
