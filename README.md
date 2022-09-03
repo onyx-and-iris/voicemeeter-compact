@@ -13,8 +13,8 @@ For an outline of past/future changes refer to: [CHANGELOG](CHANGELOG.md)
 
 ## Prerequisites
 
--   [Voicemeeter](https://voicemeeter.com/) (Basic v1.0.8.2), (Banana v2.0.6.2) or (Potato v3.0.2.2)
--   Python 3.11+
+-   [Voicemeeter](https://voicemeeter.com/) (Basic v1.0.8.4), (Banana v2.0.6.4) or (Potato v3.0.2.4)
+-   Python 3.10 or greater
 
 ## Installation
 

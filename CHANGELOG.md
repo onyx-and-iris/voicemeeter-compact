@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   [ ] Add support for forest theme (should be coming soon)
 
+## [1.4.0] - 2022-09-03
+
+### Added
+
+-   tomli/tomllib compatibility layer to support python 3.10
+
 ## [1.3.0] - 2022-07-14
 
 ### Added

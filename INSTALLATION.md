@@ -1,6 +1,6 @@
 ## Python Installation
 
-If you don't have Python already you can fetch it easily from the Windows Store. Simply type `store` into the windows search bar. To run this GUI you'll need the latest version, Python 3.11 (RC).
+If you don't have Python already you can fetch it easily from the Windows Store. Simply type `store` into the windows search bar. To run this GUI you'll need Python version 3.10 or above.
 
 ![Image of Python 311 in Windows Store](./doc_imgs/python311.png)
 
