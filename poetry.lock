@@ -68,8 +68,8 @@ test = ["appdirs (==1.4.4)", "pytest-cov (>=2.7)", "pytest-mock (>=3.6)", "pytes
 
 [[package]]
 name = "sv-ttk"
-version = "0.1"
-description = "Python module to easily use the Sun Valley ttk theme"
+version = "2.0"
+description = "A gorgeous theme for Tkinter that looks like Windows 11"
 category = "main"
 optional = false
 python-versions = ">=3.4"
@@ -107,7 +107,7 @@ tomli = {version = ">=2.0.1,<3.0.0", markers = "python_version < \"3.11\""}
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "b1536b0935a1bd7b0d87a97924ba6714c753ff4e59e6863abd7765642cb0a0d1"
+content-hash = "738f40473a635574dc00427d128af1c3bf45f4290aca9b4d8ae78b6992a486c7"
 
 [metadata.files]
 black = []
@@ -128,10 +128,7 @@ platformdirs = [
     {file = "platformdirs-2.5.2-py3-none-any.whl", hash = "sha256:027d8e83a2d7de06bbac4e5ef7e023c02b863d7ea5d079477e722bb41ab25788"},
     {file = "platformdirs-2.5.2.tar.gz", hash = "sha256:58c8abb07dcb441e6ee4b11d8df0ac856038f944ab98b7be6b27b2a3c7feef19"},
 ]
-sv-ttk = [
-    {file = "sv_ttk-0.1-py3-none-any.whl", hash = "sha256:c47ab1c70aad0333bc7f5063ab55e8a16b562e700e89e7853e577a1e2fdaa091"},
-    {file = "sv_ttk-0.1.tar.gz", hash = "sha256:342754618292b6d224060307eccaa35b6f6c284b34b4da1d0cf0484b652ffb0f"},
-]
+sv-ttk = []
 tomli = [
     {file = "tomli-2.0.1-py3-none-any.whl", hash = "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc"},
     {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},
