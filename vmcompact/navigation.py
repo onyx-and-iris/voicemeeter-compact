@@ -84,4 +84,4 @@ class Navigation(ttk.Frame):
                         background=f'{"purple" if self.submix.get() else "white"}',
                     )
 
-            self.extend_text.set("REDUCE" if self.extend.get() else "EXTEND")
+        self.extend_text.set("REDUCE" if self.extend.get() else "EXTEND")

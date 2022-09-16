@@ -93,11 +93,10 @@ class App(tk.Tk):
     def on_update(self, subject):
         """called whenever notified of update"""
 
-        if not _base_values.in_scale_button_1:
-            if subject == "pdirty":
-                self.after(1, self.subject.notify, "pdirty")
-            elif subject == "ldirty" and not _base_values.dragging:
-                self.after(1, self.subject.notify, "ldirty")
+        if subject == "pdirty" and _base_values.run_update:
+            self.after(1, self.subject.notify, "pdirty")
+        elif subject == "ldirty" and not _base_values.dragging:
+            self.after(1, self.subject.notify, "ldirty")
 
     def _destroy_top_level_frames(self):
         """
@@ -118,16 +117,14 @@ class App(tk.Tk):
     def dragging(self, event, *args):
         if event.widget is self:
             if self.drag_id == "":
-                _base_values.in_scale_button_1 = True
                 _base_values.dragging = True
             else:
                 self.after_cancel(self.drag_id)
             self.drag_id = self.after(100, self.stop_drag)
 
     def stop_drag(self):
-        _base_values.dragging = False
-        _base_values.in_scale_button_1 = False
         self.drag_id = ""
+        _base_values.dragging = False
 
 
 _apps = {kind.name: App.make(kind) for kind in _kinds_all}

@@ -45,8 +45,8 @@ class Configurations(metaclass=SingletonMeta):
 
 @dataclass
 class BaseValues(metaclass=SingletonMeta):
-    # are we dragging a scale with mouse 1
-    in_scale_button_1: bool = False
+    # pause updates after releasing scale
+    run_update: bool = True
     # are we dragging main window with mouse 1
     dragging: bool = False
     # a vban connection established

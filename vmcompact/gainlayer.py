@@ -52,7 +52,7 @@ class GainLayer(ttk.LabelFrame):
     def reset_gain(self, *args):
         self.setter("gain", 0)
         self.gain.set(0)
-        self.gainlabel.set(0)
+        self.gainlabel.set(self.gain.get())
 
     def scale_callback(self, *args):
         """callback function for scale widget"""
@@ -61,12 +61,26 @@ class GainLayer(ttk.LabelFrame):
         self.gainlabel.set(round(self.gain.get(), 1))
 
     def scale_press(self, *args):
-        _base_values.in_scale_button_1 = True
+        self.after(1, self.remove_events)
+
+    def remove_events(self):
+        self.parent.target.event.remove("pdirty")
+        self.parent.target.event.remove("ldirty")
 
     def scale_release(self, *args):
-        _base_values.in_scale_button_1 = False
+        _base_values.run_update = False
+        self.after(1, self.add_events)
+
+    def add_events(self):
+        self.parent.target.event.add("pdirty")
+        self.parent.target.event.add("ldirty")
+        self.after(500, self.resume_updates)
+
+    def resume_updates(self):
+        _base_values.run_update = True
 
     def _on_mousewheel(self, event):
+        _base_values.run_update = False
         self.gain.set(
             self.gain.get()
             + (
@@ -80,6 +94,7 @@ class GainLayer(ttk.LabelFrame):
         elif self.gain.get() < -60:
             self.gain.set(-60)
         self.setter("gain", self.gain.get())
+        self.after(1, self.resume_updates)
 
     def set_on(self):
         """enables a gainlayer. sets its button colour"""

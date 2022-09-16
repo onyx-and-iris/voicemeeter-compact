@@ -37,10 +37,23 @@ class Config(ttk.Frame):
             setattr(self.target, param, value)
 
     def scale_press(self, *args):
-        _base_values.in_scale_button_1 = True
+        self.after(1, self.remove_events)
+
+    def remove_events(self):
+        self.parent.target.event.remove("pdirty")
+        self.parent.target.event.remove("ldirty")
 
     def scale_release(self, *args):
-        _base_values.in_scale_button_1 = False
+        _base_values.run_update = False
+        self.after(1, self.add_events)
+
+    def add_events(self):
+        self.parent.target.event.add("pdirty")
+        self.parent.target.event.add("ldirty")
+        self.after(350, self.resume_updates)
+
+    def resume_updates(self):
+        _base_values.run_update = True
 
     def scale_enter(self, param, *args):
         val = self.slider_vars[self.slider_params.index(param)].get()

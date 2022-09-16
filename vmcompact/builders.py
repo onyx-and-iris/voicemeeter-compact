@@ -41,6 +41,9 @@ class MainFrameBuilder(AbstractBuilder):
                 sv_ttk.set_theme(_configuration.theme_mode)
                 print(f"Sunvalley {sv_ttk.get_theme().capitalize()} Theme applied")
 
+        self.app.target.event.remove("mdirty")
+        self.app.target.event.remove("midi")
+
     def create_channelframe(self, type_):
         if type_ == "strip":
             self.app.strip_frame = _make_channelframe(self.app, type_)

@@ -9,11 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   [ ] Add support for forest theme (should be coming soon)
 
-## [1.4.0] - 2022-09-03
+## [1.5.1] - 2022-09-16
+
+### Added
+
+-   1.5.1 binary to releases
+
+### Changed
+
+-   sv_ttk updated to v2.0.
+-   event toggles used to pause updates when dragging sliders.
+
+### Removed
+
+## [1.4.2] - 2022-09-03
 
 ### Added
 
 -   tomli/tomllib compatibility layer to support python 3.10
+-   1.4.2 binary to releases
 
 ## [1.3.0] - 2022-07-14
 
