@@ -268,11 +268,11 @@ class Menus(tk.Menu):
             if isinstance(menu, tk.Menu)
         ]
 
-    def vban_connect(self, i):
+    def menu_teardown(self, i):
         # remove config load menus
         [
             self.menu_configs_load.delete(key)
-            for key in self.vmr.configs.keys()
+            for key in self.target.configs.keys()
             if key not in self.config_defaults
         ]
 
@@ -282,12 +282,35 @@ class Menus(tk.Menu):
             if j != i
         ]
 
+    def menu_setup(self):
+        if len(self.target.configs) > len(self.config_defaults) and all(
+            key in self.target.configs for key in self.config_defaults
+        ):
+            [
+                self.menu_configs_load.add_command(
+                    label=profile, command=partial(self.load_profile, profile)
+                )
+                for profile in self.target.configs.keys()
+                if profile not in self.config_defaults
+            ]
+        else:
+            self.menu_configs.entryconfig(0, state="disabled")
+
+    def vban_connect(self, i):
         opts = {}
         opts |= self.vban_config[f"connection-{i+1}"]
         kind_id = opts.pop("kind")
         self.vban = vban_cmd.api(kind_id, **opts)
         # login to vban interface
-        self.vban.login()
+        try:
+            self.vban.login()
+        except TimeoutError as e:
+            messagebox.showerror(
+                "Connection Error", f"Unable to establish connection with {opts['ip']}"
+            )
+            self.after(1, self.enable_vban_menus)
+            return
+        self.menu_teardown(i)
         self.vban.event.add("ldirty")
         # destroy the current App frames
         self.parent._destroy_top_level_frames()
@@ -303,27 +326,10 @@ class Menus(tk.Menu):
         self.menu_layout.entryconfig(
             0, state=f"{'normal' if kind.name == 'potato' else 'disabled'}"
         )
-        # rebuild config load menus
-        if len(self.target.configs) > len(self.config_defaults) and all(
-            key in self.target.configs for key in self.config_defaults
-        ):
-            [
-                self.menu_configs_load.add_command(
-                    label=profile, command=partial(self.load_profile, profile)
-                )
-                for profile in self.target.configs.keys()
-                if profile not in self.config_defaults
-            ]
-        else:
-            self.menu_configs.entryconfig(0, state="disabled")
+        self.menu_setup()
 
     def vban_disconnect(self, i):
-        # remove config load menus
-        [
-            self.menu_configs_load.delete(key)
-            for key in self.vban.configs.keys()
-            if key not in self.config_defaults
-        ]
+        self.menu_teardown(i)
 
         # destroy the current App frames
         self.parent._destroy_top_level_frames()
@@ -340,19 +346,7 @@ class Menus(tk.Menu):
         self.menu_layout.entryconfig(
             0, state=f"{'normal' if kind.name == 'potato' else 'disabled'}"
         )
-        # rebuild config load menus
-        if len(self.target.configs) > len(self.config_defaults) and all(
-            key in self.target.configs for key in self.config_defaults
-        ):
-            [
-                self.menu_configs_load.add_command(
-                    label=profile, command=partial(self.load_profile, profile)
-                )
-                for profile in self.target.configs.keys()
-                if profile not in self.config_defaults
-            ]
-        else:
-            self.menu_configs.entryconfig(0, state="disabled")
+        self.menu_setup()
 
         self.after(15000, self.enable_vban_menus)
 
