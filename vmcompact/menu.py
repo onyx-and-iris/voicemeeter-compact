@@ -5,6 +5,7 @@ from tkinter import messagebox, ttk
 
 import sv_ttk
 import vban_cmd
+from vban_cmd.error import VBANCMDError
 
 from .data import _base_values, _configuration, get_configuration, kind_get
 
@@ -304,10 +305,10 @@ class Menus(tk.Menu):
         # login to vban interface
         try:
             self.vban.login()
-        except TimeoutError as e:
-            messagebox.showerror(
-                "Connection Error", f"Unable to establish connection with {opts['ip']}"
-            )
+        except VBANCMDError as e:
+            msg = (str(e), f"Please check your connection settings")
+            messagebox.showerror("Connection Error", "\n".join(msg))
+            self.vban.logout()
             self.after(1, self.enable_vban_menus)
             return
         self.menu_teardown(i)
