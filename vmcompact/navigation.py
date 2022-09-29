@@ -1,3 +1,4 @@
+import logging
 import tkinter as tk
 from tkinter import ttk
 
@@ -7,6 +8,8 @@ from .gainlayer import SubMixFrame
 
 
 class Navigation(ttk.Frame):
+    logger = logging.getLogger("navigation.navigation")
+
     def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent
@@ -26,6 +29,9 @@ class Navigation(ttk.Frame):
     def show_submix(self):
         if self.submix.get():
             self.parent.submix_frame = SubMixFrame(self.parent)
+            self.logger.info(
+                f"Finished building submixframe for submix {_configuration.submixes}"
+            )
         else:
             if _configuration.extends_horizontal:
                 self.parent.submix_frame.teardown()
@@ -39,6 +45,9 @@ class Navigation(ttk.Frame):
                     self.parent.bus_frame.grid()
                 else:
                     self.parent.rowconfigure(2, weight=0, minsize=0)
+            self.logger.info(
+                f"Finished tearing down submixframe for submix {_configuration.submixes}"
+            )
 
         if not _configuration.themes_enabled:
             self.styletable.configure(

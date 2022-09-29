@@ -1,3 +1,4 @@
+import logging
 import tkinter as tk
 import webbrowser
 from functools import partial
@@ -11,6 +12,8 @@ from .data import _base_values, _configuration, get_configuration, kind_get
 
 
 class Menus(tk.Menu):
+    logger = logging.getLogger("menu.menus")
+
     def __init__(self, parent, vmr):
         super().__init__()
         self.parent = parent
@@ -268,6 +271,9 @@ class Menus(tk.Menu):
             for menu in self.menu_layout.winfo_children()
             if isinstance(menu, tk.Menu)
         ]
+        self.logger.info(
+            f"Finished loading theme Sunvalley {sv_ttk.get_theme().capitalize()} theme"
+        )
 
     def menu_teardown(self, i):
         # remove config load menus
@@ -304,11 +310,14 @@ class Menus(tk.Menu):
         self.vban = vban_cmd.api(kind_id, **opts)
         # login to vban interface
         try:
+            self.logger.info(f"Attempting vban connection to {opts.get('ip')}")
             self.vban.login()
         except VBANCMDError as e:
+            self.vban.logout()
             msg = (str(e), f"Please check your connection settings")
             messagebox.showerror("Connection Error", "\n".join(msg))
-            self.vban.logout()
+            msg = (str(e), f"resuming local connection")
+            self.logger.error(", ".join(msg))
             self.after(1, self.enable_vban_menus)
             return
         self.menu_teardown(i)

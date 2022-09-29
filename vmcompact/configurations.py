@@ -1,9 +1,12 @@
+import logging
 from pathlib import Path
 
 try:
     import tomllib
 except ModuleNotFoundError:
     import tomli as tomllib
+
+LOGGER = logging.getLogger("configurations")
 
 configuration = {}
 
@@ -21,7 +24,7 @@ for path in config_path:
                 print(f"Invalid TOML config: configs/{filename.stem}")
 
         for name, cfg in configs.items():
-            print(f"Loaded configuration configs/{name}")
+            LOGGER.info(f"Loaded configuration configs/{name}")
             configuration[name] = cfg
 
 _defaults = {

@@ -1,4 +1,5 @@
 import abc
+import logging
 import tkinter as tk
 from functools import partial
 from tkinter import ttk
@@ -27,6 +28,8 @@ class AbstractBuilder(abc.ABC):
 class MainFrameBuilder(AbstractBuilder):
     """Responsible for building the frames that sit directly on the mainframe"""
 
+    logger = logging.getLogger("builders.mainframebuilder")
+
     def __init__(self, app):
         self.kind = app.kind
         self.app = app
@@ -39,24 +42,26 @@ class MainFrameBuilder(AbstractBuilder):
         if _configuration.themes_enabled:
             if sv_ttk.get_theme() not in ("light", "dark"):
                 sv_ttk.set_theme(_configuration.theme_mode)
-                print(f"Sunvalley {sv_ttk.get_theme().capitalize()} Theme applied")
-
-        self.app.target.event.remove("mdirty")
-        self.app.target.event.remove("midi")
+                self.logger.info(
+                    f"Sunvalley {sv_ttk.get_theme().capitalize()} Theme applied"
+                )
 
     def create_channelframe(self, type_):
         if type_ == "strip":
             self.app.strip_frame = _make_channelframe(self.app, type_)
         else:
             self.app.bus_frame = _make_channelframe(self.app, type_)
+        self.logger.info(f"Finished building channelframe type {type_}")
 
     def create_separator(self):
         self.app.sep = ttk.Separator(self.app, orient="vertical")
         self.app.sep.grid(row=0, column=1, sticky=(tk.N, tk.S))
         self.app.columnconfigure(1, minsize=15)
+        self.logger.info(f"Finished building separator")
 
     def create_navframe(self):
         self.app.nav_frame = Navigation(self.app)
+        self.logger.info(f"Finished building navframe")
 
     def create_configframe(self, type_, index, id):
         if type_ == "strip":
@@ -102,6 +107,7 @@ class MainFrameBuilder(AbstractBuilder):
                     )
                     for _, frame in enumerate(self.app.bus_frame.labelframes)
                 ]
+        self.logger.info(f"Finished building configframe for {type_}[{index}]")
         self.app.after(5, self.reset_config_frames)
 
     def reset_config_frames(self):
@@ -114,6 +120,7 @@ class MainFrameBuilder(AbstractBuilder):
     def create_banner(self):
         self.app.banner = Banner(self.app)
         self.app.banner.grid(row=4, column=0, columnspan=3)
+        self.logger.info(f"Finished building banner")
 
     def teardown(self):
         pass

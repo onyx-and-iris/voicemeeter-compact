@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   [ ] Add support for forest theme (should be coming soon)
 
+## [1.6.0] - 2022-09-29
+
+### Added
+
+-   Logging module used in place of print statements across the interface.
+
 ## [1.5.1] - 2022-09-16
 
 ### Added
@@ -19,8 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   sv_ttk updated to v2.0.
 -   event toggles used to pause updates when dragging sliders.
-
-### Removed
 
 ## [1.4.2] - 2022-09-03
 
