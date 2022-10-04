@@ -4,10 +4,10 @@
 # kind = 'banana'
 # ip = '<ip address 1>'
 # streamname = 'Command1'
-# port = 6990
+# port = 6980
 
 # [connection-2]
 # kind = 'potato'
 # ip = '<ip address 2>'
 # streamname = 'Command1'
-# port = 6990
+# port = 6980
