@@ -84,7 +84,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "vban-cmd"
-version = "1.5.3"
+version = "1.5.4"
 description = "Python interface for the VBAN RT Packet Service (Sendtext)"
 category = "main"
 optional = false
