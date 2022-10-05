@@ -185,14 +185,9 @@ class Strip(ChannelLabelFrame):
         if self.index < self.parent.parent.kind.num_strip:
             if self.target.levels.is_updated:
                 val = max(self.target.levels.prefader)
-                if _base_values.vban_connected:
-                    self.level.set(
-                        (0 if self.mute.get() else 72 + val - 12 + self.gain.get())
-                    )
-                else:
-                    self.level.set(
-                        (0 if self.mute.get() else 72 + val + self.gain.get())
-                    )
+                self.level.set(
+                    (0 if self.mute.get() else 72 + val - 12 + self.gain.get())
+                )
 
 
 class Bus(ChannelLabelFrame):
@@ -213,7 +208,7 @@ class Bus(ChannelLabelFrame):
         if self.index < self.parent.parent.kind.num_bus:
             if self.target.levels.is_updated or self.level.get() != -118:
                 val = max(self.target.levels.all)
-                self.level.set((0 if self.mute.get() else 72 + val))
+                self.level.set((0 if self.mute.get() else 72 + val - 12))
 
 
 class ChannelFrame(ttk.Frame):
