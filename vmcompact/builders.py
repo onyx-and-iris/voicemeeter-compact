@@ -226,7 +226,7 @@ class ChannelLabelFrameBuilder(AbstractBuilder):
         """Adds a progress bar widget to a single label frame"""
         self.labelframe.pb = ttk.Progressbar(
             self.labelframe,
-            maximum=100,
+            maximum=72,
             orient="vertical",
             mode="determinate",
             variable=self.labelframe.level,

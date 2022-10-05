@@ -154,13 +154,24 @@ class GainLayer(ttk.LabelFrame):
 
         if self.parent.target.strip[self.index].levels.is_updated:
             val = max(self.parent.target.strip[self.index].levels.prefader)
-            self.level.set(
-                (
-                    0
-                    if self.parent.target.strip[self.index].mute or not self.on.get()
-                    else 100 + val - 18 + self.gain.get()
+            if _base_values.vban_connected:
+                self.level.set(
+                    (
+                        0
+                        if self.parent.target.strip[self.index].mute
+                        or not self.on.get()
+                        else 72 + val - 12 + self.gain.get()
+                    )
                 )
-            )
+            else:
+                self.level.set(
+                    (
+                        0
+                        if self.parent.target.strip[self.index].mute
+                        or not self.on.get()
+                        else 72 + val + self.gain.get()
+                    )
+                )
 
     def grid_configure(self):
         [
