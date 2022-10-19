@@ -34,9 +34,8 @@ class App(tk.Tk):
         super().__init__()
 
         self._vmr = vmr
-        self._vmr.event.add("ldirty")
-        self._vmr.event.remove("mdirty")
-        self._vmr.event.remove("midi")
+        self._vmr.event.ldirty = True
+        self._vmr.event.remove(["mdirty", "midi"])
         icon_path = Path(__file__).parent.resolve() / "img" / "cat.ico"
         if icon_path.is_file():
             self.iconbitmap(str(icon_path))

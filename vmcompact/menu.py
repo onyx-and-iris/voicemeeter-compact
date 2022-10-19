@@ -321,7 +321,7 @@ class Menus(tk.Menu):
             self.after(1, self.enable_vban_menus)
             return
         self.menu_teardown(i)
-        self.vban.event.add("ldirty")
+        self.vban.event.ldirty = True
         # destroy the current App frames
         self.parent._destroy_top_level_frames()
         _base_values.vban_connected = True
