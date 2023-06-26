@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   use `gate.knob` to set a strip gate slider.
     -   use `eq.on` to set a bus eq.on button.
     -   use `eq.ab` to set a bus eq.ab button.
+
 Check example configs.
 
 -   `configs` directory may now be located in one of the following locations:
