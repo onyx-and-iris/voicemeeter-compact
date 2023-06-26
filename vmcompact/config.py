@@ -1,9 +1,10 @@
-import tkinter as tk
-from functools import partial
+import logging
 from tkinter import ttk
 
 from . import builders
 from .data import _base_values, _configuration
+
+logger = logging.getLogger(__name__)
 
 
 class Config(ttk.Frame):
@@ -12,6 +13,7 @@ class Config(ttk.Frame):
         self.parent = parent
         self.index = index
         self.id = _id
+        self.logger = logger.getChild(self.__class__.__name__)
         self.styletable = parent.styletable
         self.phys_in, self.virt_in = parent.kind.ins
         self.phys_out, self.virt_out = parent.kind.outs
@@ -29,12 +31,26 @@ class Config(ttk.Frame):
         return self.parent.target
 
     def getter(self, param):
-        if hasattr(self.target, param):
-            return getattr(self.target, param)
+        param = param.split(".")
+        try:
+            if len(param) == 2:
+                target = getattr(self.target, param[0])
+                return getattr(target, param[1])
+            else:
+                return getattr(self.target, param[0])
+        except AttributeError as e:
+            self.logger.error(f"{type(e).__name__}: {e}")
 
     def setter(self, param, value):
-        if hasattr(self.target, param):
-            setattr(self.target, param, value)
+        param = param.split(".")
+        try:
+            if len(param) == 2:
+                target = getattr(self.target, param[0])
+                setattr(target, param[1], value)
+            else:
+                setattr(self.target, param[0], value)
+        except AttributeError as e:
+            self.logger(f"{type(e).__name__}: {e}")
 
     def scale_press(self, *args):
         self.after(1, self.remove_events)
@@ -66,7 +82,7 @@ class Config(ttk.Frame):
         """callback function for scale widget"""
 
         val = self.slider_vars[self.slider_params.index(param)].get()
-        self.setter(param, val)
+        self.setter(param, round(val, 1))
         self.parent.nav_frame.info_text.set(round(val, 1))
 
     def reset_scale(self, param, val, *args):
@@ -98,6 +114,7 @@ class StripConfig(Config):
         self.make_row_2()
         self.builder.grid_configure()
 
+        self.parent.target.clear_dirty()
         self.sync()
 
     @property
@@ -155,6 +172,12 @@ class StripConfig(Config):
             self.param_vars[i].set(self.getter(param))
             for i, param in enumerate(self.params)
         ]
+        if not _base_values.vban_connected:  # slider vars not defined in RT Packet
+            [
+                self.slider_vars[i].set(self.getter(param))
+                for i, param in enumerate(self.slider_params)
+                if self.index < self.phys_in
+            ]
 
         if not _configuration.themes_enabled:
             [
@@ -193,6 +216,7 @@ class BusConfig(Config):
         self.make_row_1()
         self.builder.grid_configure()
 
+        self.parent.target.clear_dirty()
         self.sync()
 
     @property

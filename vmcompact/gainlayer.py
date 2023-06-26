@@ -1,5 +1,4 @@
 import tkinter as tk
-from math import log
 from tkinter import ttk
 
 from . import builders
@@ -42,11 +41,13 @@ class GainLayer(ttk.LabelFrame):
         return "gainlayer"
 
     def getter(self, param):
-        if hasattr(self.target, param):
+        try:
             return getattr(self.target, param)
+        except AttributeError as e:
+            self.logger(f"{type(e).__name__}: {e}")
 
     def setter(self, param, value):
-        if hasattr(self.target, param):
+        if param in dir(self.target):  # avoid calling getattr (with hasattr)
             setattr(self.target, param, value)
 
     def reset_gain(self, *args):
@@ -57,8 +58,9 @@ class GainLayer(ttk.LabelFrame):
     def scale_callback(self, *args):
         """callback function for scale widget"""
 
-        self.setter("gain", self.gain.get())
-        self.gainlabel.set(round(self.gain.get(), 1))
+        val = round(self.gain.get(), 1)
+        self.setter("gain", val)
+        self.gainlabel.set(val)
 
     def scale_press(self, *args):
         self.after(1, self.remove_events)
@@ -157,7 +159,8 @@ class GainLayer(ttk.LabelFrame):
             self.level.set(
                 (
                     0
-                    if self.parent.target.strip[self.index].mute or not self.on.get()
+                    if self.parent.parent.strip_frame.strips[self.index].mute.get()
+                    or not self.on.get()
                     else 72 + val - 12 + self.gain.get()
                 )
             )

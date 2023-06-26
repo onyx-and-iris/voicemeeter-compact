@@ -12,6 +12,8 @@ from .config import BusConfig, StripConfig
 from .data import _base_values, _configuration
 from .navigation import Navigation
 
+logger = logging.getLogger(__name__)
+
 
 class AbstractBuilder(abc.ABC):
     @abc.abstractmethod
@@ -28,11 +30,10 @@ class AbstractBuilder(abc.ABC):
 class MainFrameBuilder(AbstractBuilder):
     """Responsible for building the frames that sit directly on the mainframe"""
 
-    logger = logging.getLogger("builders.mainframebuilder")
-
     def __init__(self, app):
         self.kind = app.kind
         self.app = app
+        self.logger = logger.getChild(self.__class__.__name__)
 
     def setup(self):
         self.app.title(
@@ -336,7 +337,7 @@ class StripConfigFrameBuilder(ChannelConfigFrameBuilder):
             self.configframe.slider_params = ("audibility",)
             self.configframe.slider_vars = (tk.DoubleVar(),)
         else:
-            self.configframe.slider_params = ("comp", "gate", "limit")
+            self.configframe.slider_params = ("comp.knob", "gate.knob", "limit")
             self.configframe.slider_vars = [
                 tk.DoubleVar() for _ in self.configframe.slider_params
             ]
@@ -393,16 +394,16 @@ class StripConfigFrameBuilder(ChannelConfigFrameBuilder):
             orient="horizontal",
             length=_configuration.level_width,
             variable=self.configframe.slider_vars[
-                self.configframe.slider_params.index("comp")
+                self.configframe.slider_params.index("comp.knob")
             ],
-            command=partial(self.configframe.scale_callback, "comp"),
+            command=partial(self.configframe.scale_callback, "comp.knob"),
         )
         comp_scale.bind(
-            "<Double-Button-1>", partial(self.configframe.reset_scale, "comp", 0)
+            "<Double-Button-1>", partial(self.configframe.reset_scale, "comp.knob", 0)
         )
         comp_scale.bind("<Button-1>", self.configframe.scale_press)
         comp_scale.bind("<ButtonRelease-1>", self.configframe.scale_release)
-        comp_scale.bind("<Enter>", partial(self.configframe.scale_enter, "comp"))
+        comp_scale.bind("<Enter>", partial(self.configframe.scale_enter, "comp.knob"))
         comp_scale.bind("<Leave>", self.configframe.scale_leave)
 
         comp_label.grid(column=0, row=0)
@@ -417,16 +418,16 @@ class StripConfigFrameBuilder(ChannelConfigFrameBuilder):
             orient="horizontal",
             length=_configuration.level_width,
             variable=self.configframe.slider_vars[
-                self.configframe.slider_params.index("gate")
+                self.configframe.slider_params.index("gate.knob")
             ],
-            command=partial(self.configframe.scale_callback, "gate"),
+            command=partial(self.configframe.scale_callback, "gate.knob"),
         )
         gate_scale.bind(
-            "<Double-Button-1>", partial(self.configframe.reset_scale, "gate", 0)
+            "<Double-Button-1>", partial(self.configframe.reset_scale, "gate.knob", 0)
         )
         gate_scale.bind("<Button-1>", self.configframe.scale_press)
         gate_scale.bind("<ButtonRelease-1>", self.configframe.scale_release)
-        gate_scale.bind("<Enter>", partial(self.configframe.scale_enter, "gate"))
+        gate_scale.bind("<Enter>", partial(self.configframe.scale_enter, "gate.knob"))
         gate_scale.bind("<Leave>", self.configframe.scale_leave)
 
         gate_label.grid(column=2, row=0)
@@ -563,7 +564,7 @@ class BusConfigFrameBuilder(ChannelConfigFrameBuilder):
         }
         self.configframe.bus_modes = list(self.configframe.bus_mode_map.keys())
         # fmt: on
-        self.configframe.params = ("mono", "eq", "eq_ab")
+        self.configframe.params = ("mono", "eq.on", "eq.ab")
         self.configframe.param_vars = [tk.BooleanVar() for _ in self.configframe.params]
         self.configframe.bus_mode_label_text = tk.StringVar(
             value=self.configframe.bus_mode_map[self.configframe.current_bus_mode()]
