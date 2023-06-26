@@ -1,4 +1,2 @@
-class VMCompactErrors(Exception):
-    """Base classs for VMCompact Errors"""
-
-    pass
+class VMCompactError(Exception):
+    """Exception raised when general errors occur"""
