@@ -6,13 +6,14 @@ from . import builders
 from .data import _configuration
 from .gainlayer import SubMixFrame
 
+logger = logging.getLogger(__name__)
+
 
 class Navigation(ttk.Frame):
-    logger = logging.getLogger("navigation.navigation")
-
     def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent
+        self.logger = logger.getChild(self.__class__.__name__)
         self.grid(row=0, column=3, padx=(0, 2), pady=(5, 5), sticky=(tk.W, tk.E))
         self.styletable = self.parent.styletable
 

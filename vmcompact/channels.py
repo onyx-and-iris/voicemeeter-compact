@@ -1,9 +1,11 @@
+import logging
 import tkinter as tk
-from math import log
 from tkinter import ttk
 
 from . import builders
 from .data import _base_values, _configuration
+
+logger = logging.getLogger(__name__)
 
 
 class ChannelLabelFrame(ttk.LabelFrame):
@@ -14,6 +16,7 @@ class ChannelLabelFrame(ttk.LabelFrame):
         self.parent = parent
         self.index = index
         self.id = id
+        self.logger = logger.getChild(self.__class__.__name__)
         self.styletable = self.parent.parent.styletable
 
         self.builder = builders.ChannelLabelFrameBuilder(self, index, id)
@@ -40,18 +43,21 @@ class ChannelLabelFrame(ttk.LabelFrame):
         return self.parent.target
 
     def getter(self, param):
-        if hasattr(self.target, param):
+        try:
             return getattr(self.target, param)
+        except AttributeError as e:
+            self.logger(f"{type(e).__name__}: {e}")
 
     def setter(self, param, value):
-        if hasattr(self.target, param):
+        if param in dir(self.target):  # avoid calling getattr (with hasattr)
             setattr(self.target, param, value)
 
     def scale_callback(self, *args):
         """callback function for scale widget"""
 
-        self.setter("gain", self.gain.get())
-        self.gainlabel.set(round(self.gain.get(), 1))
+        val = round(self.gain.get(), 1)
+        self.setter("gain", val)
+        self.gainlabel.set(val)
 
     def toggle_mute(self, *args):
         self.target.mute = self.mute.get()
