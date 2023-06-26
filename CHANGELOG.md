@@ -7,7 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
--   [ ] Add support for forest theme (should be coming soon)
+-   [ ] Add support for forest theme (if rbende adds it to pypi)
+
+## [1.7.0] - 2023-06-26
+
+### Changed
+
+-   There are changes to how some parameters must be set in user toml configs.
+    -   use `comp.knob` to set a strip comp slider.
+    -   use `gate.knob` to set a strip gate slider.
+    -   use `eq.on` to set a bus eq.on button.
+    -   use `eq.ab` to set a bus eq.ab button.
+Check example configs.
+
+-   `configs` directory may now be located in one of the following locations:
+    -   \<current working directory>/configs/
+    -   \<user home directory>/.configs/vm-compact/configs/
+    -   \<user home directory>/Documents/Voicemeeter/configs/
+
+-   dependency updates:
+    -   sv_ttk updated to v2.4.5.
+    -   voicemeeter-api updated to v2.0.1.
+    -   vban-cmd updated to v2.0.0.
+
+### Fixed
+
+-   A number of changes that reduce the amount of api calls being made.
 
 ## [1.6.0] - 2022-09-29
 
