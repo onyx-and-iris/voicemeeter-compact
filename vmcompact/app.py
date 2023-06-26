@@ -78,7 +78,7 @@ class App(tk.Tk):
         if kind:
             self.kind = kind
 
-        # register app as observer
+        # register event callbacks
         self.target.subject.add([self.on_pdirty, self.on_ldirty])
 
         self.bus_frame = None
