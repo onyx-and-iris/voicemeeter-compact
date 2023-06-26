@@ -39,6 +39,20 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
+name = "isort"
+version = "5.12.0"
+description = "A Python utility / library to sort Python imports."
+category = "dev"
+optional = false
+python-versions = ">=3.8.0"
+
+[package.extras]
+colors = ["colorama (>=0.4.3)"]
+requirements-deprecated-finder = ["pip-api", "pipreqs"]
+pipfile-deprecated-finder = ["pip-shims (>=0.5.2)", "pipreqs", "requirementslib"]
+plugins = ["setuptools"]
+
+[[package]]
 name = "mypy-extensions"
 version = "0.4.3"
 description = "Experimental type system extensions for programs checked with the mypy typechecker."
@@ -68,8 +82,8 @@ test = ["appdirs (==1.4.4)", "pytest-cov (>=2.7)", "pytest-mock (>=3.6)", "pytes
 
 [[package]]
 name = "sv-ttk"
-version = "2.0"
-description = "A gorgeous theme for Tkinter that looks like Windows 11"
+version = "2.4.5"
+description = "A gorgeous theme for Tkinter, based on Windows 11's UI"
 category = "main"
 optional = false
 python-versions = ">=3.4"
@@ -84,7 +98,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "vban-cmd"
-version = "1.8.1"
+version = "2.0.0"
 description = "Python interface for the VBAN RT Packet Service (Sendtext)"
 category = "main"
 optional = false
@@ -95,7 +109,7 @@ tomli = {version = ">=2.0.1,<3.0.0", markers = "python_version < \"3.11\""}
 
 [[package]]
 name = "voicemeeter-api"
-version = "0.8.4"
+version = "2.0.1"
 description = "A Python wrapper for the Voiceemeter API"
 category = "main"
 optional = false
@@ -107,12 +121,13 @@ tomli = {version = ">=2.0.1,<3.0.0", markers = "python_version < \"3.11\""}
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "ba702e1c74c507e75070c2c58bffe5a7787d1dfa1b4ff7b5cedce7374871f7db"
+content-hash = "ffb9af7ef7aa87ac08a09293de5e99487155faaa459cd49964ac95589deb69fa"
 
 [metadata.files]
 black = []
 click = []
 colorama = []
+isort = []
 mypy-extensions = []
 pathspec = []
 platformdirs = []
