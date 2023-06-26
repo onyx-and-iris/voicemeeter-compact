@@ -26,7 +26,7 @@ for configpath in configpaths:
                     try:
                         with open(filepath, "rb") as f:
                             configs[filename] = tomllib.load(f)
-                        logger.info(f"{filename} loaded into memory")
+                        logger.info(f"configuration: {filename} loaded into memory")
                     except tomllib.TOMLDecodeError:
                         logger.error(f"Invalid TOML config: configs/{filename.stem}")
 
@@ -66,3 +66,19 @@ else:
 def get_configuration(key):
     if key in configuration:
         return configuration[key]
+
+
+def loader(kind_id):
+    configs = {}
+    userconfigpath = Path.home() / ".config" / "vm-compact" / "configs" / kind_id
+    if userconfigpath.exists():
+        filepaths = list(userconfigpath.glob("*.toml"))
+        for filepath in filepaths:
+            identifier = filepath.with_suffix("").stem
+            try:
+                with open(filepath, "rb") as f:
+                    configs[identifier] = tomllib.load(f)
+                logger.info(f"loader: {identifier} loaded into memory")
+            except tomllib.TOMLDecodeError:
+                logger.error(f"Invalid TOML config: configs/{filename.stem}")
+    return configs

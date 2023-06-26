@@ -93,6 +93,14 @@ class Menus(tk.Menu):
                 for profile in self.target.configs.keys()
                 if profile not in self.config_defaults
             ]
+        elif self.parent.userconfigs:
+            [
+                self.menu_configs_load.add_command(
+                    label=name, command=partial(self.load_custom_profile, data)
+                )
+                for name, data in self.parent.userconfigs.items()
+                if name not in self.config_defaults
+            ]
         else:
             self.menu_configs.entryconfig(0, state="disabled")
         self.menu_configs.add_command(
@@ -213,6 +221,10 @@ class Menus(tk.Menu):
             self._unlock.set(not self._lock.get())
         setattr(self.target.command, cmd, val)
 
+    def load_custom_profile(self, profile):
+        self.logger.info(f"loading user profile {profile}")
+        self.target.apply(profile)
+
     def load_profile(self, profile):
         self.logger.info(f"loading user profile {profile}")
         self.target.apply_config(profile)
@@ -289,6 +301,11 @@ class Menus(tk.Menu):
             for key in self.target.configs.keys()
             if key not in self.config_defaults
         ]
+        [
+            self.menu_configs_load.delete(key)
+            for key in self.parent.userconfigs.keys()
+            if key not in self.config_defaults
+        ]
 
         [
             self.menu_vban.entryconfig(j, state="disabled")
@@ -306,6 +323,14 @@ class Menus(tk.Menu):
                 )
                 for profile in self.target.configs.keys()
                 if profile not in self.config_defaults
+            ]
+        elif self.parent.userconfigs:
+            [
+                self.menu_configs_load.add_command(
+                    label=name, command=partial(self.load_custom_profile, data)
+                )
+                for name, data in self.parent.userconfigs.items()
+                if name not in self.config_defaults
             ]
         else:
             self.menu_configs.entryconfig(0, state="disabled")
@@ -346,6 +371,11 @@ class Menus(tk.Menu):
         self.menu_layout.entryconfig(
             0, state=f"{'normal' if kind.name == 'potato' else 'disabled'}"
         )
+        # ensure the configs are reloaded into memory
+        if "config" in self.parent.target.__dict__:
+            del self.parent.target.__dict__["config"]
+        if "userconfigs" in self.parent.__dict__:
+            del self.parent.__dict__["userconfigs"]
         self.menu_setup()
 
     def vban_disconnect(self, i):
@@ -366,6 +396,11 @@ class Menus(tk.Menu):
         self.menu_layout.entryconfig(
             0, state=f"{'normal' if kind.name == 'potato' else 'disabled'}"
         )
+        # ensure the configs are reloaded into memory
+        if "config" in self.parent.target.__dict__:
+            del self.parent.target.__dict__["config"]
+        if "userconfigs" in self.parent.__dict__:
+            del self.parent.__dict__["userconfigs"]
         self.menu_setup()
 
         self.after(15000, self.enable_vban_menus)

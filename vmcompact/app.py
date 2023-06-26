@@ -1,9 +1,11 @@
 import tkinter as tk
+from functools import cached_property
 from pathlib import Path
 from tkinter import ttk
 from typing import NamedTuple
 
 from .builders import MainFrameBuilder
+from .configurations import loader
 from .data import _base_values, _configuration, _kinds_all
 from .errors import VMCompactError
 from .menu import Menus
@@ -41,6 +43,7 @@ class App(tk.Tk):
             self.iconbitmap(str(icon_path))
         self.minsize(275, False)
         self.subject = Subject()
+        self._configs = None
         self["menu"] = Menus(self, vmr)
         self.styletable = ttk.Style()
         if _configuration.config:
@@ -129,6 +132,11 @@ class App(tk.Tk):
     def stop_drag(self):
         self.drag_id = ""
         _base_values.dragging = False
+
+    @cached_property
+    def userconfigs(self):
+        self._configs = loader(self.kind.name)
+        return self._configs
 
 
 _apps = {kind.name: App.make(kind) for kind in _kinds_all}
