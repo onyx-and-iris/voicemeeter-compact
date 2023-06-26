@@ -6,26 +6,32 @@ try:
 except ModuleNotFoundError:
     import tomli as tomllib
 
-LOGGER = logging.getLogger("configurations")
+logger = logging.getLogger(__name__)
 
 configuration = {}
 
-config_path = [Path.cwd() / "configs"]
-for path in config_path:
-    if path.is_dir():
-        filenames = list(path.glob("*.toml"))
-        configs = {}
-        for filename in filenames:
-            name = filename.with_suffix("").stem
-            try:
-                with open(filename, "rb") as f:
-                    configs[name] = tomllib.load(f)
-            except tomllib.TOMLDecodeError:
-                print(f"Invalid TOML config: configs/{filename.stem}")
+configpaths = [
+    Path.cwd() / "configs",
+    Path.home() / ".config" / "vm-compact" / "configs",
+    Path.home() / "Documents" / "Voicemeeter" / "configs",
+]
+for configpath in configpaths:
+    if configpath.is_dir():
+        filepaths = list(configpath.glob("*.toml"))
+        if any(f.stem in ("app", "vban") for f in filepaths):
+            configs = {}
+            for filepath in filepaths:
+                filename = filepath.with_suffix("").stem
+                if filename in ("app", "vban"):
+                    try:
+                        with open(filepath, "rb") as f:
+                            configs[filename] = tomllib.load(f)
+                        logger.info(f"{filename} loaded into memory")
+                    except tomllib.TOMLDecodeError:
+                        logger.error(f"Invalid TOML config: configs/{filename.stem}")
 
-        for name, cfg in configs.items():
-            LOGGER.info(f"Loaded configuration configs/{name}")
-            configuration[name] = cfg
+            configuration |= configs
+            break
 
 _defaults = {
     "configs": {
