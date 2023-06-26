@@ -5,7 +5,7 @@ from typing import NamedTuple
 
 from .builders import MainFrameBuilder
 from .data import _base_values, _configuration, _kinds_all
-from .errors import VMCompactErrors
+from .errors import VMCompactError
 from .menu import Menus
 from .subject import Subject
 
@@ -34,8 +34,8 @@ class App(tk.Tk):
         super().__init__()
 
         self._vmr = vmr
-        self._vmr.event.ldirty = True
-        self._vmr.event.remove(["mdirty", "midi"])
+        self._vmr.event.add(["pdirty", "ldirty"])
+        self._vmr.init_thread()
         icon_path = Path(__file__).parent.resolve() / "img" / "cat.ico"
         if icon_path.is_file():
             self.iconbitmap(str(icon_path))
@@ -50,6 +50,9 @@ class App(tk.Tk):
 
         self.drag_id = ""
         self.bind("<Configure>", self.dragging)
+
+    def __str__(self):
+        return f"{type(self).__name__}App"
 
     @property
     def target(self):
@@ -76,7 +79,7 @@ class App(tk.Tk):
             self.kind = kind
 
         # register app as observer
-        self.target.subject.add(self)
+        self.target.subject.add([self.on_pdirty, self.on_ldirty])
 
         self.bus_frame = None
         self.submix_frame = None
@@ -91,12 +94,12 @@ class App(tk.Tk):
         if self.kind.name == "potato":
             self.builder.create_banner()
 
-    def on_update(self, subject):
-        """called whenever notified of update"""
-
-        if subject == "pdirty" and _base_values.run_update:
+    def on_pdirty(self):
+        if _base_values.run_update:
             self.after(1, self.subject.notify, "pdirty")
-        elif subject == "ldirty" and not _base_values.dragging:
+
+    def on_ldirty(self):
+        if not _base_values.dragging:
             self.after(1, self.subject.notify, "ldirty")
 
     def _destroy_top_level_frames(self):
@@ -137,5 +140,5 @@ def connect(kind_id: str, vmr) -> App:
     try:
         VMMIN_cls = _apps[kind_id]
     except KeyError:
-        raise VMCompactErrors(f"Invalid kind: {kind_id}")
+        raise VMCompactError(f"Invalid kind: {kind_id}")
     return VMMIN_cls(vmr)
