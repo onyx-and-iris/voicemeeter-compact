@@ -2,22 +2,23 @@ import logging
 import tkinter as tk
 import webbrowser
 from functools import partial
-from tkinter import messagebox, ttk
+from tkinter import messagebox
 
 import sv_ttk
 import vban_cmd
-from vban_cmd.error import VBANCMDError
+from vban_cmd.error import VBANCMDConnectionError
 
 from .data import _base_values, _configuration, get_configuration, kind_get
 
+logger = logging.getLogger(__name__)
+
 
 class Menus(tk.Menu):
-    logger = logging.getLogger("menu.menus")
-
     def __init__(self, parent, vmr):
         super().__init__()
         self.parent = parent
         self.vmr = vmr
+        self.logger = logger.getChild(self.__class__.__name__)
         self.vban_config = get_configuration("vban")
         self.app_config = get_configuration("app")
         self._is_topmost = tk.BooleanVar()
@@ -213,14 +214,19 @@ class Menus(tk.Menu):
         setattr(self.target.command, cmd, val)
 
     def load_profile(self, profile):
+        self.logger.info(f"loading user profile {profile}")
         self.target.apply_config(profile)
 
     def load_defaults(self):
-        resp = messagebox.askyesno(
-            message="Are you sure you want to Reset values to defaults?\nPhysical strips B1, Virtual strips A1\nMono, Solo, Mute, EQ all OFF"
+        msg = (
+            "Are you sure you want to Reset values to defaults?",
+            "Physical strips B1, Virtual strips A1",
+            "Mono, Solo, Mute, EQ all OFF",
+            "Gain sliders for Strip/Bus at 0.0",
         )
+        resp = messagebox.askyesno(message="\n".join(msg))
         if resp:
-            self.target.apply_config("reset")
+            self.load_profile("reset")
 
     def always_on_top(self):
         self.parent.attributes("-topmost", self._is_topmost.get())
@@ -242,6 +248,7 @@ class Menus(tk.Menu):
                 self.parent.nav_frame.show_submix()
             for j, var in enumerate(self._selected_bus):
                 var.set(i == j)
+            self.parent.subject.notify("submix")
 
     def load_theme(self, theme):
         sv_ttk.set_theme(theme)
@@ -312,16 +319,19 @@ class Menus(tk.Menu):
         try:
             self.logger.info(f"Attempting vban connection to {opts.get('ip')}")
             self.vban.login()
-        except VBANCMDError as e:
+        except VBANCMDConnectionError as e:
             self.vban.logout()
-            msg = (str(e), f"Please check your connection settings")
+            msg = (
+                f"Timeout attempting to establish connection to {opts.get('ip')}",
+                f"Please check your connection settings",
+            )
             messagebox.showerror("Connection Error", "\n".join(msg))
             msg = (str(e), f"resuming local connection")
             self.logger.error(", ".join(msg))
             self.after(1, self.enable_vban_menus)
             return
         self.menu_teardown(i)
-        self.vban.event.ldirty = True
+        self.vban.event.add(["pdirty", "ldirty"])
         # destroy the current App frames
         self.parent._destroy_top_level_frames()
         _base_values.vban_connected = True
