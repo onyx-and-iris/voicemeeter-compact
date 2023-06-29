@@ -15,6 +15,8 @@ class Navigation(ttk.Frame):
         self.parent = parent
         self.logger = logger.getChild(self.__class__.__name__)
         self.grid(row=0, column=3, padx=(0, 2), pady=(5, 5), sticky=(tk.W, tk.E))
+        if not _configuration.navigation_show:
+            self.grid_remove()
         self.styletable = self.parent.styletable
 
         self.builder = builders.NavigationFrameBuilder(self)

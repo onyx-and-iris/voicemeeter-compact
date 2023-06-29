@@ -24,6 +24,8 @@ class Menus(tk.Menu):
         self._is_topmost = tk.BooleanVar()
         self._lock = tk.BooleanVar()
         self._unlock = tk.BooleanVar()
+        self._navigation_show = tk.BooleanVar(value=_configuration.navigation_show)
+        self._navigation_hide = tk.BooleanVar(value=not _configuration.navigation_show)
         self._selected_bus = list(tk.BooleanVar() for _ in range(8))
 
         # voicemeeter menu
@@ -162,6 +164,23 @@ class Menus(tk.Menu):
         )
         if not _configuration.themes_enabled:
             self.menu_layout.entryconfig(2, state="disabled")
+        # layout/navigation
+        self.menu_navigation = tk.Menu(self.menu_layout, tearoff=0)
+        self.menu_layout.add_cascade(menu=self.menu_navigation, label="Navigation")
+        self.menu_navigation.add_checkbutton(
+            label="show",
+            onvalue=1,
+            offvalue=0,
+            variable=self._navigation_show,
+            command=partial(self.toggle_navigation, "show"),
+        )
+        self.menu_navigation.add_checkbutton(
+            label="hide",
+            onvalue=1,
+            offvalue=0,
+            variable=self._navigation_hide,
+            command=partial(self.toggle_navigation, "hide"),
+        )
 
         # vban connect menu
         self.menu_vban = tk.Menu(self, tearoff=0)
@@ -334,6 +353,18 @@ class Menus(tk.Menu):
             ]
         else:
             self.menu_configs.entryconfig(0, state="disabled")
+
+    def toggle_navigation(self, cmd=None):
+        if cmd == "show":
+            self.logger.debug("show navframe")
+            self.parent.nav_frame.grid()
+            self._navigation_show.set(True)
+            self._navigation_hide.set(not self._navigation_show.get())
+        else:
+            self.logger.debug("hide navframe")
+            self.parent.nav_frame.grid_remove()
+            self._navigation_hide.set(True)
+            self._navigation_show.set(not self._navigation_hide.get())
 
     def vban_connect(self, i):
         opts = {}
