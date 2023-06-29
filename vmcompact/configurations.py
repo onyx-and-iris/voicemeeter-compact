@@ -48,6 +48,7 @@ _defaults = {
     "channel": {
         "width": 80,
         "height": 130,
+        "xpadding": 3,
     },
     "mwscroll_step": {
         "size": 3,
@@ -55,6 +56,7 @@ _defaults = {
     "submixes": {
         "default": 0,
     },
+    "navigation": {"show": True},
 }
 
 if "app" in configuration:

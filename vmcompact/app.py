@@ -1,3 +1,4 @@
+import logging
 import tkinter as tk
 from functools import cached_property
 from pathlib import Path
@@ -10,6 +11,8 @@ from .data import _base_values, _configuration, _kinds_all
 from .errors import VMCompactError
 from .menu import Menus
 from .subject import Subject
+
+logger = logging.getLogger(__name__)
 
 
 class App(tk.Tk):
@@ -34,9 +37,10 @@ class App(tk.Tk):
 
     def __init__(self, vmr):
         super().__init__()
-
+        self.logger = logger.getChild(self.__class__.__name__)
         self._vmr = vmr
         self._vmr.event.add(["pdirty", "ldirty"])
+        self.after(12000 if not self._vmr.gui.initial_state else 1, self.start_updates)
         self._vmr.init_thread()
         icon_path = Path(__file__).parent.resolve() / "img" / "cat.ico"
         if icon_path.is_file():
@@ -53,6 +57,10 @@ class App(tk.Tk):
 
         self.drag_id = ""
         self.bind("<Configure>", self.dragging)
+
+    def start_updates(self):
+        self.logger.debug("updates started")
+        _base_values.run_update = True
 
     def __str__(self):
         return f"{type(self).__name__}App"

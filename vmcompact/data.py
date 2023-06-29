@@ -32,10 +32,15 @@ class Configurations(metaclass=SingletonMeta):
     # bus assigned as current submix
     submixes: int = configuration["submixes"]["default"]
 
-    # width of a single labelframe
-    level_width: int = configuration["channel"]["width"]
-    # height of a single labelframe
-    level_height: int = configuration["channel"]["height"]
+    # width of a single channel labelframe
+    channel_width: int = configuration["channel"]["width"]
+    # height of a single channel labelframe
+    channel_height: int = configuration["channel"]["height"]
+    # xpadding for a single channel labelframe
+    channel_xpadding: int = configuration["channel"]["xpadding"]
+
+    # do we grid the navigation frame?
+    navigation_show: bool = configuration["navigation"]["show"]
 
     @property
     def config(self):
@@ -46,7 +51,7 @@ class Configurations(metaclass=SingletonMeta):
 @dataclass
 class BaseValues(metaclass=SingletonMeta):
     # pause updates after releasing scale
-    run_update: bool = True
+    run_update: bool = False
     # are we dragging main window with mouse 1
     dragging: bool = False
     # a vban connection established
