@@ -59,8 +59,13 @@ _defaults = {
     "navigation": {"show": True},
 }
 
+
 if "app" in configuration:
-    configuration["app"] = _defaults | configuration["app"]
+    for key in _defaults:
+        if key in configuration["app"]:
+            configuration["app"][key] = _defaults[key] | configuration["app"][key]
+        else:
+            configuration["app"][key] = _defaults[key]
 else:
     configuration["app"] = _defaults
 
