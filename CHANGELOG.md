@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   [ ] Add support for forest theme (if rbende adds it to pypi)
 
+## [1.8.0] - 2023-06-29
+
+### Added
+
+-   Ability to toggle the navigation frame. This may also be set in app.toml, check example config.
+
+### Changed
+
+-   xpadding added to channel labelframes. This may also be configured through app.toml.
+-   During startup of the app there is now a twelve second grace period before parameter updates begin if the GUI was not previously launched. This is aimed at removing the stutter (due to VM engine startup) on initial launch. Be mindful of this if changing settings on the base Voicemeeter app. After the grace period all updates continue as normal.
+
+-   dependency updates:
+    -   sv_ttk updated to v2.5.1.
+    -   voicemeeter-api updated to v2.0.2.
+
 ## [1.7.0] - 2023-06-26
 
 ### Changed
