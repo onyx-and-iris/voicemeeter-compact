@@ -40,7 +40,7 @@ class App(tk.Tk):
         self.logger = logger.getChild(self.__class__.__name__)
         self._vmr = vmr
         self._vmr.event.add(["pdirty", "ldirty"])
-        self.after(12000 if not self._vmr.gui.initial_state else 1, self.start_updates)
+        self.after(12000 if self._vmr.gui.launched_by_api else 1, self.start_updates)
         self._vmr.init_thread()
         icon_path = Path(__file__).parent.resolve() / "img" / "cat.ico"
         if icon_path.is_file():
@@ -61,6 +61,8 @@ class App(tk.Tk):
     def start_updates(self):
         self.logger.debug("updates started")
         _base_values.run_update = True
+        if self._vmr.gui.launched_by_api:
+            self.on_pdirty()
 
     def __str__(self):
         return f"{type(self).__name__}App"
