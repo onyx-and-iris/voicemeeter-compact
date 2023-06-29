@@ -154,7 +154,7 @@ class ChannelLabelFrame(ttk.LabelFrame):
         self.configure(text=retval)
 
     def grid_configure(self):
-        self.grid(sticky=(tk.N, tk.S))
+        self.grid(padx=_configuration.channel_xpadding, sticky=(tk.N, tk.S))
         [
             child.grid_configure(padx=1, pady=1, sticky=(tk.W, tk.E))
             for child in self.winfo_children()
@@ -258,7 +258,7 @@ class ChannelFrame(ttk.Frame):
 
     def grid_configure(self):
         [
-            self.columnconfigure(i, minsize=_configuration.level_width)
+            self.columnconfigure(i, minsize=_configuration.channel_width)
             for i, _ in enumerate(self.labelframes)
         ]
         [self.rowconfigure(0, minsize=100) for i, _ in enumerate(self.labelframes)]

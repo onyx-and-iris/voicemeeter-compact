@@ -195,9 +195,9 @@ class NavigationFrameBuilder(AbstractBuilder):
             if isinstance(child, ttk.Checkbutton)
         ]
         if _configuration.themes_enabled:
-            self.navframe.rowconfigure(1, minsize=_configuration.level_height)
+            self.navframe.rowconfigure(1, minsize=_configuration.channel_height)
         else:
-            self.navframe.rowconfigure(1, minsize=_configuration.level_height + 10)
+            self.navframe.rowconfigure(1, minsize=_configuration.channel_height + 10)
 
     def teardown(self):
         pass
@@ -243,7 +243,7 @@ class ChannelLabelFrameBuilder(AbstractBuilder):
             orient="vertical",
             variable=self.labelframe.gain,
             command=self.labelframe.scale_callback,
-            length=_configuration.level_height,
+            length=_configuration.channel_height,
         )
         self.scale.grid(column=1, row=0)
         self.scale.bind("<Double-Button-1>", self.labelframe.reset_gain)
@@ -324,7 +324,7 @@ class ChannelConfigFrameBuilder(AbstractBuilder):
         ]
         self.configframe.grid(sticky=(tk.W))
         [
-            self.configframe.columnconfigure(i, minsize=_configuration.level_width)
+            self.configframe.columnconfigure(i, minsize=_configuration.channel_width)
             for i in range(self.configframe.phys_out + self.configframe.virt_out)
         ]
 
@@ -392,7 +392,7 @@ class StripConfigFrameBuilder(ChannelConfigFrameBuilder):
             from_=0.0,
             to=10.0,
             orient="horizontal",
-            length=_configuration.level_width,
+            length=_configuration.channel_width,
             variable=self.configframe.slider_vars[
                 self.configframe.slider_params.index("comp.knob")
             ],
@@ -416,7 +416,7 @@ class StripConfigFrameBuilder(ChannelConfigFrameBuilder):
             from_=0.0,
             to=10.0,
             orient="horizontal",
-            length=_configuration.level_width,
+            length=_configuration.channel_width,
             variable=self.configframe.slider_vars[
                 self.configframe.slider_params.index("gate.knob")
             ],
@@ -440,7 +440,7 @@ class StripConfigFrameBuilder(ChannelConfigFrameBuilder):
             from_=-40,
             to=12,
             orient="horizontal",
-            length=_configuration.level_width,
+            length=_configuration.channel_width,
             variable=self.configframe.slider_vars[
                 self.configframe.slider_params.index("limit")
             ],
@@ -464,7 +464,7 @@ class StripConfigFrameBuilder(ChannelConfigFrameBuilder):
             from_=0.0,
             to=10.0,
             orient="horizontal",
-            length=_configuration.level_width,
+            length=_configuration.channel_width,
             variable=self.configframe.slider_vars[
                 self.configframe.slider_params.index("audibility")
             ],
