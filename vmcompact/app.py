@@ -123,7 +123,7 @@ class App(tk.Tk):
 
         Destroy all top level frames.
         """
-        self.target.subject.remove(self)
+        self.target.subject.remove([self.on_pdirty, self.on_ldirty])
         self.subject.clear()
         [
             frame.destroy()
