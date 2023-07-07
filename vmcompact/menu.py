@@ -85,23 +85,15 @@ class Menus(tk.Menu):
         self.menu_configs_load = tk.Menu(self.menu_configs, tearoff=0)
         self.menu_configs.add_cascade(menu=self.menu_configs_load, label="Load config")
         self.config_defaults = {"reset"}
-        if len(self.target.configs) > len(self.config_defaults) and all(
-            key in self.target.configs for key in self.config_defaults
+        if len(self.parent.userconfigs) > len(self.config_defaults) and all(
+            key in self.parent.userconfigs for key in self.config_defaults
         ):
             [
                 self.menu_configs_load.add_command(
                     label=profile, command=partial(self.load_profile, profile)
                 )
-                for profile in self.target.configs.keys()
+                for profile in self.parent.userconfigs.keys()
                 if profile not in self.config_defaults
-            ]
-        elif self.parent.userconfigs:
-            [
-                self.menu_configs_load.add_command(
-                    label=name, command=partial(self.load_custom_profile, data)
-                )
-                for name, data in self.parent.userconfigs.items()
-                if name not in self.config_defaults
             ]
         else:
             self.menu_configs.entryconfig(0, state="disabled")
@@ -315,21 +307,13 @@ class Menus(tk.Menu):
 
     def menu_teardown(self, i):
         # remove config load menus
-        removed = []
-        for key in self.target.configs.keys():
-            if key not in self.config_defaults:
-                try:
-                    self.menu_configs_load.delete(key)
-                    removed.append(key)
-                except tk._tkinter.tclError as e:
-                    self.logger.warning(f"{type(e).__name__}: {e}")
-
-        for key in self.parent.userconfigs.keys():
-            if key not in self.config_defaults and key not in removed:
-                try:
-                    self.menu_configs_load.delete(key)
-                except tk._tkinter.tclError as e:
-                    self.logger.warning(f"{type(e).__name__}: {e}")
+        if len(self.parent.userconfigs) > len(self.config_defaults):
+            for profile in self.parent.userconfigs:
+                if profile not in self.config_defaults:
+                    try:
+                        self.menu_configs_load.delete(profile)
+                    except tk._tkinter.tclError as e:
+                        self.logger.warning(f"{type(e).__name__}: {e}")
 
         [
             self.menu_vban.entryconfig(j, state="disabled")
@@ -338,24 +322,13 @@ class Menus(tk.Menu):
         ]
 
     def menu_setup(self):
-        if len(self.target.configs) > len(self.config_defaults) and all(
-            key in self.target.configs for key in self.config_defaults
-        ):
-            [
-                self.menu_configs_load.add_command(
-                    label=profile, command=partial(self.load_profile, profile)
-                )
-                for profile in self.target.configs.keys()
-                if profile not in self.config_defaults
-            ]
-        elif self.parent.userconfigs:
-            [
-                self.menu_configs_load.add_command(
-                    label=name, command=partial(self.load_custom_profile, data)
-                )
-                for name, data in self.parent.userconfigs.items()
-                if name not in self.config_defaults
-            ]
+        if len(self.parent.userconfigs) > len(self.config_defaults):
+            for profile in self.parent.userconfigs:
+                if profile not in self.config_defaults:
+                    self.menu_configs_load.add_command(
+                        label=profile, command=partial(self.load_profile, profile)
+                    )
+                    self.menu_configs.entryconfig(0, state="normal")
         else:
             self.menu_configs.entryconfig(0, state="disabled")
 

@@ -145,7 +145,7 @@ class App(tk.Tk):
 
     @cached_property
     def userconfigs(self):
-        self._configs = loader(self.kind.name)
+        self._configs = loader(self.kind.name, self.target)
         return self._configs
 
 
