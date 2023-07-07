@@ -315,16 +315,21 @@ class Menus(tk.Menu):
 
     def menu_teardown(self, i):
         # remove config load menus
-        [
-            self.menu_configs_load.delete(key)
-            for key in self.target.configs.keys()
-            if key not in self.config_defaults
-        ]
-        [
-            self.menu_configs_load.delete(key)
-            for key in self.parent.userconfigs.keys()
-            if key not in self.config_defaults
-        ]
+        removed = []
+        for key in self.target.configs.keys():
+            if key not in self.config_defaults:
+                try:
+                    self.menu_configs_load.delete(key)
+                    removed.append(key)
+                except tk._tkinter.tclError as e:
+                    self.logger.warning(f"{type(e).__name__}: {e}")
+
+        for key in self.parent.userconfigs.keys():
+            if key not in self.config_defaults and key not in removed:
+                try:
+                    self.menu_configs_load.delete(key)
+                except tk._tkinter.tclError as e:
+                    self.logger.warning(f"{type(e).__name__}: {e}")
 
         [
             self.menu_vban.entryconfig(j, state="disabled")
