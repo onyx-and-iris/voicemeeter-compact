@@ -14,8 +14,8 @@ include = ["vmcompact/img/cat.ico"]
 python = "^3.10"
 sv-ttk = "^2.5.1"
 tomli = { version = "^2.0.1", python = "<3.11" }
-voicemeeter-api = "^2.0.2"
-vban-cmd = "^2.0.0"
+voicemeeter-api = "^2.1.2"
+vban-cmd = "^2.2.0"
 
 [tool.poetry.dev-dependencies]
 black = { version = "^22.6.0", allow-prereleases = true }
