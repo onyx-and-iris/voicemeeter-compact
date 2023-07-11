@@ -224,7 +224,10 @@ class Menus(tk.Menu):
         ]
 
     def action_invoke_voicemeeter(self, cmd):
-        getattr(self.target.command, cmd)()
+        if fn := getattr(self.target.command, cmd):
+            fn()
+        if cmd == "shutdown":
+            self.parent.destroy()
 
     def action_set_voicemeeter(self, cmd, val=True):
         if cmd == "lock":
@@ -398,7 +401,7 @@ class Menus(tk.Menu):
         self.vban.logout()
         # build new app frames according to a kind
         kind = kind_get(self.vmr.type)
-        self.parent.build_app(kind, None)
+        self.parent.build_app(kind)
         target_menu = getattr(self, f"menu_vban_{i+1}")
         target_menu.entryconfig(0, state="normal")
         target_menu.entryconfig(1, state="disabled")
