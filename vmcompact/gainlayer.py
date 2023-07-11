@@ -78,6 +78,14 @@ class GainLayer(ttk.LabelFrame):
         self.parent.target.event.add("ldirty")
         self.after(500, self.resume_updates)
 
+    def pause_updates(self, func, *args):
+        """function wrapper, adds a 50ms delay on updates"""
+        _base_values.run_update = False
+
+        func(*args)
+
+        self.after(50, self.resume_updates)
+
     def resume_updates(self):
         _base_values.run_update = True
 

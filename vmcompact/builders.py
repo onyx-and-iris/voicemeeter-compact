@@ -249,7 +249,13 @@ class ChannelLabelFrameBuilder(AbstractBuilder):
         self.scale.bind("<Double-Button-1>", self.labelframe.reset_gain)
         self.scale.bind("<Button-1>", self.labelframe.scale_press)
         self.scale.bind("<ButtonRelease-1>", self.labelframe.scale_release)
-        self.scale.bind("<MouseWheel>", self.labelframe._on_mousewheel)
+        self.scale.bind(
+            "<MouseWheel>",
+            partial(
+                self.labelframe.pause_updates,
+                self.labelframe._on_mousewheel,
+            ),
+        )
 
     def add_gain_label(self):
         self.labelframe.gain_label = ttk.Label(
@@ -263,7 +269,7 @@ class ChannelLabelFrameBuilder(AbstractBuilder):
         self.button_mute = ttk.Checkbutton(
             self.labelframe,
             text="MUTE",
-            command=partial(self.labelframe.toggle_mute, "mute"),
+            command=partial(self.labelframe.pause_updates, self.labelframe.toggle_mute),
             style=f"{'Toggle.TButton' if _configuration.themes_enabled else f'{self.identifier}Mute{self.index}.TButton'}",
             variable=self.labelframe.mute,
         )
@@ -283,7 +289,7 @@ class ChannelLabelFrameBuilder(AbstractBuilder):
         self.button_on = ttk.Checkbutton(
             self.labelframe,
             text="ON",
-            command=self.labelframe.set_on,
+            command=partial(self.labelframe.pause_updates, self.labelframe.set_on),
             style=f"{'Toggle.TButton' if _configuration.themes_enabled else f'{self.identifier}On{self.index}.TButton'}",
             variable=self.labelframe.on,
         )
@@ -486,7 +492,9 @@ class StripConfigFrameBuilder(ChannelConfigFrameBuilder):
             ttk.Checkbutton(
                 self.configframe,
                 text=param,
-                command=partial(self.configframe.toggle_a, param),
+                command=partial(
+                    self.configframe.pause_updates, self.configframe.toggle_a, param
+                ),
                 style=f"{'Toggle.TButton' if _configuration.themes_enabled else f'{param}.TButton'}",
                 variable=self.configframe.phys_out_params_vars[
                     self.configframe.phys_out_params.index(param)
@@ -507,7 +515,9 @@ class StripConfigFrameBuilder(ChannelConfigFrameBuilder):
             ttk.Checkbutton(
                 self.configframe,
                 text=param,
-                command=partial(self.configframe.toggle_b, param),
+                command=partial(
+                    self.configframe.pause_updates, self.configframe.toggle_b, param
+                ),
                 style=f"{'Toggle.TButton' if _configuration.themes_enabled else f'{param}.TButton'}",
                 variable=self.configframe.virt_out_params_vars[
                     self.configframe.virt_out_params.index(param)
@@ -528,7 +538,9 @@ class StripConfigFrameBuilder(ChannelConfigFrameBuilder):
             ttk.Checkbutton(
                 self.configframe,
                 text=param,
-                command=partial(self.configframe.toggle_p, param),
+                command=partial(
+                    self.configframe.pause_updates, self.configframe.toggle_p, param
+                ),
                 style=f"{'Toggle.TButton' if _configuration.themes_enabled else f'{param}.TButton'}",
                 variable=self.configframe.param_vars[i],
             )
@@ -578,10 +590,16 @@ class BusConfigFrameBuilder(ChannelConfigFrameBuilder):
             column=0, row=0, columnspan=2, sticky=(tk.W)
         )
         self.configframe.busmode_button.bind(
-            "<Button-1>", self.configframe.rotate_bus_modes_right
+            "<Button-1>",
+            partial(
+                self.configframe.pause_updates, self.configframe.rotate_bus_modes_right
+            ),
         )
         self.configframe.busmode_button.bind(
-            "<Button-3>", self.configframe.rotate_bus_modes_left
+            "<Button-3>",
+            partial(
+                self.configframe.pause_updates, self.configframe.rotate_bus_modes_left
+            ),
         )
 
     def create_param_buttons(self):
@@ -589,7 +607,9 @@ class BusConfigFrameBuilder(ChannelConfigFrameBuilder):
             ttk.Checkbutton(
                 self.configframe,
                 text=param,
-                command=partial(self.configframe.toggle_p, param),
+                command=partial(
+                    self.configframe.pause_updates, self.configframe.toggle_p, param
+                ),
                 style=f"{'Toggle.TButton' if _configuration.themes_enabled else f'{param}.TButton'}",
                 variable=self.configframe.param_vars[i],
             )

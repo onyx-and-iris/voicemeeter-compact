@@ -88,17 +88,27 @@ class ChannelLabelFrame(ttk.LabelFrame):
         self.parent.target.event.add("ldirty")
         self.after(500, self.resume_updates)
 
+    def pause_updates(self, func, *args):
+        """function wrapper, adds a 50ms delay on updates"""
+        _base_values.run_update = False
+
+        func(*args)
+
+        self.after(50, self.resume_updates)
+
     def resume_updates(self):
         _base_values.run_update = True
 
     def _on_mousewheel(self, event):
-        _base_values.run_update = False
         self.gain.set(
-            self.gain.get()
-            + (
-                _configuration.mwscroll_step
-                if event.delta > 0
-                else -_configuration.mwscroll_step
+            round(
+                self.gain.get()
+                + (
+                    _configuration.mwscroll_step
+                    if event.delta > 0
+                    else -_configuration.mwscroll_step
+                ),
+                1,
             )
         )
         if self.gain.get() > 12:
@@ -106,7 +116,7 @@ class ChannelLabelFrame(ttk.LabelFrame):
         elif self.gain.get() < -60:
             self.gain.set(-60)
         self.setter("gain", self.gain.get())
-        self.after(1, self.resume_updates)
+        self.gainlabel.set(round(self.gain.get(), 1))
 
     def open_config(self):
         if self.conf.get():
