@@ -2,12 +2,14 @@ import logging
 import tkinter as tk
 from functools import cached_property
 from pathlib import Path
-from tkinter import ttk
+from tkinter import messagebox, ttk
 from typing import NamedTuple
+
+import voicemeeterlib
 
 from .builders import MainFrameBuilder
 from .configurations import loader
-from .data import _base_values, _configuration, _kinds_all
+from .data import _base_values, _configuration, _kinds_all, get_configuration
 from .errors import VMCompactError
 from .menu import Menus
 from .subject import Subject
@@ -48,7 +50,7 @@ class App(tk.Tk):
         self.minsize(275, False)
         self.subject = Subject()
         self._configs = None
-        self["menu"] = Menus(self, vmr)
+        self.menu = self["menu"] = Menus(self, vmr)
         self.styletable = ttk.Style()
         if _configuration.config:
             vmr.apply_config(_configuration.config)
@@ -58,11 +60,7 @@ class App(tk.Tk):
         self.drag_id = ""
         self.bind("<Configure>", self.dragging)
 
-    def start_updates(self):
-        self.logger.debug("updates started")
-        _base_values.run_update = True
-        if self._vmr.gui.launched_by_api:
-            self.on_pdirty()
+        self.after(1, self.healthcheck_step)
 
     def __str__(self):
         return f"{type(self).__name__}App"
@@ -147,6 +145,42 @@ class App(tk.Tk):
     def userconfigs(self):
         self._configs = loader(self.kind.name, self.target)
         return self._configs
+
+    def start_updates(self):
+        self.logger.debug("updates started")
+        _base_values.run_update = True
+        if self._vmr.gui.launched_by_api:
+            self.on_pdirty()
+
+    def healthcheck_step(self):
+        if not _base_values.vban_connected:
+            try:
+                self._vmr.pdirty
+            except voicemeeterlib.error.CAPIError:
+                resp = messagebox.askyesno(message="Restart Voicemeeter GUI?")
+                if resp:
+                    self.logger.debug(
+                        "healthcheck failed, rebuilding the app after GUI restart."
+                    )
+                    self._vmr.end_thread()
+                    self._vmr.run_voicemeeter(self._vmr.kind.name)
+                    _base_values.run_update = False
+                    self._vmr.init_thread()
+                    self.after(8000, self.start_updates)
+                    self._destroy_top_level_frames()
+                    self.build_app(self._vmr.kind)
+                    vban_config = get_configuration("vban")
+                    for i, _ in enumerate(vban_config):
+                        target = getattr(self.menu, f"menu_vban_{i+1}")
+                        target.entryconfig(0, state="normal")
+                        target.entryconfig(1, state="disabled")
+                    [
+                        self.menu.menu_vban.entryconfig(j, state="normal")
+                        for j, _ in enumerate(self.menu.menu_vban.winfo_children())
+                    ]
+                else:
+                    self.destroy()
+        self.after(250, self.healthcheck_step)
 
 
 _apps = {kind.name: App.make(kind) for kind in _kinds_all}
