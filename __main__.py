@@ -4,12 +4,12 @@ import vmcompact
 
 
 def main():
-    with voicemeeterlib.api(kind_id) as vmr:
-        app = vmcompact.connect(kind_id, vmr)
+    KIND_ID = "banana"
+
+    with voicemeeterlib.api(KIND_ID) as vmr:
+        app = vmcompact.connect(KIND_ID, vmr)
         app.mainloop()
 
 
 if __name__ == "__main__":
-    kind_id = "banana"
-
     main()

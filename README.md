@@ -34,16 +34,16 @@ import vmcompact
 
 
 def main():
-    # pass the kind_id and the vm object to the app
-    with voicemeeterlib.api(kind_id) as vm:
-        app = vmcompact.connect(kind_id, vm)
+    # choose the kind of Voicemeeter (Local connection)
+    KIND_ID = "banana"
+
+    # pass the KIND_ID and the vm object to the app
+    with voicemeeterlib.api(KIND_ID) as vm:
+        app = vmcompact.connect(KIND_ID, vm)
         app.mainloop()
 
 
 if __name__ == "__main__":
-    # choose the kind of Voicemeeter (Local connection)
-    kind_id = "banana"
-
     main()
 ```
 
@@ -53,9 +53,9 @@ It's important to know that only labelled strips and buses will appear in the Ch
 
 If the GUI looks like the above when you first load it, then no channels are labelled. From the menu, `Configs->Load config` you may load an example config. Save your current Voicemeeter settings first :).
 
-### kind_id
+### KIND_ID
 
-Set the kind of Voicemeeter, kind_id may be:
+Set the kind of Voicemeeter, KIND_ID may be:
 
 -   `basic`
 -   `banana`

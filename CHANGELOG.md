@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   [ ] Add support for forest theme (if rbende adds it to pypi)
 
+## [1.9.0] - 2023-07-10
+
+### Added
+
+-   Should the voicemeeter-compact app lose communication with Voicemeeter GUI a popup will show asking to restart the GUI.
+    -   If yes is selected the app's mainframe will redraw, there will be a grace period before updates start again due to Voicemeeter engine startup.
+
+### Fixed
+
+-   From the menu, Voicemeeter->Shutdown now closes both the compact app and the main Voicemeeter GUI.
+
 ## [1.8.0] - 2023-06-29
 
 ### Added
