@@ -36,13 +36,13 @@ uvloop = ["uvloop (>=0.15.2)"]
 
 [[package]]
 name = "click"
-version = "8.1.3"
+version = "8.1.4"
 description = "Composable command line interface toolkit"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "click-8.1.3-py3-none-any.whl", hash = "sha256:bb4d8133cb15a609f44e8213d9b391b0809795062913b383c62be0ee95b1db48"},
-    {file = "click-8.1.3.tar.gz", hash = "sha256:7682dc8afb30297001674575ea00d1814d808d6a36af415a82bd481d37ba7b8e"},
+    {file = "click-8.1.4-py3-none-any.whl", hash = "sha256:2739815aaa5d2c986a88f1e9230c55e17f0caad3d958a5e13ad0797c166db9e3"},
+    {file = "click-8.1.4.tar.gz", hash = "sha256:b97d0c74955da062a7d4ef92fadb583806a585b2ea81958a81bd72726cbb8e37"},
 ]
 
 [package.dependencies]
@@ -100,13 +100,13 @@ files = [
 
 [[package]]
 name = "platformdirs"
-version = "3.8.0"
+version = "3.8.1"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "platformdirs-3.8.0-py3-none-any.whl", hash = "sha256:ca9ed98ce73076ba72e092b23d3c93ea6c4e186b3f1c3dad6edd98ff6ffcca2e"},
-    {file = "platformdirs-3.8.0.tar.gz", hash = "sha256:b0cabcb11063d21a0b261d557acb0a9d2126350e63b70cdf7db6347baea456dc"},
+    {file = "platformdirs-3.8.1-py3-none-any.whl", hash = "sha256:cec7b889196b9144d088e4c57d9ceef7374f6c39694ad1577a0aab50d27ea28c"},
+    {file = "platformdirs-3.8.1.tar.gz", hash = "sha256:f87ca4fcff7d2b0f81c6a748a77973d7af0f4d526f98f308477c3c436c74d528"},
 ]
 
 [package.extras]
@@ -115,13 +115,13 @@ test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=7.3.1)", "pytest-
 
 [[package]]
 name = "sv-ttk"
-version = "2.5.1"
+version = "2.5.3"
 description = "A gorgeous theme for Tkinter, based on Windows 11's UI"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "sv_ttk-2.5.1-py3-none-any.whl", hash = "sha256:c7388741e14316b4e9c3b9fd135e1e2e5b501f1b30c89b7af1e26286b38f2ccc"},
-    {file = "sv_ttk-2.5.1.tar.gz", hash = "sha256:e32d60587db7debe4d7d7438f66257ffcd9db5b8efbcb52151697fa8a662a4f5"},
+    {file = "sv_ttk-2.5.3-py3-none-any.whl", hash = "sha256:d13bf6a7b49316431eefcf83f30d0daf312c00553c4e0b6f91acffd7b2aaa1d3"},
+    {file = "sv_ttk-2.5.3.tar.gz", hash = "sha256:d9b9a5d14f4cbdd4e0bda2e1a84445b0aa852b99f74aafce9386459e385717b3"},
 ]
 
 [[package]]
@@ -137,13 +137,13 @@ files = [
 
 [[package]]
 name = "vban-cmd"
-version = "2.2.0"
+version = "2.3.2"
 description = "Python interface for the VBAN RT Packet Service (Sendtext)"
 optional = false
 python-versions = ">=3.10,<4.0"
 files = [
-    {file = "vban_cmd-2.2.0-py3-none-any.whl", hash = "sha256:ad0bd848b5412004c4c14976e8a9a18d0fc727599e343db0fb67f9427c8541fa"},
-    {file = "vban_cmd-2.2.0.tar.gz", hash = "sha256:7bad6001504fd052df3192c7d817e604703353f57efa7648c1f1d6e425665006"},
+    {file = "vban_cmd-2.3.2-py3-none-any.whl", hash = "sha256:28168a7ec1c6966fd4bcbaed3144219f8cdc2490f15dd8ecba2aa19f2a3461f5"},
+    {file = "vban_cmd-2.3.2.tar.gz", hash = "sha256:c33e338e3207f35a6b9f9026d29cf68af9e5f6d7c96aea4b581225f4befd844e"},
 ]
 
 [package.dependencies]
@@ -151,13 +151,13 @@ tomli = {version = ">=2.0.1,<3.0.0", markers = "python_version < \"3.11\""}
 
 [[package]]
 name = "voicemeeter-api"
-version = "2.1.2"
+version = "2.3.2"
 description = "A Python wrapper for the Voiceemeter API"
 optional = false
 python-versions = ">=3.10,<4.0"
 files = [
-    {file = "voicemeeter_api-2.1.2-py3-none-any.whl", hash = "sha256:43a6e36282a89f2701b58f627bdd21c5e17f9f9044bf3337059d89e91f25fc09"},
-    {file = "voicemeeter_api-2.1.2.tar.gz", hash = "sha256:c24c643e868535786860420fe5775a10e2ace6f79ec4905a172a1c64712f3d6b"},
+    {file = "voicemeeter_api-2.3.2-py3-none-any.whl", hash = "sha256:081bd6b3e27d8757e4c5ed239b4c58f9bcb4f4d16ebc9c88229e9390dac184c8"},
+    {file = "voicemeeter_api-2.3.2.tar.gz", hash = "sha256:aa700600b5910e4bb55df20cdf028aae2a44cc14bfd80dd0fe060aa03bbf7e02"},
 ]
 
 [package.dependencies]
@@ -166,4 +166,4 @@ tomli = {version = ">=2.0.1,<3.0.0", markers = "python_version < \"3.11\""}
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "3a59de3a76e4c0ca11c0166750fa1af7d7c887750f855b48c45359068ef04798"
+content-hash = "770291c3645dd9bfd28051c0deb13bf5ae17a510bfc2785b51be1bc5c7266b1a"

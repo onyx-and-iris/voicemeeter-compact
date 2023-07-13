@@ -155,7 +155,7 @@ class App(tk.Tk):
     def healthcheck_step(self):
         if not _base_values.vban_connected:
             try:
-                self._vmr.pdirty
+                self._vmr.version
             except voicemeeterlib.error.CAPIError:
                 resp = messagebox.askyesno(message="Restart Voicemeeter GUI?")
                 if resp:
