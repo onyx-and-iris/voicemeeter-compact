@@ -227,7 +227,7 @@ class Menus(tk.Menu):
         if fn := getattr(self.target.command, cmd):
             fn()
         if cmd == "shutdown":
-            self.parent.destroy()
+            self.parent.on_close_window()
 
     def action_set_voicemeeter(self, cmd, val=True):
         if cmd == "lock":

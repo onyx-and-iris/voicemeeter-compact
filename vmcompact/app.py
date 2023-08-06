@@ -50,6 +50,7 @@ class App(tk.Tk):
         self.minsize(275, False)
         self.subject = Subject()
         self._configs = None
+        self.protocol("WM_DELETE_WINDOW", self.on_close_window)
         self.menu = self["menu"] = Menus(self, vmr)
         self.styletable = ttk.Style()
         if _configuration.config:
@@ -181,6 +182,11 @@ class App(tk.Tk):
                 else:
                     self.destroy()
         self.after(250, self.healthcheck_step)
+
+    def on_close_window(self):
+        if _base_values.vban_connected:
+            self._vban.logout()
+        self.destroy()
 
 
 _apps = {kind.name: App.make(kind) for kind in _kinds_all}
