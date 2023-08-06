@@ -151,17 +151,18 @@ class ChannelLabelFrame(ttk.LabelFrame):
     def sync_labels(self):
         """sync labelframes according to label text"""
         retval = self.getter("label")
-        self.parent.label_cache[self.id].insert(self.index, retval)
-        if len(retval) > 10:
-            retval = f"{retval[:8]}.."
-        if not retval:
-            self.parent.columnconfigure(self.index, minsize=0)
-            self.parent.parent.subject.remove(self)
-            self.grid_remove()
-        else:
-            self.parent.parent.subject.add(self)
-            self.grid()
-        self.configure(text=retval)
+        if self.parent.label_cache[self.id][self.index] != retval:
+            self.parent.label_cache[self.id][self.index] = retval
+            if len(retval) > 10:
+                retval = f"{retval[:8]}.."
+            if not retval:
+                self.parent.columnconfigure(self.index, minsize=0)
+                self.parent.parent.subject.remove(self)
+                self.grid_remove()
+            else:
+                self.parent.parent.subject.add(self)
+                self.grid()
+            self.configure(text=retval)
 
     def grid_configure(self):
         self.grid(padx=_configuration.channel_xpadding, sticky=(tk.N, tk.S))
@@ -228,15 +229,18 @@ class Bus(ChannelLabelFrame):
 
 
 class ChannelFrame(ttk.Frame):
-    label_cache = {"strip": list(), "bus": list()}
-
     def init(self, parent, id):
         super().__init__(parent)
         self.parent = parent
         self.id = id
         self.phys_in, self.virt_in = parent.kind.ins
         self.phys_out, self.virt_out = parent.kind.outs
+        self.label_cache = {
+            "strip": [""] * (self.phys_in + self.virt_in),
+            "bus": [""] * (self.phys_out + self.virt_out),
+        }
         self.parent.subject.add(self)
+        self.update_labels()
 
     @property
     def target(self):
@@ -258,13 +262,13 @@ class ChannelFrame(ttk.Frame):
             if isinstance(frame, ttk.LabelFrame)
         )
 
+    def update_labels(self):
+        for labelframe in self.labelframes:
+            labelframe.on_update("labelframe")
+
     def on_update(self, subject):
         if subject == "pdirty":
-            target = getattr(self.target, self.id)
-            num = getattr(self.parent.kind, f"num_{self.id}")
-            if self.label_cache[self.id] != [target[i].label for i in range(num)]:
-                for labelframe in self.labelframes:
-                    labelframe.on_update("labelframe")
+            self.update_labels()
 
     def grid_configure(self):
         [
@@ -280,7 +284,7 @@ class ChannelFrame(ttk.Frame):
         setattr(self.parent, f"{self.identifier}_frame", None)
 
 
-def _make_channelframe(parent, id):
+def _make_channelframe(parent, identifier):
     """
     Creates a Channel Frame class of type strip or bus
     """
@@ -288,29 +292,33 @@ def _make_channelframe(parent, id):
     phys_in, virt_in = parent.kind.ins
     phys_out, virt_out = parent.kind.outs
 
-    def init_labels(self, id):
+    def init_labels(self):
         """
         Grids each labelframe, grid_removes any without a label
         """
 
         for i, labelframe in enumerate(
-            getattr(self, "strips" if id == "strip" else "buses")
+            getattr(self, "strips" if identifier == "strip" else "buses")
         ):
             labelframe.grid(row=0, column=i)
-            if not labelframe.target.label:
+            label = labelframe.target.label
+            if not label:
                 self.columnconfigure(i, minsize=0)
                 labelframe.grid_remove()
+            self.label_cache[identifier][i] = label
 
     def init_strip(self, *args, **kwargs):
-        self.init(parent, id)
-        self.strips = tuple(Strip(self, i, id) for i in range(phys_in + virt_in))
+        self.init(parent, identifier)
+        self.strips = tuple(
+            Strip(self, i, identifier) for i in range(phys_in + virt_in)
+        )
         self.grid(row=0, column=0, sticky=(tk.W))
         self.grid_configure()
-        init_labels(self, id)
+        init_labels(self)
 
     def init_bus(self, *args, **kwargs):
-        self.init(parent, id)
-        self.buses = tuple(Bus(self, i, id) for i in range(phys_out + virt_out))
+        self.init(parent, identifier)
+        self.buses = tuple(Bus(self, i, identifier) for i in range(phys_out + virt_out))
         if _configuration.extended:
             if _configuration.extends_horizontal:
                 self.grid(row=0, column=2, sticky=(tk.W))
@@ -319,11 +327,11 @@ def _make_channelframe(parent, id):
         else:
             self.grid(row=0, column=0)
         self.grid_configure()
-        init_labels(self, id)
+        init_labels(self)
 
-    if id == "strip":
+    if identifier == "strip":
         CHANNELFRAME_cls = type(
-            f"ChannelFrame{id.capitalize()}",
+            f"ChannelFrame{identifier.capitalize()}",
             (ChannelFrame,),
             {
                 "__init__": init_strip,
@@ -331,7 +339,7 @@ def _make_channelframe(parent, id):
         )
     else:
         CHANNELFRAME_cls = type(
-            f"ChannelFrame{id.capitalize()}",
+            f"ChannelFrame{identifier.capitalize()}",
             (ChannelFrame,),
             {
                 "__init__": init_bus,
