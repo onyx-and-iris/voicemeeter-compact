@@ -273,4 +273,4 @@ tomli = {version = ">=2.0.1,<3.0.0", markers = "python_version < \"3.11\""}
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "781e80b07b3619ad403c9dd62c0c0cae82eebd5ee07dba5ca7a8aa451d26d0a6"
+content-hash = "2eaf6fcdc32697296201706d983c0d336af4e6644bae2a0d38d11fff8fa21985"
