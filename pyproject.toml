@@ -11,7 +11,7 @@ packages = [{ include = "vmcompact" }]
 include = ["vmcompact/img/cat.ico"]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = ">=3.10,<3.13"
 sv-ttk = "^2.5.5"
 tomli = { version = "^2.0.1", python = "<3.11" }
 voicemeeter-api = "^2.4.4"
@@ -21,6 +21,14 @@ vban-cmd = "^2.4.4"
 black = { version = "^22.6.0", allow-prereleases = true }
 isort = "^5.12.0"
 
+[tool.poetry.group.dev.dependencies]
+pyinstaller = "^5.13.1"
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+build_sunvalley = "scripts:build_sunvalley"
+build_forest = "scripts:build_forest"
+build_all = "scripts:build_all"

@@ -132,4 +132,11 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# build
+sv_ttk/
+theme/
+
+sv_*.py
+fst_*.py
+
 .vscode/
