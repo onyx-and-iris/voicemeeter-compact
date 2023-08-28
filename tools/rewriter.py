@@ -201,14 +201,14 @@ def rewrite_menu():
 
 def prepare_for_build():
     ################# MOVE FILES FROM PACKAGE DIR INTO SRC DIR #########################
-    for path in (
-        Path(PACKAGE_DIR) / "app.py",
-        Path(PACKAGE_DIR) / "builders.py",
-        Path(PACKAGE_DIR) / "menu.py",
+    for file in (
+        PACKAGE_DIR / "app.py",
+        PACKAGE_DIR / "builders.py",
+        PACKAGE_DIR / "menu.py",
     ):
-        if path.exists():
-            logger.debug(f"moving {str(path)}")
-            path.rename(SRC_DIR / f"{path.stem}.bk")
+        if file.exists():
+            logger.debug(f"moving {str(file)}")
+            file.rename(SRC_DIR / f"{file.stem}.bk")
 
     ###################### RUN THE FILE REWRITER FOR EACH *.BK #########################
     steps = (
