@@ -4,9 +4,10 @@ import webbrowser
 from functools import partial
 from tkinter import messagebox
 
-import sv_ttk
 import vban_cmd
 from vban_cmd.error import VBANCMDConnectionError
+
+import sv_ttk
 
 from .data import _base_values, _configuration, get_configuration, kind_get
 
@@ -238,10 +239,14 @@ class Menus(tk.Menu):
     def load_custom_profile(self, profile):
         self.logger.info(f"loading user profile {profile}")
         self.target.apply(profile)
+        if not _base_values.run_update:
+            self.parent.subject.notify("pdirty")
 
     def load_profile(self, profile):
         self.logger.info(f"loading user profile {profile}")
         self.target.apply_config(profile)
+        if not _base_values.run_update:
+            self.parent.subject.notify("pdirty")
 
     def load_defaults(self):
         msg = (

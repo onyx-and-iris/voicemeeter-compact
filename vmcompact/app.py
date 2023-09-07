@@ -42,13 +42,13 @@ class App(tk.Tk):
         self.logger = logger.getChild(self.__class__.__name__)
         self._vmr = vmr
         self._vmr.event.add(["pdirty", "ldirty"])
-        self.after(12000 if self._vmr.gui.launched_by_api else 1, self.start_updates)
+        self.subject = Subject()
+        self.start_updates()
         self._vmr.init_thread()
         icon_path = Path(__file__).parent.resolve() / "img" / "cat.ico"
         if icon_path.is_file():
             self.iconbitmap(str(icon_path))
         self.minsize(275, False)
-        self.subject = Subject()
         self._configs = None
         self.protocol("WM_DELETE_WINDOW", self.on_close_window)
         self.menu = self["menu"] = Menus(self, vmr)
@@ -148,10 +148,15 @@ class App(tk.Tk):
         return self._configs
 
     def start_updates(self):
-        self.logger.debug("updates started")
-        _base_values.run_update = True
+        def init():
+            self.logger.debug("updates started")
+            _base_values.run_update = True
+
         if self._vmr.gui.launched_by_api:
-            self.on_pdirty()
+            self.subject.notify("pdirty")
+            self.after(12000, init)
+        else:
+            init()
 
     def healthcheck_step(self):
         if not _base_values.vban_connected:
