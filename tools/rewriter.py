@@ -36,7 +36,7 @@ def rewrite_app():
                                 "        self._theme = theme\n",
                                 '        tcldir = Path.cwd() / "theme"\n',
                                 "        if not tcldir.is_dir():\n",
-                                '            tcldir = Path.cwd() / "builds" / "theme"\n',
+                                '            tcldir = Path.cwd() / "_internal" / "theme"\n',
                                 '        self.tk.call("source", tcldir.resolve() / f"forest-{self._theme}.tcl")\n',
                             ),
                         )
