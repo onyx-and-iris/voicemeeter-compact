@@ -18,7 +18,7 @@ voicemeeter-api = "^2.5.3"
 vban-cmd = "^2.4.11"
 
 [tool.poetry.group.dev.dependencies]
-black = { version = "^22.6.0", allow-prereleases = true }
+black = { version = ">=22.6,<25.0", allow-prereleases = true }
 isort = "^5.12.0"
 
 
