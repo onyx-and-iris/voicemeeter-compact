@@ -110,7 +110,7 @@ Configure certain startup states for the app.
     Configure a user config to load on app startup. Don't include the .toml extension in the config name.
 
 -   `theme`
-    By default the app loads up the [Sun Valley light or dark theme](https://github.com/rdbende/Sun-Valley-ttk-theme) by @rdbende. You have the option to load up the app without any theme loaded. Simply set `enabled` to false and `mode` will take no effect.
+    By default the app loads up the [Sun Valley light or dark theme][def] by @rdbende. You have the option to load up the app without any theme loaded. Simply set `enabled` to false and `mode` will take no effect.
 
 -   `extends`
     Extending the app will show both strips and buses. In reduced mode only one or the other. This app will extend both horizontally and vertically, simply set `extends_horizontal` true or false accordingly.
@@ -150,7 +150,7 @@ port = 6990
 
 Three example user configs are included with the package, one for each kind of Voicemeeter. Use these to configure parameter startup states. Any parameter supported by the underlying interfaces may be used. Check the 'multiple-parameters' section for more info:
 
-[Python Interface for Voicemeeter API](https://github.com/onyx-and-iris/voicemeeter-api-python#multiple-parameters)
+[Python Interface for the Voicemeeter API](https://github.com/onyx-and-iris/voicemeeter-api-python#multiple-parameters)
 
 [Python Interface for VBAN CMD](https://github.com/onyx-and-iris/vban-cmd-python#multiple-parameters)
 
@@ -158,6 +158,9 @@ User configs may be loaded at any time via the menu.
 
 ## Special Thanks
 
-[Vincent Burel](https://github.com/vburel2018) for creating Voicemeeter, its SDK, the C Remote API, the RT Packet service and Streamer View app!
+[Vincent Burel](https://github.com/vburel2018) for creating Voicemeeter and its SDK.
 
-[Rdbende](https://github.com/rdbende) for creating the beautiful Sun Valley Tkinter theme and adding it to Pypi!
+[Rdbende](https://github.com/rdbende) for creating the beautiful [Sun Valley theme][sv-theme].
+
+
+[sv-theme]: https://github.com/rdbende/Sun-Valley-ttk-theme
