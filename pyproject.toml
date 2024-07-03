@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "voicemeeter-compact"
-version = "1.9.4"
+version = "1.9.5"
 description = "A Compact Voicemeeter Remote App"
 authors = ["onyx-and-iris <code@onyxandiris.online>"]
 license = "MIT"
