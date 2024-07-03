@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
--   [ ] Add support for forest theme (if rbende adds it to pypi)
+-   [ ] 
+
+## [1.9.5] - 2024-07-03
+
+### Changed
+
+-   Launching the Voicemeeter Compact app will now launch the x64 bit Voicemeeter GUI (on 64 bit systems) for all kinds.
 
 ## [1.9.0] - 2023-07-10
 
