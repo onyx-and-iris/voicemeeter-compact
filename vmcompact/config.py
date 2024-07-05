@@ -241,9 +241,7 @@ class BusConfig(Config):
         self.builder.create_param_buttons()
 
     def current_bus_mode(self):
-        for mode in self.bus_modes:
-            if getattr(self.target.mode, mode):
-                return mode
+        return self.target.mode.get()
 
     def rotate_bus_modes_right(self, *args):
         current_mode = self.current_bus_mode()

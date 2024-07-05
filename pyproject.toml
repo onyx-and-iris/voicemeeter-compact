@@ -15,7 +15,7 @@ python = ">=3.10,<3.13"
 sv-ttk = "^2.6.0"
 tomli = { version = "^2.0.1", python = "<3.11" }
 voicemeeter-api = "^2.6.0"
-vban-cmd = "^2.4.11"
+vban-cmd = "^2.4.12"
 
 [tool.poetry.group.dev.dependencies]
 black = { version = ">=22.6,<25.0", allow-prereleases = true }

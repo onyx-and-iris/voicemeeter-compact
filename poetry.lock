@@ -280,13 +280,13 @@ files = [
 
 [[package]]
 name = "vban-cmd"
-version = "2.4.11"
+version = "2.4.12"
 description = "Python interface for the VBAN RT Packet Service (Sendtext)"
 optional = false
-python-versions = ">=3.10,<4.0"
+python-versions = "<4.0,>=3.10"
 files = [
-    {file = "vban_cmd-2.4.11-py3-none-any.whl", hash = "sha256:a74b7631222f340488f5d45bc9aa9d4e7a0f919687c9715619e8809c684875b7"},
-    {file = "vban_cmd-2.4.11.tar.gz", hash = "sha256:250ca8043f075eee11d2a811142d0205900d14d7e2f0cd98eb597901ead738f5"},
+    {file = "vban_cmd-2.4.12-py3-none-any.whl", hash = "sha256:418f97a22b474f97e985149eedcd66756e2a192c92225cdf5c37640f235e46e8"},
+    {file = "vban_cmd-2.4.12.tar.gz", hash = "sha256:3bc1b0ff584d1c3e611d9f0c29d4a8a1a017ebcb891bf0c8ee458a95e711ec06"},
 ]
 
 [package.dependencies]
@@ -309,4 +309,4 @@ tomli = {version = ">=2.0.1,<3.0.0", markers = "python_version < \"3.11\""}
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "343eb64c79bba2d92eeb9af614c782dd175bd8a7b1a236a330b1dd9ae4d18a57"
+content-hash = "a308dcf090e2f693491364a0a8cd7a1e79961c677d6cd5eb0eea0ca31aa77e9c"
