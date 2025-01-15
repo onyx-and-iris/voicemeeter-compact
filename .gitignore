@@ -133,10 +133,7 @@ dmypy.json
 .pyre/
 
 # build
-sv_ttk/
 theme/
-
-sv_*.py
-fst_*.py
+spec/
 
 .vscode/
