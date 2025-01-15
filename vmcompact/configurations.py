@@ -13,9 +13,9 @@ configuration = {}
 
 def get_configpath():
     configpaths = [
-        Path.cwd() / "configs",
-        Path.home() / ".config" / "vm-compact" / "configs",
-        Path.home() / "Documents" / "Voicemeeter" / "configs",
+        Path.cwd() / 'configs',
+        Path.home() / '.config' / 'vm-compact' / 'configs',
+        Path.home() / 'Documents' / 'Voicemeeter' / 'configs',
     ]
     for configpath in configpaths:
         if configpath.exists():
@@ -23,55 +23,55 @@ def get_configpath():
 
 
 if configpath := get_configpath():
-    filepaths = list(configpath.glob("*.toml"))
-    if any(f.stem in ("app", "vban") for f in filepaths):
+    filepaths = list(configpath.glob('*.toml'))
+    if any(f.stem in ('app', 'vban') for f in filepaths):
         configs = {}
         for filepath in filepaths:
-            filename = filepath.with_suffix("").stem
-            if filename in ("app", "vban"):
+            filename = filepath.with_suffix('').stem
+            if filename in ('app', 'vban'):
                 try:
-                    with open(filepath, "rb") as f:
+                    with open(filepath, 'rb') as f:
                         configs[filename] = tomllib.load(f)
-                    logger.info(f"configuration: {filename} loaded into memory")
+                    logger.info(f'configuration: {filename} loaded into memory')
                 except tomllib.TOMLDecodeError:
-                    logger.error(f"Invalid TOML config: configs/{filename.stem}")
+                    logger.error(f'Invalid TOML config: configs/{filename.stem}')
         configuration |= configs
 
 _defaults = {
-    "configs": {
-        "config": None,
+    'configs': {
+        'config': None,
     },
-    "theme": {
-        "enabled": True,
-        "mode": "light",
+    'theme': {
+        'enabled': True,
+        'mode': 'light',
     },
-    "extends": {
-        "extended": True,
-        "extends_horizontal": True,
+    'extends': {
+        'extended': True,
+        'extends_horizontal': True,
     },
-    "channel": {
-        "width": 80,
-        "height": 130,
-        "xpadding": 3,
+    'channel': {
+        'width': 80,
+        'height': 130,
+        'xpadding': 3,
     },
-    "mwscroll_step": {
-        "size": 3,
+    'mwscroll_step': {
+        'size': 3,
     },
-    "submixes": {
-        "default": 0,
+    'submixes': {
+        'default': 0,
     },
-    "navigation": {"show": True},
+    'navigation': {'show': True},
 }
 
 
-if "app" in configuration:
+if 'app' in configuration:
     for key in _defaults:
-        if key in configuration["app"]:
-            configuration["app"][key] = _defaults[key] | configuration["app"][key]
+        if key in configuration['app']:
+            configuration['app'][key] = _defaults[key] | configuration['app'][key]
         else:
-            configuration["app"][key] = _defaults[key]
+            configuration['app'][key] = _defaults[key]
 else:
-    configuration["app"] = _defaults
+    configuration['app'] = _defaults
 
 
 def get_configuration(key):
@@ -80,19 +80,19 @@ def get_configuration(key):
 
 
 def loader(kind_id, target):
-    configs = {"reset": target.configs["reset"]}
+    configs = {'reset': target.configs['reset']}
     if configpath := get_configpath():
         userconfigpath = configpath / kind_id
         if userconfigpath.exists():
-            filepaths = list(userconfigpath.glob("*.toml"))
+            filepaths = list(userconfigpath.glob('*.toml'))
             for filepath in filepaths:
-                identifier = filepath.with_suffix("").stem
+                identifier = filepath.with_suffix('').stem
                 try:
-                    with open(filepath, "rb") as f:
+                    with open(filepath, 'rb') as f:
                         configs[identifier] = tomllib.load(f)
-                    logger.info(f"loader: {identifier} loaded into memory")
+                    logger.info(f'loader: {identifier} loaded into memory')
                 except tomllib.TOMLDecodeError:
-                    logger.error(f"Invalid TOML config: configs/{filename.stem}")
+                    logger.error(f'Invalid TOML config: configs/{filename.stem}')
 
     target.configs = configs
     return target.configs

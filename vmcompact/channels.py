@@ -46,7 +46,7 @@ class ChannelLabelFrame(ttk.LabelFrame):
         try:
             return getattr(self.target, param)
         except AttributeError as e:
-            self.logger(f"{type(e).__name__}: {e}")
+            self.logger(f'{type(e).__name__}: {e}')
 
     def setter(self, param, value):
         if param in dir(self.target):  # avoid calling getattr (with hasattr)
@@ -56,19 +56,19 @@ class ChannelLabelFrame(ttk.LabelFrame):
         """callback function for scale widget"""
 
         val = round(self.gain.get(), 1)
-        self.setter("gain", val)
+        self.setter('gain', val)
         self.gainlabel.set(val)
 
     def toggle_mute(self, *args):
         self.target.mute = self.mute.get()
         if not _configuration.themes_enabled:
             self.styletable.configure(
-                f"{self.identifier}Mute{self.index}.TButton",
+                f'{self.identifier}Mute{self.index}.TButton',
                 background=f'{"red" if self.mute.get() else "white"}',
             )
 
     def reset_gain(self, *args):
-        self.setter("gain", 0)
+        self.setter('gain', 0)
         self.gain.set(0)
         self.gainlabel.set(self.gain.get())
 
@@ -76,16 +76,16 @@ class ChannelLabelFrame(ttk.LabelFrame):
         self.after(1, self.remove_events)
 
     def remove_events(self):
-        self.parent.target.event.remove("pdirty")
-        self.parent.target.event.remove("ldirty")
+        self.parent.target.event.remove('pdirty')
+        self.parent.target.event.remove('ldirty')
 
     def scale_release(self, *args):
         _base_values.run_update = False
         self.after(1, self.add_events)
 
     def add_events(self):
-        self.parent.target.event.add("pdirty")
-        self.parent.target.event.add("ldirty")
+        self.parent.target.event.add('pdirty')
+        self.parent.target.event.add('ldirty')
         self.after(500, self.resume_updates)
 
     def pause_updates(self, func, *args):
@@ -115,7 +115,7 @@ class ChannelLabelFrame(ttk.LabelFrame):
             self.gain.set(12)
         elif self.gain.get() < -60:
             self.gain.set(-60)
-        self.setter("gain", self.gain.get())
+        self.setter('gain', self.gain.get())
         self.gainlabel.set(round(self.gain.get(), 1))
 
     def open_config(self):
@@ -125,36 +125,36 @@ class ChannelLabelFrame(ttk.LabelFrame):
             self.parent.parent.config_frame.teardown()
         if not _configuration.themes_enabled:
             self.styletable.configure(
-                f"{self.identifier}Conf{self.index}.TButton",
+                f'{self.identifier}Conf{self.index}.TButton',
                 background=f'{"yellow" if self.conf.get() else "white"}',
             )
 
     def on_update(self, subject):
-        if subject == "ldirty":
+        if subject == 'ldirty':
             self.upd_levels()
-        elif subject == "pdirty":
+        elif subject == 'pdirty':
             self.sync_params()
-        elif subject == "labelframe":
+        elif subject == 'labelframe':
             self.after(5, self.sync_labels)
 
     def sync_params(self):
         """sync parameter states, update button colours"""
-        self.gain.set(self.getter("gain"))
+        self.gain.set(self.getter('gain'))
         self.gainlabel.set(round(self.gain.get(), 1))
-        self.mute.set(self.getter("mute"))
+        self.mute.set(self.getter('mute'))
         if not _configuration.themes_enabled:
             self.styletable.configure(
-                f"{self.identifier}Mute{self.index}.TButton",
-                background=f'{"red" if  self.mute.get() else "white"}',
+                f'{self.identifier}Mute{self.index}.TButton',
+                background=f'{"red" if self.mute.get() else "white"}',
             )
 
     def sync_labels(self):
         """sync labelframes according to label text"""
-        retval = self.getter("label")
+        retval = self.getter('label')
         if self.parent.label_cache[self.id][self.index] != retval:
             self.parent.label_cache[self.id][self.index] = retval
             if len(retval) > 10:
-                retval = f"{retval[:8]}.."
+                retval = f'{retval[:8]}..'
             if not retval:
                 self.parent.columnconfigure(self.index, minsize=0)
                 self.parent.parent.subject.remove(self)
@@ -236,8 +236,8 @@ class ChannelFrame(ttk.Frame):
         self.phys_in, self.virt_in = parent.kind.ins
         self.phys_out, self.virt_out = parent.kind.outs
         self.label_cache = {
-            "strip": [""] * (self.phys_in + self.virt_in),
-            "bus": [""] * (self.phys_out + self.virt_out),
+            'strip': [''] * (self.phys_in + self.virt_in),
+            'bus': [''] * (self.phys_out + self.virt_out),
         }
         self.parent.subject.add(self)
         self.update_labels()
@@ -264,10 +264,10 @@ class ChannelFrame(ttk.Frame):
 
     def update_labels(self):
         for labelframe in self.labelframes:
-            labelframe.on_update("labelframe")
+            labelframe.on_update('labelframe')
 
     def on_update(self, subject):
-        if subject == "pdirty":
+        if subject == 'pdirty':
             self.update_labels()
 
     def grid_configure(self):
@@ -281,7 +281,7 @@ class ChannelFrame(ttk.Frame):
         [self.parent.subject.remove(frame) for frame in self.labelframes]
         self.parent.subject.remove(self)
         self.destroy()
-        setattr(self.parent, f"{self.identifier}_frame", None)
+        setattr(self.parent, f'{self.identifier}_frame', None)
 
 
 def _make_channelframe(parent, identifier):
@@ -298,7 +298,7 @@ def _make_channelframe(parent, identifier):
         """
 
         for i, labelframe in enumerate(
-            getattr(self, "strips" if identifier == "strip" else "buses")
+            getattr(self, 'strips' if identifier == 'strip' else 'buses')
         ):
             labelframe.grid(row=0, column=i)
             label = labelframe.target.label
@@ -329,20 +329,20 @@ def _make_channelframe(parent, identifier):
         self.grid_configure()
         init_labels(self)
 
-    if identifier == "strip":
+    if identifier == 'strip':
         CHANNELFRAME_cls = type(
-            f"ChannelFrame{identifier.capitalize()}",
+            f'ChannelFrame{identifier.capitalize()}',
             (ChannelFrame,),
             {
-                "__init__": init_strip,
+                '__init__': init_strip,
             },
         )
     else:
         CHANNELFRAME_cls = type(
-            f"ChannelFrame{identifier.capitalize()}",
+            f'ChannelFrame{identifier.capitalize()}',
             (ChannelFrame,),
             {
-                "__init__": init_bus,
+                '__init__': init_bus,
             },
         )
     return CHANNELFRAME_cls(parent)

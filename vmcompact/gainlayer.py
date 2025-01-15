@@ -19,7 +19,7 @@ class GainLayer(ttk.LabelFrame):
         else:
             self.level_offset = parent.phys_in * 2 + (index - parent.phys_in) * 8
 
-        self.builder = builders.ChannelLabelFrameBuilder(self, index, id="gainlayer")
+        self.builder = builders.ChannelLabelFrameBuilder(self, index, id='gainlayer')
         self.builder.setup()
         self.builder.add_progressbar()
         self.builder.add_scale()
@@ -38,20 +38,20 @@ class GainLayer(ttk.LabelFrame):
 
     @property
     def identifier(self):
-        return "gainlayer"
+        return 'gainlayer'
 
     def getter(self, param):
         try:
             return getattr(self.target, param)
         except AttributeError as e:
-            self.logger(f"{type(e).__name__}: {e}")
+            self.logger(f'{type(e).__name__}: {e}')
 
     def setter(self, param, value):
         if param in dir(self.target):  # avoid calling getattr (with hasattr)
             setattr(self.target, param, value)
 
     def reset_gain(self, *args):
-        self.setter("gain", 0)
+        self.setter('gain', 0)
         self.gain.set(0)
         self.gainlabel.set(self.gain.get())
 
@@ -59,23 +59,23 @@ class GainLayer(ttk.LabelFrame):
         """callback function for scale widget"""
 
         val = round(self.gain.get(), 1)
-        self.setter("gain", val)
+        self.setter('gain', val)
         self.gainlabel.set(val)
 
     def scale_press(self, *args):
         self.after(1, self.remove_events)
 
     def remove_events(self):
-        self.parent.target.event.remove("pdirty")
-        self.parent.target.event.remove("ldirty")
+        self.parent.target.event.remove('pdirty')
+        self.parent.target.event.remove('ldirty')
 
     def scale_release(self, *args):
         _base_values.run_update = False
         self.after(1, self.add_events)
 
     def add_events(self):
-        self.parent.target.event.add("pdirty")
-        self.parent.target.event.add("ldirty")
+        self.parent.target.event.add('pdirty')
+        self.parent.target.event.add('ldirty')
         self.after(500, self.resume_updates)
 
     def pause_updates(self, func, *args):
@@ -103,7 +103,7 @@ class GainLayer(ttk.LabelFrame):
             self.gain.set(12)
         elif self.gain.get() < -60:
             self.gain.set(-60)
-        self.setter("gain", self.gain.get())
+        self.setter('gain', self.gain.get())
         self.after(1, self.resume_updates)
 
     def set_on(self):
@@ -116,20 +116,20 @@ class GainLayer(ttk.LabelFrame):
         )
         if not _configuration.themes_enabled:
             self.styletable.configure(
-                f"{self.identifier}On{self.index}.TButton",
+                f'{self.identifier}On{self.index}.TButton',
                 background=f'{"green" if self.on.get() else "white"}',
             )
 
     def on_update(self, subject):
-        if subject == "ldirty":
+        if subject == 'ldirty':
             self.upd_levels()
-        elif subject == "pdirty":
+        elif subject == 'pdirty':
             self.sync_params()
-        elif subject == "labelframe":
+        elif subject == 'labelframe':
             self.after(5, self.sync_labels)
 
     def sync_params(self):
-        self.gain.set(self.getter("gain"))
+        self.gain.set(self.getter('gain'))
         self.gainlabel.set(round(self.gain.get(), 1))
         self.on.set(
             getattr(
@@ -139,7 +139,7 @@ class GainLayer(ttk.LabelFrame):
         )
         if not _configuration.themes_enabled:
             self.styletable.configure(
-                f"{self.identifier}On{self.index}.TButton",
+                f'{self.identifier}On{self.index}.TButton',
                 background=f'{"green" if self.on.get() else "white"}',
             )
 
@@ -147,7 +147,7 @@ class GainLayer(ttk.LabelFrame):
         """sync params with voicemeeter"""
         retval = self.parent.target.strip[self.index].label
         if len(retval) > 10:
-            retval = f"{retval[:8]}.."
+            retval = f'{retval[:8]}..'
         if not retval:
             self.parent.columnconfigure(self.index, minsize=0)
             self.parent.parent.subject.remove(self)
@@ -201,8 +201,8 @@ class SubMixFrame(ttk.Frame):
         self.parent = parent
         self.phys_in, self.virt_in = parent.kind.ins
         self.phys_out, self.virt_out = parent.kind.outs
-        self.buses = tuple(f"A{i+1}" for i in range(self.phys_out)) + tuple(
-            f"B{i+1}" for i in range(self.virt_out)
+        self.buses = tuple(f'A{i + 1}' for i in range(self.phys_out)) + tuple(
+            f'B{i + 1}' for i in range(self.virt_out)
         )
 
         self.gainlayers = [
@@ -221,7 +221,7 @@ class SubMixFrame(ttk.Frame):
         else:
             if parent.bus_frame and parent.bus_frame.grid_info():
                 self.grid(
-                    row=parent.bus_frame.grid_info()["row"], column=0, sticky=(tk.W)
+                    row=parent.bus_frame.grid_info()['row'], column=0, sticky=(tk.W)
                 )
                 parent.bus_frame.grid_remove()
             else:
@@ -256,9 +256,9 @@ class SubMixFrame(ttk.Frame):
         )
 
     def on_update(self, subject):
-        if subject == "pdirty":
+        if subject == 'pdirty':
             for labelframe in self.labelframes:
-                labelframe.on_update("labelframe")
+                labelframe.on_update('labelframe')
 
     def grid_configure(self):
         [

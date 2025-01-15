@@ -41,31 +41,31 @@ class MainFrameBuilder(AbstractBuilder):
         )
         self.app.resizable(False, False)
         if _configuration.themes_enabled:
-            if sv_ttk.get_theme() not in ("light", "dark"):
+            if sv_ttk.get_theme() not in ('light', 'dark'):
                 sv_ttk.set_theme(_configuration.theme_mode)
                 self.logger.info(
-                    f"Sunvalley {sv_ttk.get_theme().capitalize()} Theme applied"
+                    f'Sunvalley {sv_ttk.get_theme().capitalize()} Theme applied'
                 )
 
     def create_channelframe(self, type_):
-        if type_ == "strip":
+        if type_ == 'strip':
             self.app.strip_frame = _make_channelframe(self.app, type_)
         else:
             self.app.bus_frame = _make_channelframe(self.app, type_)
-        self.logger.info(f"Finished building channelframe type {type_}")
+        self.logger.info(f'Finished building channelframe type {type_}')
 
     def create_separator(self):
-        self.app.sep = ttk.Separator(self.app, orient="vertical")
+        self.app.sep = ttk.Separator(self.app, orient='vertical')
         self.app.sep.grid(row=0, column=1, sticky=(tk.N, tk.S))
         self.app.columnconfigure(1, minsize=15)
-        self.logger.info(f"Finished building separator")
+        self.logger.info('Finished building separator')
 
     def create_navframe(self):
         self.app.nav_frame = Navigation(self.app)
-        self.logger.info(f"Finished building navframe")
+        self.logger.info('Finished building navframe')
 
     def create_configframe(self, type_, index, id):
-        if type_ == "strip":
+        if type_ == 'strip':
             self.app.config_frame = StripConfig(self.app, index, id)
             if self.app.strip_frame:
                 [
@@ -95,20 +95,20 @@ class MainFrameBuilder(AbstractBuilder):
             if self.app.strip_frame:
                 [
                     frame.styletable.configure(
-                        f"{frame.identifier}Conf{frame.index}.TButton",
-                        background=f"{'white' if not frame.conf.get() else 'yellow'}",
+                        f'{frame.identifier}Conf{frame.index}.TButton',
+                        background=f'{"white" if not frame.conf.get() else "yellow"}',
                     )
                     for _, frame in enumerate(self.app.strip_frame.labelframes)
                 ]
             if self.app.bus_frame:
                 [
                     frame.styletable.configure(
-                        f"{frame.identifier}Conf{frame.index}.TButton",
-                        background=f"{'white' if not frame.conf.get() else 'yellow'}",
+                        f'{frame.identifier}Conf{frame.index}.TButton',
+                        background=f'{"white" if not frame.conf.get() else "yellow"}',
                     )
                     for _, frame in enumerate(self.app.bus_frame.labelframes)
                 ]
-        self.logger.info(f"Finished building configframe for {type_}[{index}]")
+        self.logger.info(f'Finished building configframe for {type_}[{index}]')
         self.app.after(5, self.reset_config_frames)
 
     def reset_config_frames(self):
@@ -121,7 +121,7 @@ class MainFrameBuilder(AbstractBuilder):
     def create_banner(self):
         self.app.banner = Banner(self.app)
         self.app.banner.grid(row=4, column=0, columnspan=3)
-        self.logger.info(f"Finished building banner")
+        self.logger.info('Finished building banner')
 
     def teardown(self):
         pass
@@ -140,31 +140,31 @@ class NavigationFrameBuilder(AbstractBuilder):
         self.navframe.info = tk.BooleanVar()
 
         self.navframe.channel_text = tk.StringVar(
-            value=f"{self.navframe.parent.strip_frame.identifier.upper()}"
+            value=f'{self.navframe.parent.strip_frame.identifier.upper()}'
         )
         self.navframe.extend_text = tk.StringVar(
-            value=f"{'REDUCE' if self.navframe.extend.get() else 'EXTEND'}"
+            value=f'{"REDUCE" if self.navframe.extend.get() else "EXTEND"}'
         )
         self.navframe.info_text = tk.StringVar()
 
     def create_submix_button(self):
         self.navframe.submix_button = ttk.Checkbutton(
             self.navframe,
-            text="SUBMIX",
+            text='SUBMIX',
             command=self.navframe.show_submix,
-            style=f"{'Toggle.TButton' if _configuration.themes_enabled else f'Submix.TButton'}",
+            style=f'{"Toggle.TButton" if _configuration.themes_enabled else "Submix.TButton"}',
             variable=self.navframe.submix,
         )
         self.navframe.submix_button.grid(column=0, row=0)
-        if self.navframe.parent.kind.name != "potato":
-            self.navframe.submix_button["state"] = "disabled"
+        if self.navframe.parent.kind.name != 'potato':
+            self.navframe.submix_button['state'] = 'disabled'
 
     def create_channel_button(self):
         self.navframe.channel_button = ttk.Checkbutton(
             self.navframe,
             textvariable=self.navframe.channel_text,
             command=self.navframe.switch_channel,
-            style=f"{'Toggle.TButton' if _configuration.themes_enabled else f'Channel.TButton'}",
+            style=f'{"Toggle.TButton" if _configuration.themes_enabled else "Channel.TButton"}',
             variable=self.navframe.channel,
         )
         self.navframe.channel_button.grid(column=0, row=1, rowspan=1)
@@ -174,7 +174,7 @@ class NavigationFrameBuilder(AbstractBuilder):
             self.navframe,
             textvariable=self.navframe.extend_text,
             command=self.navframe.extend_frame,
-            style=f"{'Toggle.TButton' if _configuration.themes_enabled else f'Extend.TButton'}",
+            style=f'{"Toggle.TButton" if _configuration.themes_enabled else "Extend.TButton"}',
             variable=self.navframe.extend,
         )
         self.navframe.extend_button.grid(column=0, row=2)
@@ -183,7 +183,7 @@ class NavigationFrameBuilder(AbstractBuilder):
         self.navframe.info_button = ttk.Checkbutton(
             self.navframe,
             textvariable=self.navframe.info_text,
-            style=f"{'Toggle.TButton' if _configuration.themes_enabled else f'Rec.TButton'}",
+            style=f'{"Toggle.TButton" if _configuration.themes_enabled else "Rec.TButton"}',
             variable=self.navframe.info,
         )
         self.navframe.info_button.grid(column=0, row=3)
@@ -228,8 +228,8 @@ class ChannelLabelFrameBuilder(AbstractBuilder):
         self.labelframe.pb = ttk.Progressbar(
             self.labelframe,
             maximum=72,
-            orient="vertical",
-            mode="determinate",
+            orient='vertical',
+            mode='determinate',
             variable=self.labelframe.level,
         )
         self.labelframe.pb.grid(column=0, row=0)
@@ -240,17 +240,17 @@ class ChannelLabelFrameBuilder(AbstractBuilder):
             self.labelframe,
             from_=12.0,
             to=-60.0,
-            orient="vertical",
+            orient='vertical',
             variable=self.labelframe.gain,
             command=self.labelframe.scale_callback,
             length=_configuration.channel_height,
         )
         self.scale.grid(column=1, row=0)
-        self.scale.bind("<Double-Button-1>", self.labelframe.reset_gain)
-        self.scale.bind("<Button-1>", self.labelframe.scale_press)
-        self.scale.bind("<ButtonRelease-1>", self.labelframe.scale_release)
+        self.scale.bind('<Double-Button-1>', self.labelframe.reset_gain)
+        self.scale.bind('<Button-1>', self.labelframe.scale_press)
+        self.scale.bind('<ButtonRelease-1>', self.labelframe.scale_release)
         self.scale.bind(
-            "<MouseWheel>",
+            '<MouseWheel>',
             partial(
                 self.labelframe.pause_updates,
                 self.labelframe._on_mousewheel,
@@ -268,9 +268,9 @@ class ChannelLabelFrameBuilder(AbstractBuilder):
         """Adds a mute button widget to a single label frame"""
         self.button_mute = ttk.Checkbutton(
             self.labelframe,
-            text="MUTE",
+            text='MUTE',
             command=partial(self.labelframe.pause_updates, self.labelframe.toggle_mute),
-            style=f"{'Toggle.TButton' if _configuration.themes_enabled else f'{self.identifier}Mute{self.index}.TButton'}",
+            style=f'{"Toggle.TButton" if _configuration.themes_enabled else f"{self.identifier}Mute{self.index}.TButton"}',
             variable=self.labelframe.mute,
         )
         self.button_mute.grid(column=0, row=2, columnspan=2)
@@ -278,9 +278,9 @@ class ChannelLabelFrameBuilder(AbstractBuilder):
     def add_conf_button(self):
         self.button_conf = ttk.Checkbutton(
             self.labelframe,
-            text="CONFIG",
+            text='CONFIG',
             command=self.labelframe.open_config,
-            style=f"{'Toggle.TButton' if _configuration.themes_enabled else f'{self.identifier}Conf{self.index}.TButton'}",
+            style=f'{"Toggle.TButton" if _configuration.themes_enabled else f"{self.identifier}Conf{self.index}.TButton"}',
             variable=self.labelframe.conf,
         )
         self.button_conf.grid(column=0, row=3, columnspan=2)
@@ -288,9 +288,9 @@ class ChannelLabelFrameBuilder(AbstractBuilder):
     def add_on_button(self):
         self.button_on = ttk.Checkbutton(
             self.labelframe,
-            text="ON",
+            text='ON',
             command=partial(self.labelframe.pause_updates, self.labelframe.set_on),
-            style=f"{'Toggle.TButton' if _configuration.themes_enabled else f'{self.identifier}On{self.index}.TButton'}",
+            style=f'{"Toggle.TButton" if _configuration.themes_enabled else f"{self.identifier}On{self.index}.TButton"}',
             variable=self.labelframe.on,
         )
         self.button_on.grid(column=0, row=2, columnspan=2)
@@ -339,40 +339,40 @@ class StripConfigFrameBuilder(ChannelConfigFrameBuilder):
     """Responsible for building channel configframe widgets"""
 
     def setup(self):
-        if self.configframe.parent.kind.name == "basic":
-            self.configframe.slider_params = ("audibility",)
+        if self.configframe.parent.kind.name == 'basic':
+            self.configframe.slider_params = ('audibility',)
             self.configframe.slider_vars = (tk.DoubleVar(),)
         else:
-            self.configframe.slider_params = ("comp.knob", "gate.knob", "limit")
+            self.configframe.slider_params = ('comp.knob', 'gate.knob', 'limit')
             self.configframe.slider_vars = [
                 tk.DoubleVar() for _ in self.configframe.slider_params
             ]
 
         self.configframe.phys_out_params = [
-            f"A{i+1}" for i in range(self.configframe.phys_out)
+            f'A{i + 1}' for i in range(self.configframe.phys_out)
         ]
         self.configframe.phys_out_params_vars = [
             tk.BooleanVar() for _ in self.configframe.phys_out_params
         ]
 
         self.configframe.virt_out_params = [
-            f"B{i+1}" for i in range(self.configframe.virt_out)
+            f'B{i + 1}' for i in range(self.configframe.virt_out)
         ]
         self.configframe.virt_out_params_vars = [
             tk.BooleanVar() for _ in self.configframe.virt_out_params
         ]
 
-        self.configframe.params = ("mono", "solo")
+        self.configframe.params = ('mono', 'solo')
         self.configframe.param_vars = list(
             tk.BooleanVar() for _ in self.configframe.params
         )
 
-        if self.configframe.parent.kind.name in ("banana", "potato"):
+        if self.configframe.parent.kind.name in ('banana', 'potato'):
             if self.configframe.index == self.configframe.phys_in:
                 self.configframe.params = list(
-                    map(lambda x: x.replace("mono", "mc"), self.configframe.params)
+                    map(lambda x: x.replace('mono', 'mc'), self.configframe.params)
                 )
-            if self.configframe.parent.kind.name == "banana":
+            if self.configframe.parent.kind.name == 'banana':
                 pass
                 # karaoke modes not in RT Packet yet. May implement in future
                 """
@@ -388,101 +388,101 @@ class StripConfigFrameBuilder(ChannelConfigFrameBuilder):
                     == self.configframe.phys_in + self.configframe.virt_in - 1
                 ):
                     self.configframe.params = list(
-                        map(lambda x: x.replace("mono", "mc"), self.configframe.params)
+                        map(lambda x: x.replace('mono', 'mc'), self.configframe.params)
                     )
 
     def create_comp_slider(self):
-        comp_label = ttk.Label(self.configframe, text="Comp")
+        comp_label = ttk.Label(self.configframe, text='Comp')
         comp_scale = ttk.Scale(
             self.configframe,
             from_=0.0,
             to=10.0,
-            orient="horizontal",
+            orient='horizontal',
             length=_configuration.channel_width,
             variable=self.configframe.slider_vars[
-                self.configframe.slider_params.index("comp.knob")
+                self.configframe.slider_params.index('comp.knob')
             ],
-            command=partial(self.configframe.scale_callback, "comp.knob"),
+            command=partial(self.configframe.scale_callback, 'comp.knob'),
         )
         comp_scale.bind(
-            "<Double-Button-1>", partial(self.configframe.reset_scale, "comp.knob", 0)
+            '<Double-Button-1>', partial(self.configframe.reset_scale, 'comp.knob', 0)
         )
-        comp_scale.bind("<Button-1>", self.configframe.scale_press)
-        comp_scale.bind("<ButtonRelease-1>", self.configframe.scale_release)
-        comp_scale.bind("<Enter>", partial(self.configframe.scale_enter, "comp.knob"))
-        comp_scale.bind("<Leave>", self.configframe.scale_leave)
+        comp_scale.bind('<Button-1>', self.configframe.scale_press)
+        comp_scale.bind('<ButtonRelease-1>', self.configframe.scale_release)
+        comp_scale.bind('<Enter>', partial(self.configframe.scale_enter, 'comp.knob'))
+        comp_scale.bind('<Leave>', self.configframe.scale_leave)
 
         comp_label.grid(column=0, row=0)
         comp_scale.grid(column=1, row=0)
 
     def create_gate_slider(self):
-        gate_label = ttk.Label(self.configframe, text="Gate")
+        gate_label = ttk.Label(self.configframe, text='Gate')
         gate_scale = ttk.Scale(
             self.configframe,
             from_=0.0,
             to=10.0,
-            orient="horizontal",
+            orient='horizontal',
             length=_configuration.channel_width,
             variable=self.configframe.slider_vars[
-                self.configframe.slider_params.index("gate.knob")
+                self.configframe.slider_params.index('gate.knob')
             ],
-            command=partial(self.configframe.scale_callback, "gate.knob"),
+            command=partial(self.configframe.scale_callback, 'gate.knob'),
         )
         gate_scale.bind(
-            "<Double-Button-1>", partial(self.configframe.reset_scale, "gate.knob", 0)
+            '<Double-Button-1>', partial(self.configframe.reset_scale, 'gate.knob', 0)
         )
-        gate_scale.bind("<Button-1>", self.configframe.scale_press)
-        gate_scale.bind("<ButtonRelease-1>", self.configframe.scale_release)
-        gate_scale.bind("<Enter>", partial(self.configframe.scale_enter, "gate.knob"))
-        gate_scale.bind("<Leave>", self.configframe.scale_leave)
+        gate_scale.bind('<Button-1>', self.configframe.scale_press)
+        gate_scale.bind('<ButtonRelease-1>', self.configframe.scale_release)
+        gate_scale.bind('<Enter>', partial(self.configframe.scale_enter, 'gate.knob'))
+        gate_scale.bind('<Leave>', self.configframe.scale_leave)
 
         gate_label.grid(column=2, row=0)
         gate_scale.grid(column=3, row=0)
 
     def create_limit_slider(self):
-        limit_label = ttk.Label(self.configframe, text="Limit")
+        limit_label = ttk.Label(self.configframe, text='Limit')
         limit_scale = ttk.Scale(
             self.configframe,
             from_=-40,
             to=12,
-            orient="horizontal",
+            orient='horizontal',
             length=_configuration.channel_width,
             variable=self.configframe.slider_vars[
-                self.configframe.slider_params.index("limit")
+                self.configframe.slider_params.index('limit')
             ],
-            command=partial(self.configframe.scale_callback, "limit"),
+            command=partial(self.configframe.scale_callback, 'limit'),
         )
         limit_scale.bind(
-            "<Double-Button-1>", partial(self.configframe.reset_scale, "limit", 12)
+            '<Double-Button-1>', partial(self.configframe.reset_scale, 'limit', 12)
         )
-        limit_scale.bind("<Button-1>", self.configframe.scale_press)
-        limit_scale.bind("<ButtonRelease-1>", self.configframe.scale_release)
-        limit_scale.bind("<Enter>", partial(self.configframe.scale_enter, "limit"))
-        limit_scale.bind("<Leave>", self.configframe.scale_leave)
+        limit_scale.bind('<Button-1>', self.configframe.scale_press)
+        limit_scale.bind('<ButtonRelease-1>', self.configframe.scale_release)
+        limit_scale.bind('<Enter>', partial(self.configframe.scale_enter, 'limit'))
+        limit_scale.bind('<Leave>', self.configframe.scale_leave)
 
         limit_label.grid(column=4, row=0)
         limit_scale.grid(column=5, row=0)
 
     def create_audibility_slider(self):
-        aud_label = ttk.Label(self.configframe, text="Audibility")
+        aud_label = ttk.Label(self.configframe, text='Audibility')
         aud_scale = ttk.Scale(
             self.configframe,
             from_=0.0,
             to=10.0,
-            orient="horizontal",
+            orient='horizontal',
             length=_configuration.channel_width,
             variable=self.configframe.slider_vars[
-                self.configframe.slider_params.index("audibility")
+                self.configframe.slider_params.index('audibility')
             ],
-            command=partial(self.configframe.scale_callback, "audibility"),
+            command=partial(self.configframe.scale_callback, 'audibility'),
         )
         aud_scale.bind(
-            "<Double-Button-1>", partial(self.configframe.reset_scale, "audibility", 0)
+            '<Double-Button-1>', partial(self.configframe.reset_scale, 'audibility', 0)
         )
-        aud_scale.bind("<Button-1>", self.configframe.scale_press)
-        aud_scale.bind("<ButtonRelease-1>", self.configframe.scale_release)
-        aud_scale.bind("<Enter>", partial(self.configframe.scale_enter, "audibility"))
-        aud_scale.bind("<Leave>", self.configframe.scale_leave)
+        aud_scale.bind('<Button-1>', self.configframe.scale_press)
+        aud_scale.bind('<ButtonRelease-1>', self.configframe.scale_release)
+        aud_scale.bind('<Enter>', partial(self.configframe.scale_enter, 'audibility'))
+        aud_scale.bind('<Leave>', self.configframe.scale_leave)
 
         aud_label.grid(column=0, row=0)
         aud_scale.grid(column=1, row=0)
@@ -495,7 +495,7 @@ class StripConfigFrameBuilder(ChannelConfigFrameBuilder):
                 command=partial(
                     self.configframe.pause_updates, self.configframe.toggle_a, param
                 ),
-                style=f"{'Toggle.TButton' if _configuration.themes_enabled else f'{param}.TButton'}",
+                style=f'{"Toggle.TButton" if _configuration.themes_enabled else f"{param}.TButton"}',
                 variable=self.configframe.phys_out_params_vars[
                     self.configframe.phys_out_params.index(param)
                 ],
@@ -518,7 +518,7 @@ class StripConfigFrameBuilder(ChannelConfigFrameBuilder):
                 command=partial(
                     self.configframe.pause_updates, self.configframe.toggle_b, param
                 ),
-                style=f"{'Toggle.TButton' if _configuration.themes_enabled else f'{param}.TButton'}",
+                style=f'{"Toggle.TButton" if _configuration.themes_enabled else f"{param}.TButton"}',
                 variable=self.configframe.virt_out_params_vars[
                     self.configframe.virt_out_params.index(param)
                 ],
@@ -541,7 +541,7 @@ class StripConfigFrameBuilder(ChannelConfigFrameBuilder):
                 command=partial(
                     self.configframe.pause_updates, self.configframe.toggle_p, param
                 ),
-                style=f"{'Toggle.TButton' if _configuration.themes_enabled else f'{param}.TButton'}",
+                style=f'{"Toggle.TButton" if _configuration.themes_enabled else f"{param}.TButton"}',
                 variable=self.configframe.param_vars[i],
             )
             for i, param in enumerate(self.configframe.params)
@@ -576,7 +576,7 @@ class BusConfigFrameBuilder(ChannelConfigFrameBuilder):
         }
         self.configframe.bus_modes = list(self.configframe.bus_mode_map.keys())
         # fmt: on
-        self.configframe.params = ("mono", "eq.on", "eq.ab")
+        self.configframe.params = ('mono', 'eq.on', 'eq.ab')
         self.configframe.param_vars = [tk.BooleanVar() for _ in self.configframe.params]
         self.configframe.bus_mode_label_text = tk.StringVar(
             value=self.configframe.bus_mode_map[self.configframe.current_bus_mode()]
@@ -590,13 +590,13 @@ class BusConfigFrameBuilder(ChannelConfigFrameBuilder):
             column=0, row=0, columnspan=2, sticky=(tk.W)
         )
         self.configframe.busmode_button.bind(
-            "<Button-1>",
+            '<Button-1>',
             partial(
                 self.configframe.pause_updates, self.configframe.rotate_bus_modes_right
             ),
         )
         self.configframe.busmode_button.bind(
-            "<Button-3>",
+            '<Button-3>',
             partial(
                 self.configframe.pause_updates, self.configframe.rotate_bus_modes_left
             ),
@@ -610,7 +610,7 @@ class BusConfigFrameBuilder(ChannelConfigFrameBuilder):
                 command=partial(
                     self.configframe.pause_updates, self.configframe.toggle_p, param
                 ),
-                style=f"{'Toggle.TButton' if _configuration.themes_enabled else f'{param}.TButton'}",
+                style=f'{"Toggle.TButton" if _configuration.themes_enabled else f"{param}.TButton"}',
                 variable=self.configframe.param_vars[i],
             )
             for i, param in enumerate(self.configframe.params)

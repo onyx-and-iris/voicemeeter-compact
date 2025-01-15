@@ -33,7 +33,7 @@ class Navigation(ttk.Frame):
         if self.submix.get():
             self.parent.submix_frame = SubMixFrame(self.parent)
             self.logger.info(
-                f"Finished building submixframe for submix {_configuration.submixes}"
+                f'Finished building submixframe for submix {_configuration.submixes}'
             )
         else:
             if _configuration.extends_horizontal:
@@ -49,51 +49,51 @@ class Navigation(ttk.Frame):
                 else:
                     self.parent.rowconfigure(2, weight=0, minsize=0)
             self.logger.info(
-                f"Finished tearing down submixframe for submix {_configuration.submixes}"
+                f'Finished tearing down submixframe for submix {_configuration.submixes}'
             )
 
         if not _configuration.themes_enabled:
             self.styletable.configure(
-                f"Submix.TButton",
+                'Submix.TButton',
                 background=f'{"purple" if self.submix.get() else "white"}',
             )
 
     def switch_channel(self):
-        if self.channel_text.get() == "STRIP":
-            self.mainframebuilder.create_channelframe("bus")
+        if self.channel_text.get() == 'STRIP':
+            self.mainframebuilder.create_channelframe('bus')
             self.parent.strip_frame.teardown()
         else:
-            self.mainframebuilder.create_channelframe("strip")
+            self.mainframebuilder.create_channelframe('strip')
             self.parent.bus_frame.teardown()
 
-        self.extend_button["state"] = (
-            "disabled" if self.channel_text.get() == "STRIP" else "normal"
+        self.extend_button['state'] = (
+            'disabled' if self.channel_text.get() == 'STRIP' else 'normal'
         )
         [frame.teardown() for frame in self.parent.configframes]
-        self.channel_text.set("BUS" if self.channel_text.get() == "STRIP" else "STRIP")
+        self.channel_text.set('BUS' if self.channel_text.get() == 'STRIP' else 'STRIP')
 
     def extend_frame(self):
         _configuration.extended = self.extend.get()
         if self.extend.get():
-            self.channel_button["state"] = "disabled"
-            self.mainframebuilder.create_channelframe("bus")
+            self.channel_button['state'] = 'disabled'
+            self.mainframebuilder.create_channelframe('bus')
         else:
             [
                 frame.teardown()
                 for frame in self.parent.configframes
-                if "!busconfig" in str(frame)
+                if '!busconfig' in str(frame)
             ]
             self.parent.bus_frame.teardown()
             self.parent.bus_frame = None
-            self.channel_button["state"] = "normal"
+            self.channel_button['state'] = 'normal'
 
             if self.parent.submix_frame:
                 self.parent.submix_frame.teardown()
                 self.submix.set(False)
                 if not _configuration.themes_enabled:
                     self.styletable.configure(
-                        f"Submix.TButton",
+                        'Submix.TButton',
                         background=f'{"purple" if self.submix.get() else "white"}',
                     )
 
-        self.extend_text.set("REDUCE" if self.extend.get() else "EXTEND")
+        self.extend_text.set('REDUCE' if self.extend.get() else 'EXTEND')

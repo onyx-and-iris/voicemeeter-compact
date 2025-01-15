@@ -31,7 +31,7 @@ class Config(ttk.Frame):
         return self.parent.target
 
     def getter(self, param):
-        param = param.split(".")
+        param = param.split('.')
         try:
             if len(param) == 2:
                 target = getattr(self.target, param[0])
@@ -39,10 +39,10 @@ class Config(ttk.Frame):
             else:
                 return getattr(self.target, param[0])
         except AttributeError as e:
-            self.logger.error(f"{type(e).__name__}: {e}")
+            self.logger.error(f'{type(e).__name__}: {e}')
 
     def setter(self, param, value):
-        param = param.split(".")
+        param = param.split('.')
         try:
             if len(param) == 2:
                 target = getattr(self.target, param[0])
@@ -50,22 +50,22 @@ class Config(ttk.Frame):
             else:
                 setattr(self.target, param[0], value)
         except AttributeError as e:
-            self.logger(f"{type(e).__name__}: {e}")
+            self.logger(f'{type(e).__name__}: {e}')
 
     def scale_press(self, *args):
         self.after(1, self.remove_events)
 
     def remove_events(self):
-        self.parent.target.event.remove("pdirty")
-        self.parent.target.event.remove("ldirty")
+        self.parent.target.event.remove('pdirty')
+        self.parent.target.event.remove('ldirty')
 
     def scale_release(self, *args):
         _base_values.run_update = False
         self.after(1, self.add_events)
 
     def add_events(self):
-        self.parent.target.event.add("pdirty")
-        self.parent.target.event.add("ldirty")
+        self.parent.target.event.add('pdirty')
+        self.parent.target.event.add('ldirty')
         self.after(350, self.resume_updates)
 
     def pause_updates(self, func, *args):
@@ -84,7 +84,7 @@ class Config(ttk.Frame):
         self.parent.nav_frame.info_text.set(round(val, 1))
 
     def scale_leave(self, *args):
-        self.parent.nav_frame.info_text.set("")
+        self.parent.nav_frame.info_text.set('')
 
     def scale_callback(self, param, *args):
         """callback function for scale widget"""
@@ -102,12 +102,12 @@ class Config(ttk.Frame):
         self.setter(param, val)
         if not _configuration.themes_enabled:
             self.styletable.configure(
-                f"{param}.TButton", background=f'{"green" if val else "white"}'
+                f'{param}.TButton', background=f'{"green" if val else "white"}'
             )
 
     def on_update(self, subject):
         """update parameters"""
-        if subject == "pdirty":
+        if subject == 'pdirty':
             self.sync()
 
 
@@ -134,7 +134,7 @@ class StripConfig(Config):
 
     def make_row_0(self):
         if self.index < self.phys_in:
-            if self.parent.kind.name == "basic":
+            if self.parent.kind.name == 'basic':
                 self.builder.create_audibility_slider()
             else:
                 self.builder.create_comp_slider()
@@ -153,7 +153,7 @@ class StripConfig(Config):
         self.setter(param, val)
         if not _configuration.themes_enabled:
             self.styletable.configure(
-                f"{param}.TButton", background=f'{"green" if val else "white"}'
+                f'{param}.TButton', background=f'{"green" if val else "white"}'
             )
 
     def toggle_b(self, param):
@@ -161,7 +161,7 @@ class StripConfig(Config):
         self.setter(param, val)
         if not _configuration.themes_enabled:
             self.styletable.configure(
-                f"{param}.TButton", background=f'{"green" if val else "white"}'
+                f'{param}.TButton', background=f'{"green" if val else "white"}'
             )
 
     def teardown(self):
@@ -190,21 +190,21 @@ class StripConfig(Config):
         if not _configuration.themes_enabled:
             [
                 self.styletable.configure(
-                    f"{param}.TButton",
+                    f'{param}.TButton',
                     background=f'{"green" if self.phys_out_params_vars[i].get() else "white"}',
                 )
                 for i, param in enumerate(self.phys_out_params)
             ]
             [
                 self.styletable.configure(
-                    f"{param}.TButton",
+                    f'{param}.TButton',
                     background=f'{"green" if self.virt_out_params_vars[i].get() else "white"}',
                 )
                 for i, param in enumerate(self.virt_out_params)
             ]
             [
                 self.styletable.configure(
-                    f"{param}.TButton",
+                    f'{param}.TButton',
                     background=f'{"green" if self.param_vars[i].get() else "white"}',
                 )
                 for i, param in enumerate(self.params)
@@ -255,14 +255,14 @@ class BusConfig(Config):
             self.bus_mode_label_text.set(self.bus_mode_map[self.bus_modes[next]])
         else:
             self.target.mode.normal = True
-            self.bus_mode_label_text.set("Normal")
+            self.bus_mode_label_text.set('Normal')
 
     def rotate_bus_modes_left(self, *args):
         current_mode = self.current_bus_mode()
         prev = self.bus_modes.index(current_mode) - 1
         if prev < 0:
             self.target.mode.rearonly = True
-            self.bus_mode_label_text.set("Rear Only")
+            self.bus_mode_label_text.set('Rear Only')
         else:
             setattr(
                 self.target.mode,
@@ -283,7 +283,7 @@ class BusConfig(Config):
         if not _configuration.themes_enabled:
             [
                 self.styletable.configure(
-                    f"{param}.TButton",
+                    f'{param}.TButton',
                     background=f'{"green" if self.param_vars[i].get() else "white"}',
                 )
                 for i, param in enumerate(self.params)

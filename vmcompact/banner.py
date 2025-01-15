@@ -17,7 +17,7 @@ class Banner(ttk.Frame):
 
         self.label = ttk.Label(
             self,
-            text=f"SUBMIX: {self.submix.get().upper()}",
+            text=f'SUBMIX: {self.submix.get().upper()}',
         )
         self.label.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.W, tk.E))
 
@@ -28,8 +28,8 @@ class Banner(ttk.Frame):
         return self.parent.target
 
     def on_update(self, subject):
-        if subject == "submix":
+        if subject == 'submix':
             if not _base_values.dragging:
-                self.logger.debug("checking submix for banner")
+                self.logger.debug('checking submix for banner')
                 self.submix.set(self.target.bus[_configuration.submixes].label)
-                self.label["text"] = f"SUBMIX: {self.submix.get().upper()}"
+                self.label['text'] = f'SUBMIX: {self.submix.get().upper()}'

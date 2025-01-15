@@ -4,7 +4,7 @@ from voicemeeterlib import kinds
 
 from .configurations import get_configuration
 
-configuration = get_configuration("app")
+configuration = get_configuration('app')
 
 
 class SingletonMeta(type):
@@ -20,32 +20,32 @@ class SingletonMeta(type):
 @dataclass
 class Configurations(metaclass=SingletonMeta):
     # is the gui extended
-    extended: bool = configuration["extends"]["extended"]
+    extended: bool = configuration['extends']['extended']
     # direction the gui extends
-    extends_horizontal: bool = configuration["extends"]["extends_horizontal"]
+    extends_horizontal: bool = configuration['extends']['extends_horizontal']
     # are themes enabled
-    themes_enabled: bool = configuration["theme"]["enabled"]
+    themes_enabled: bool = configuration['theme']['enabled']
     # light or dark
-    theme_mode: str = configuration["theme"]["mode"]
+    theme_mode: str = configuration['theme']['mode']
     # size of mousewheel scroll step
-    mwscroll_step: int = configuration["mwscroll_step"]["size"]
+    mwscroll_step: int = configuration['mwscroll_step']['size']
     # bus assigned as current submix
-    submixes: int = configuration["submixes"]["default"]
+    submixes: int = configuration['submixes']['default']
 
     # width of a single channel labelframe
-    channel_width: int = configuration["channel"]["width"]
+    channel_width: int = configuration['channel']['width']
     # height of a single channel labelframe
-    channel_height: int = configuration["channel"]["height"]
+    channel_height: int = configuration['channel']['height']
     # xpadding for a single channel labelframe
-    channel_xpadding: int = configuration["channel"]["xpadding"]
+    channel_xpadding: int = configuration['channel']['xpadding']
 
     # do we grid the navigation frame?
-    navigation_show: bool = configuration["navigation"]["show"]
+    navigation_show: bool = configuration['navigation']['show']
 
     @property
     def config(self):
-        if "configs" in configuration:
-            return configuration["configs"]["config"]
+        if 'configs' in configuration:
+            return configuration['configs']['config']
 
 
 @dataclass
