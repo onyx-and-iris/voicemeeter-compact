@@ -31,12 +31,13 @@ Example `__main__.py` file:
 
 ```python
 import voicemeeterlib
+
 import vmcompact
 
 
 def main():
     # choose the kind of Voicemeeter (Local connection)
-    KIND_ID = "banana"
+    KIND_ID = 'banana'
 
     # pass the KIND_ID and the vm object to the app
     with voicemeeterlib.api(KIND_ID) as vm:
@@ -44,7 +45,7 @@ def main():
         app.mainloop()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
 ```
 
