@@ -1,6 +1,6 @@
 [project]
 name = "voicemeeter-compact"
-version = "1.9.7"
+version = "1.9.8"
 description = "A Compact Voicemeeter Remote App"
 authors = [
     {name = "Onyx and Iris",email = "code@onyxandiris.online"}
