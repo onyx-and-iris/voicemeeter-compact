@@ -12,14 +12,14 @@ configuration = {}
 
 
 def get_configpath():
-    configpaths = [
+    for pn in (
+        Path.home() / '.config' / 'vm-compact',
+        Path.home() / 'Documents' / 'Voicemeeter' / 'vm-compact',
+        Path.cwd() / '_internal' / 'configs',
         Path.cwd() / 'configs',
-        Path.home() / '.config' / 'vm-compact' / 'configs',
-        Path.home() / 'Documents' / 'Voicemeeter' / 'configs',
-    ]
-    for configpath in configpaths:
-        if configpath.exists():
-            return configpath
+    ):
+        if pn.exists():
+            return pn
 
 
 if configpath := get_configpath():

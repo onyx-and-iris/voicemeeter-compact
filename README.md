@@ -65,15 +65,18 @@ Set the kind of Voicemeeter, KIND_ID may be:
 
 ## TOML Files
 
-This is how your files should be organised. Wherever your `__main__.py` file is located (after install this can be any location), `configs` should be in the same location.
-Directly inside of configs directory you may place an app.toml, vban.toml and a directory for each kind.
-Inside each kind directory you may place as many custom toml configurations as you wish.
+If you've downloaded the binary from [Releases][releases] you can find configs included in the `_internal/configs` directory.
+
+You may override these configs by placing a directory `vm-compact` in one of the following locations:
+
+-   `user home directory / .config`
+-   `user home directory / Documents / Voicemeeter`
+
+The contents should match the following directory structure:
 
 .
 
-├── `__main__.py`
-
-├── configs
+├── vm-compact
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── app.toml
 
@@ -111,7 +114,7 @@ Configure certain startup states for the app.
     Configure a user config to load on app startup. Don't include the .toml extension in the config name.
 
 -   `theme`
-    By default the app loads up the [Sun Valley light or dark theme][def] by @rdbende. You have the option to load up the app without any theme loaded. Simply set `enabled` to false and `mode` will take no effect.
+    By default the app loads up the [Sun Valley light or dark theme][releases] by @rdbende. You have the option to load up the app without any theme loaded. Simply set `enabled` to false and `mode` will take no effect.
 
 -   `extends`
     Extending the app will show both strips and buses. In reduced mode only one or the other. This app will extend both horizontally and vertically, simply set `extends_horizontal` true or false accordingly.
@@ -165,3 +168,4 @@ User configs may be loaded at any time via the menu.
 
 
 [sv-theme]: https://github.com/rdbende/Sun-Valley-ttk-theme
+[releases]: https://github.com/onyx-and-iris/voicemeeter-compact/releases
