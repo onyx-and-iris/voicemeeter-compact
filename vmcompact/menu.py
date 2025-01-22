@@ -421,7 +421,7 @@ class Menus(tk.Menu):
             del self.parent.__dict__['userconfigs']
         self.menu_setup()
 
-        self.after(15000, self.enable_vban_menus)
+        self.after(500, self.enable_vban_menus)
 
     def documentation(self):
         webbrowser.open_new(r'https://voicemeeter.com/')
