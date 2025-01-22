@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   [ ] 
 
+## [1.9.8] - 2025-01-22
+
+### Changed
+
+-   vm-compact config dirs now override _internal/configs (if using build from releases). See [TOML Files](https://github.com/onyx-and-iris/voicemeeter-compact?tab=readme-ov-file#toml-files) section in README.
+-   after disconnecting from a vban connection, vban menus are re-enabled after 500ms.
+
 ## [1.9.5] - 2024-07-03
 
 ### Changed
