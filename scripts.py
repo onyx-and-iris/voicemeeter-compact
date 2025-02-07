@@ -5,7 +5,7 @@ from pathlib import Path
 
 def build_sunvalley():
     buildscript = Path.cwd() / 'build.ps1'
-    subprocess.run(['powershell', str(buildscript), 'sv'])
+    subprocess.run(['powershell', str(buildscript), 'sunvalley'])
 
 
 def build_forest():
@@ -14,7 +14,7 @@ def build_forest():
 
     buildscript = Path.cwd() / 'build.ps1'
     for theme in ('light', 'dark'):
-        subprocess.run(['powershell', str(buildscript), 'fst', theme])
+        subprocess.run(['powershell', str(buildscript), 'forest', theme])
 
     subprocess.run([sys.executable, str(rewriter), '--restore'])
 

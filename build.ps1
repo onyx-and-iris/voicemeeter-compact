@@ -10,9 +10,9 @@ function Format-SpecName {
     )
     return @(
         $prefix,
-        (& { if ($theme) { $theme } else { "" } }),
-        $Kind
-    ).Where({ $_ -ne "" }) -Join "_"
+        $Kind,
+        (& { if ($theme) { $theme } else { "" } })
+    ).Where({ $_ -ne "" }) -Join "-"
 }
 
 function Compress-Builds {
