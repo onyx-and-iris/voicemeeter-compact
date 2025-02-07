@@ -35,7 +35,7 @@ tasks:
     desc: "Build Forest artifacts"
     deps: [rewrite]
     cmds:
-    - defer: { task: cleanup }
+    - defer: { task: restore }
     - for:
         matrix:
           KIND: ["basic", "banana", "potato"]
