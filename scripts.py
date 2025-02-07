@@ -4,19 +4,19 @@ from pathlib import Path
 
 
 def build_sunvalley():
-    buildscript = Path.cwd() / "build.ps1"
-    subprocess.run(["powershell", str(buildscript), "sv"])
+    buildscript = Path.cwd() / 'build.ps1'
+    subprocess.run(['powershell', str(buildscript), 'sv'])
 
 
 def build_forest():
-    rewriter = Path.cwd() / "tools" / "rewriter.py"
-    subprocess.run([sys.executable, str(rewriter), "-r"])
+    rewriter = Path.cwd() / 'tools' / 'rewriter.py'
+    subprocess.run([sys.executable, str(rewriter), '--rewrite'])
 
-    buildscript = Path.cwd() / "build.ps1"
-    for theme in ("light", "dark"):
-        subprocess.run(["powershell", str(buildscript), "fst", theme])
+    buildscript = Path.cwd() / 'build.ps1'
+    for theme in ('light', 'dark'):
+        subprocess.run(['powershell', str(buildscript), 'fst', theme])
 
-    subprocess.run([sys.executable, str(rewriter), "-c"])
+    subprocess.run([sys.executable, str(rewriter), '--restore'])
 
 
 def build_all():
