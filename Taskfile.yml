@@ -1,0 +1,80 @@
+version: '3'
+
+vars:
+  SHELL: pwsh
+
+tasks:
+  default:
+    desc: "Prepare artifacts for release"
+    deps: [release]
+
+  release:
+    desc: "Build and compress all artifacts"
+    cmds:
+    - task: build
+    - task: compress
+    - echo "Release complete"
+
+  build:
+    desc: "Build all artifacts"
+    cmds:
+    - task: build-sunvalley
+    - echo "Sunvalley build complete"
+    - task: build-forest
+    - echo "Forest build complete"
+
+  build-sunvalley:
+    desc: "Build Sunvalley artifacts"
+    cmds:
+    - for:
+        matrix:
+          KIND: ["basic", "banana", "potato"]
+      cmd: poetry run pyinstaller --noconfirm --distpath dist/sunvalley-{{.ITEM.KIND}} spec/sunvalley-{{.ITEM.KIND}}.spec
+
+  build-forest:
+    desc: "Build Forest artifacts"
+    deps: [rewrite]
+    cmds:
+    - defer: { task: cleanup }
+    - for:
+        matrix:
+          KIND: ["basic", "banana", "potato"]
+          THEME: ["light", "dark"]
+      cmd: poetry run pyinstaller --noconfirm --distpath dist/forest-{{.ITEM.KIND}}-{{.ITEM.THEME}} spec/forest-{{.ITEM.KIND}}-{{.ITEM.THEME}}.spec
+
+  rewrite:
+    desc: "Run the source code rewriter"
+    cmds: 
+    - poetry run python tools/rewriter.py --rewrite
+
+  restore:
+    desc: "Restore the backup files"
+    cmds:
+    - poetry run python tools/rewriter.py --restore
+
+  compress:
+    deps: [compress-sunvalley, compress-forest]
+
+  compress-sunvalley:
+    cmds:
+    - for:
+        matrix:
+          KIND: ["basic", "banana", "potato"]
+      cmd: '{{.SHELL}} -Command "Compress-Archive -Path dist/sunvalley-{{.ITEM.KIND}} -DestinationPath dist/sunvalley-{{.ITEM.KIND}}.zip"'
+
+  compress-forest:
+    cmds:
+    - for:
+        matrix:
+          KIND: ["basic", "banana", "potato"]
+          THEME: ["light", "dark"]
+      cmd: '{{.SHELL}} -Command "Compress-Archive -Path dist/forest-{{.ITEM.KIND}}-{{.ITEM.THEME}} -DestinationPath dist/forest-{{.ITEM.KIND}}-{{.ITEM.THEME}}.zip"'
+
+  clean:
+    cmds:
+      - |
+        {{.SHELL}} -Command "
+        Remove-Item -Path build/forest-* -Recurse -Force
+        Remove-Item -Path build/sunvalley-* -Recurse -Force
+        Remove-Item -Path dist/forest-* -Recurse -Force
+        Remove-Item -Path dist/sunvalley-* -Recurse -Force"
