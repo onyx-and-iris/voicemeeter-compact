@@ -5,70 +5,71 @@ vars:
 
 tasks:
   default:
-    desc: "Prepare artifacts for release"
-    deps: [release]
+    desc: Prepare artifacts for release
+    cmds:
+      - task: release
 
   release:
-    desc: "Build and compress all artifacts"
+    desc: Build and compress all artifacts
     cmds:
-    - task: build
-    - task: compress
-    - echo "Release complete"
+      - task: build
+      - task: compress
+      - echo "Release complete"
 
   build:
-    desc: "Build all artifacts"
+    desc: Build all artifacts
     cmds:
-    - task: build-sunvalley
-    - echo "Sunvalley build complete"
-    - task: build-forest
-    - echo "Forest build complete"
+      - task: build-sunvalley
+      - echo "Sunvalley build complete"
+      - task: build-forest
+      - echo "Forest build complete"
 
   build-sunvalley:
-    desc: "Build Sunvalley artifacts"
+    desc: Build Sunvalley artifacts
     cmds:
-    - for:
-        matrix:
-          KIND: ["basic", "banana", "potato"]
-      cmd: poetry run pyinstaller --noconfirm --distpath dist/sunvalley-{{.ITEM.KIND}} spec/sunvalley-{{.ITEM.KIND}}.spec
+      - for:
+          matrix:
+            KIND: [basic, banana, potato]
+        cmd: poetry run pyinstaller --noconfirm --distpath dist/sunvalley-{{.ITEM.KIND}} spec/sunvalley-{{.ITEM.KIND}}.spec
 
   build-forest:
-    desc: "Build Forest artifacts"
+    desc: Build Forest artifacts
     deps: [rewrite]
     cmds:
-    - defer: { task: restore }
-    - for:
-        matrix:
-          KIND: ["basic", "banana", "potato"]
-          THEME: ["light", "dark"]
-      cmd: poetry run pyinstaller --noconfirm --distpath dist/forest-{{.ITEM.KIND}}-{{.ITEM.THEME}} spec/forest-{{.ITEM.KIND}}-{{.ITEM.THEME}}.spec
+      - defer: { task: restore }
+      - for:
+          matrix:
+            KIND: [basic, banana, potato]
+            THEME: [light, dark]
+        cmd: poetry run pyinstaller --noconfirm --distpath dist/forest-{{.ITEM.KIND}}-{{.ITEM.THEME}} spec/forest-{{.ITEM.KIND}}-{{.ITEM.THEME}}.spec
 
   rewrite:
-    desc: "Run the source code rewriter"
-    cmds: 
-    - poetry run python tools/rewriter.py --rewrite
+    desc: Run the source code rewriter
+    cmds:
+      - poetry run python tools/rewriter.py --rewrite
 
   restore:
-    desc: "Restore the backup files"
+    desc: Restore the backup files
     cmds:
-    - poetry run python tools/rewriter.py --restore
+      - poetry run python tools/rewriter.py --restore
 
   compress:
     deps: [compress-sunvalley, compress-forest]
 
   compress-sunvalley:
     cmds:
-    - for:
-        matrix:
-          KIND: ["basic", "banana", "potato"]
-      cmd: '{{.SHELL}} -Command "Compress-Archive -Path dist/sunvalley-{{.ITEM.KIND}} -DestinationPath dist/sunvalley-{{.ITEM.KIND}}.zip"'
+      - for:
+          matrix:
+            KIND: [basic, banana, potato]
+        cmd: '{{.SHELL}} -Command "Compress-Archive -Path dist/sunvalley-{{.ITEM.KIND}} -DestinationPath dist/sunvalley-{{.ITEM.KIND}}.zip"'
 
   compress-forest:
     cmds:
-    - for:
-        matrix:
-          KIND: ["basic", "banana", "potato"]
-          THEME: ["light", "dark"]
-      cmd: '{{.SHELL}} -Command "Compress-Archive -Path dist/forest-{{.ITEM.KIND}}-{{.ITEM.THEME}} -DestinationPath dist/forest-{{.ITEM.KIND}}-{{.ITEM.THEME}}.zip"'
+      - for:
+          matrix:
+            KIND: [basic, banana, potato]
+            THEME: [light, dark]
+        cmd: '{{.SHELL}} -Command "Compress-Archive -Path dist/forest-{{.ITEM.KIND}}-{{.ITEM.THEME}} -DestinationPath dist/forest-{{.ITEM.KIND}}-{{.ITEM.THEME}}.zip"'
 
   clean:
     cmds:
