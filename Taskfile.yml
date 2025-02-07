@@ -74,7 +74,4 @@ tasks:
     cmds:
       - |
         {{.SHELL}} -Command "
-        Remove-Item -Path build/forest-* -Recurse -Force
-        Remove-Item -Path build/sunvalley-* -Recurse -Force
-        Remove-Item -Path dist/forest-* -Recurse -Force
-        Remove-Item -Path dist/sunvalley-* -Recurse -Force"
+          Remove-Item -Path build/forest-*,build/sunvalley-*,dist/forest-*,dist/sunvalley-* -Recurse -Force"
