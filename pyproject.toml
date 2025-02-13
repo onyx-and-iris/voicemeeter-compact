@@ -38,9 +38,14 @@ requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poe.tasks]
-build_sunvalley.script = "scripts:build_sunvalley"
-build_forest.script = "scripts:build_forest"
-build_all.script = "scripts:build_all"
+build-sunvalley = "task build-sunvalley"
+build-forest = "task build-forest"
+release = [
+  { ref = "build-sunvalley" },
+  { ref = "build-forest" },
+  { cmd = "task compress-sunvalley" },
+  { cmd = "task compress-forest" },
+]
 
 [tool.ruff]
 exclude = [

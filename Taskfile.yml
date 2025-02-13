@@ -63,7 +63,7 @@ tasks:
       - for:
           matrix:
             KIND: [basic, banana, potato]
-        cmd: '{{.SHELL}} -Command "Compress-Archive -Path dist/sunvalley-{{.ITEM.KIND}} -DestinationPath dist/sunvalley-{{.ITEM.KIND}}.zip"'
+        cmd: '{{.SHELL}} -Command "Compress-Archive -Path dist/sunvalley-{{.ITEM.KIND}} -DestinationPath dist/sunvalley-{{.ITEM.KIND}}.zip -Force"'
 
   compress-forest:
     cmds:
@@ -71,7 +71,7 @@ tasks:
           matrix:
             KIND: [basic, banana, potato]
             THEME: [light, dark]
-        cmd: '{{.SHELL}} -Command "Compress-Archive -Path dist/forest-{{.ITEM.KIND}}-{{.ITEM.THEME}} -DestinationPath dist/forest-{{.ITEM.KIND}}-{{.ITEM.THEME}}.zip"'
+        cmd: '{{.SHELL}} -Command "Compress-Archive -Path dist/forest-{{.ITEM.KIND}}-{{.ITEM.THEME}} -DestinationPath dist/forest-{{.ITEM.KIND}}-{{.ITEM.THEME}}.zip -Force"'
 
   clean:
     desc: Clean up build and dist directories
