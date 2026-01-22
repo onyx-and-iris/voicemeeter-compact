@@ -2,10 +2,8 @@
 name = "voicemeeter-compact"
 version = "1.9.8"
 description = "A Compact Voicemeeter Remote App"
-authors = [
-    {name = "Onyx and Iris",email = "code@onyxandiris.online"}
-]
-license = {text = "MIT"}
+authors = [{ name = "Onyx and Iris", email = "code@onyxandiris.online" }]
+license = { text = "MIT" }
 readme = "README.md"
 requires-python = ">=3.10,<3.14"
 dependencies = [
@@ -25,10 +23,12 @@ packages = [{ include = "vmcompact" }]
 include = ["vmcompact/img/cat.ico"]
 
 [tool.poetry.requires-plugins]
-poethepoet = "^0.32.1"
+poethepoet = "^0.35.0"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.9.1"
+voicemeeter-api = { path = "../voicemeeter-api-python/", develop = true }
+vban-cmd = { path = "../vban-cmd-python/", develop = true }
 
 [tool.poetry.group.build.dependencies]
 pyinstaller = "^6.11.1"
@@ -41,10 +41,10 @@ build-backend = "poetry.core.masonry.api"
 build-sunvalley = "task build-sunvalley"
 build-forest = "task build-forest"
 release = [
-  { ref = "build-sunvalley" },
-  { ref = "build-forest" },
-  { cmd = "task compress-sunvalley" },
-  { cmd = "task compress-forest" },
+    { ref = "build-sunvalley" },
+    { ref = "build-forest" },
+    { cmd = "task compress-sunvalley" },
+    { cmd = "task compress-forest" },
 ]
 
 [tool.ruff]
@@ -125,7 +125,4 @@ docstring-code-line-length = "dynamic"
 max-complexity = 10
 
 [tool.ruff.lint.per-file-ignores]
-"__init__.py" = [
-    "E402",
-    "F401",
-]
+"__init__.py" = ["E402", "F401"]
