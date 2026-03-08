@@ -227,7 +227,7 @@ class ChannelLabelFrameBuilder(AbstractBuilder):
         """Adds a progress bar widget to a single label frame"""
         self.labelframe.pb = ttk.Progressbar(
             self.labelframe,
-            maximum=72,
+            maximum=72,  # Range: 0 = -60dB, 72 = +12dB (72dB total range)
             orient='vertical',
             mode='determinate',
             variable=self.labelframe.level,
@@ -362,15 +362,15 @@ class StripConfigFrameBuilder(ChannelConfigFrameBuilder):
             tk.BooleanVar() for _ in self.configframe.virt_out_params
         ]
 
-        self.configframe.params = ('mono', 'solo')
-        self.configframe.param_vars = list(
-            tk.BooleanVar() for _ in self.configframe.params
+        self.configframe.bool_params = ('mono', 'solo')
+        self.configframe.bool_param_vars = list(
+            tk.BooleanVar() for _ in self.configframe.bool_params
         )
 
         if self.configframe.parent.kind.name in ('banana', 'potato'):
             if self.configframe.index == self.configframe.phys_in:
                 self.configframe.params = list(
-                    map(lambda x: x.replace('mono', 'mc'), self.configframe.params)
+                    map(lambda x: x.replace('mono', 'mc'), self.configframe.bool_params)
                 )
             if self.configframe.parent.kind.name == 'banana':
                 pass
@@ -388,7 +388,10 @@ class StripConfigFrameBuilder(ChannelConfigFrameBuilder):
                     == self.configframe.phys_in + self.configframe.virt_in - 1
                 ):
                     self.configframe.params = list(
-                        map(lambda x: x.replace('mono', 'mc'), self.configframe.params)
+                        map(
+                            lambda x: x.replace('mono', 'mc'),
+                            self.configframe.bool_params,
+                        )
                     )
 
     def create_comp_slider(self):
@@ -542,9 +545,9 @@ class StripConfigFrameBuilder(ChannelConfigFrameBuilder):
                     self.configframe.pause_updates, self.configframe.toggle_p, param
                 ),
                 style=f'{"Toggle.TButton" if _configuration.themes_enabled else f"{param}.TButton"}',
-                variable=self.configframe.param_vars[i],
+                variable=self.configframe.bool_param_vars[i],
             )
-            for i, param in enumerate(self.configframe.params)
+            for i, param in enumerate(self.configframe.bool_params)
         ]
         [
             button.grid(
@@ -574,10 +577,22 @@ class BusConfigFrameBuilder(ChannelConfigFrameBuilder):
             "lfeonly": "LFE Only",
             "rearonly": "Rear Only",
         }
+        self.configframe.bus_mode_map_reverse = {v: k for k, v in self.configframe.bus_mode_map.items()}
         self.configframe.bus_modes = list(self.configframe.bus_mode_map.keys())
         # fmt: on
-        self.configframe.params = ('mono', 'eq.on', 'eq.ab')
-        self.configframe.param_vars = [tk.BooleanVar() for _ in self.configframe.params]
+        self.configframe.int_params = ('mono',)
+        self.configframe.int_param_vars = [
+            tk.IntVar(value=getattr(self.configframe.target, param))
+            for param in self.configframe.int_params
+        ]
+        self.configframe.mono_modes = ['mono: off', 'mono: on', 'stereo reverse']
+        self.configframe.bus_mono_label_text = tk.StringVar(
+            value=self.configframe.mono_modes[self.configframe.target.mono]
+        )
+        self.configframe.bool_params = ('eq.on', 'eq.ab')
+        self.configframe.bool_param_vars = [
+            tk.BooleanVar() for _ in self.configframe.bool_params
+        ]
         self.configframe.bus_mode_label_text = tk.StringVar(
             value=self.configframe.bus_mode_map[self.configframe.current_bus_mode()]
         )
@@ -602,6 +617,20 @@ class BusConfigFrameBuilder(ChannelConfigFrameBuilder):
             ),
         )
 
+    def create_bus_mono_button(self):
+        self.configframe.mono_button = ttk.Button(
+            self.configframe, textvariable=self.configframe.bus_mono_label_text
+        )
+        self.configframe.mono_button.bind(
+            '<Button-1>',
+            partial(self.configframe.pause_updates, self.configframe.rotate_mono_right),
+        )
+        self.configframe.mono_button.bind(
+            '<Button-3>',
+            partial(self.configframe.pause_updates, self.configframe.rotate_mono_left),
+        )
+        self.configframe.mono_button.grid(column=0, row=1, sticky=(tk.W))
+
     def create_param_buttons(self):
         param_buttons = [
             ttk.Checkbutton(
@@ -611,13 +640,13 @@ class BusConfigFrameBuilder(ChannelConfigFrameBuilder):
                     self.configframe.pause_updates, self.configframe.toggle_p, param
                 ),
                 style=f'{"Toggle.TButton" if _configuration.themes_enabled else f"{param}.TButton"}',
-                variable=self.configframe.param_vars[i],
+                variable=self.configframe.bool_param_vars[i],
             )
-            for i, param in enumerate(self.configframe.params)
+            for i, param in enumerate(self.configframe.bool_params)
         ]
         [
             button.grid(
-                column=i,
+                column=i + 1,
                 row=1,
             )
             for i, button in enumerate(param_buttons)

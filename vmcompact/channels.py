@@ -197,14 +197,22 @@ class Strip(ChannelLabelFrame):
 
     def upd_levels(self):
         """
-        Updates level values.
+        Updates level values using direct dB values.
         """
         if self.index < self.parent.parent.kind.num_strip:
             if self.target.levels.is_updated:
                 val = max(self.target.levels.prefader)
-                self.level.set(
-                    (0 if self.mute.get() else 72 + val - 12 + self.gain.get())
-                )
+                if val < -72:
+                    if self.level.get() != 0:
+                        self.level.set(0)
+                    return
+                # Convert dB to progressbar: -60dB=0, 0dB=60, +12dB=72
+                if self.mute.get():
+                    level_display = 0
+                else:
+                    level_db = val + self.gain.get()
+                    level_display = max(0, min(72, level_db + 60))
+                self.level.set(level_display)
 
 
 class Bus(ChannelLabelFrame):
@@ -223,9 +231,18 @@ class Bus(ChannelLabelFrame):
 
     def upd_levels(self):
         if self.index < self.parent.parent.kind.num_bus:
-            if self.target.levels.is_updated or self.level.get() != -118:
+            if self.target.levels.is_updated:
                 val = max(self.target.levels.all)
-                self.level.set((0 if self.mute.get() else 72 + val - 12))
+                if val < -72:
+                    if self.level.get() != 0:
+                        self.level.set(0)
+                    return
+                # Convert dB to progressbar: -60dB=0, 0dB=60, +12dB=72
+                if self.mute.get():
+                    level_display = 0
+                else:
+                    level_display = max(0, min(72, val + 60))
+                self.level.set(level_display)
 
 
 class ChannelFrame(ttk.Frame):

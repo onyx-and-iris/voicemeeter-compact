@@ -98,7 +98,7 @@ class Config(ttk.Frame):
         self.slider_vars[self.slider_params.index(param)].set(val)
 
     def toggle_p(self, param):
-        val = self.param_vars[self.params.index(param)].get()
+        val = self.bool_param_vars[self.bool_params.index(param)].get()
         self.setter(param, val)
         if not _configuration.themes_enabled:
             self.styletable.configure(
@@ -177,15 +177,14 @@ class StripConfig(Config):
             for i, param in enumerate(self.virt_out_params)
         ]
         [
-            self.param_vars[i].set(self.getter(param))
-            for i, param in enumerate(self.params)
+            self.bool_param_vars[i].set(self.getter(param))
+            for i, param in enumerate(self.bool_params)
         ]
-        if not _base_values.vban_connected:  # slider vars not defined in RT Packet
-            [
-                self.slider_vars[i].set(self.getter(param))
-                for i, param in enumerate(self.slider_params)
-                if self.index < self.phys_in
-            ]
+        [
+            self.slider_vars[i].set(self.getter(param))
+            for i, param in enumerate(self.slider_params)
+            if self.index < self.phys_in
+        ]
 
         if not _configuration.themes_enabled:
             [
@@ -207,7 +206,7 @@ class StripConfig(Config):
                     f'{param}.TButton',
                     background=f'{"green" if self.param_vars[i].get() else "white"}',
                 )
-                for i, param in enumerate(self.params)
+                for i, param in enumerate(self.bool_params)
             ]
 
 
@@ -238,53 +237,56 @@ class BusConfig(Config):
         self.builder.create_bus_mode_button()
 
     def make_row_1(self):
+        self.builder.create_bus_mono_button()
         self.builder.create_param_buttons()
 
     def current_bus_mode(self):
         return self.target.mode.get()
 
     def rotate_bus_modes_right(self, *args):
-        current_mode = self.current_bus_mode()
-        next = self.bus_modes.index(current_mode) + 1
-        if next < len(self.bus_modes):
-            setattr(
-                self.target.mode,
-                self.bus_modes[next],
-                True,
-            )
-            self.bus_mode_label_text.set(self.bus_mode_map[self.bus_modes[next]])
-        else:
-            self.target.mode.normal = True
-            self.bus_mode_label_text.set('Normal')
+        current_mode = self.bus_mode_map_reverse[self.bus_mode_label_text.get()]
+        current_index = self.bus_modes.index(current_mode)
+        next_index = (current_index + 1) % len(self.bus_modes)
+        next_mode = self.bus_modes[next_index]
+
+        setattr(self.target.mode, next_mode, True)
+        self.bus_mode_label_text.set(self.bus_mode_map[next_mode])
 
     def rotate_bus_modes_left(self, *args):
-        current_mode = self.current_bus_mode()
-        prev = self.bus_modes.index(current_mode) - 1
-        if prev < 0:
-            self.target.mode.rearonly = True
-            self.bus_mode_label_text.set('Rear Only')
-        else:
-            setattr(
-                self.target.mode,
-                self.bus_modes[prev],
-                True,
-            )
-            self.bus_mode_label_text.set(self.bus_mode_map[self.bus_modes[prev]])
+        current_mode = self.bus_mode_map_reverse[self.bus_mode_label_text.get()]
+        current_index = self.bus_modes.index(current_mode)
+        prev_index = (current_index - 1) % len(self.bus_modes)
+        prev_mode = self.bus_modes[prev_index]
+
+        setattr(self.target.mode, prev_mode, True)
+        self.bus_mode_label_text.set(self.bus_mode_map[prev_mode])
+
+    def rotate_mono_right(self, *args):
+        current_val = self.mono_modes.index(self.bus_mono_label_text.get())
+        next_val = (current_val + 1) % 3
+        self.bus_mono_label_text.set(self.mono_modes[next_val])
+        self.setter('mono', next_val)
+
+    def rotate_mono_left(self, *args):
+        current_val = self.mono_modes.index(self.bus_mono_label_text.get())
+        next_val = (current_val - 1) % 3
+        self.bus_mono_label_text.set(self.mono_modes[next_val])
+        self.setter('mono', next_val)
 
     def teardown(self):
         self.builder.teardown()
 
     def sync(self):
         [
-            self.param_vars[i].set(self.getter(param))
-            for i, param in enumerate(self.params)
+            self.bool_param_vars[i].set(self.getter(param))
+            for i, param in enumerate(self.bool_params)
         ]
         self.bus_mode_label_text.set(self.bus_mode_map[self.current_bus_mode()])
         if not _configuration.themes_enabled:
             [
                 self.styletable.configure(
                     f'{param}.TButton',
-                    background=f'{"green" if self.param_vars[i].get() else "white"}',
+                    background=f'{"green" if self.bool_param_vars[i].get() else "white"}',
                 )
-                for i, param in enumerate(self.params)
+                for i, param in enumerate(self.bool_params)
             ]
