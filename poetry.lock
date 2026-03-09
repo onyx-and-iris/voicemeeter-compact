@@ -223,7 +223,7 @@ files = [
 
 [[package]]
 name = "vban-cmd"
-version = "2.10.1"
+version = "2.10.2"
 description = "Python interface for the VBAN RT Packet Service (Sendtext)"
 optional = false
 python-versions = ">=3.10"
@@ -258,4 +258,4 @@ url = "../voicemeeter-api-python"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.14"
-content-hash = "171da15ce55f47b4e651aade40ab21afd5ef589ff7ff26e51caf6840d25b98a1"
+content-hash = "f1e1782280c5e165fef043ca2695ea5f5c93fd00a66ace809266e0196fef6b71"
