@@ -25,9 +25,6 @@ def rewrite_app(theme):
         with open(outfile, 'w') as output:
             for line in input:
                 match line:
-                    # App init()
-                    case '    def __init__(self, vmr):\n':
-                        output.write('    def __init__(self, vmr, theme):\n')
                     case '        self._vmr = vmr\n':
                         write_outs(
                             output,
@@ -46,11 +43,6 @@ def rewrite_app(theme):
                                 '                self.tk.call("source", tcldir.resolve() / f"{self._theme_name}.tcl")\n',
                             ),
                         )
-                    # def connect()
-                    case 'def connect(kind_id: str, vmr) -> App:\n':
-                        output.write('def connect(kind_id: str, vmr, theme) -> App:\n')
-                    case '    return VMMIN_cls(vmr)\n':
-                        output.write('    return VMMIN_cls(vmr, theme)\n')
                     case _:
                         output.write(line)
 
