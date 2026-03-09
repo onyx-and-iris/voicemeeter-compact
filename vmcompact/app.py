@@ -37,7 +37,7 @@ class App(tk.Tk):
         )
         return APP_cls
 
-    def __init__(self, vmr):
+    def __init__(self, vmr, theme):
         super().__init__()
         self.logger = logger.getChild(self.__class__.__name__)
         self._vmr = vmr
@@ -201,11 +201,11 @@ class App(tk.Tk):
 _apps = {kind.name: App.make(kind) for kind in _kinds_all}
 
 
-def connect(kind_id: str, vmr) -> App:
+def connect(kind_id: str, vmr, theme=None) -> App:
     """return App of the kind requested"""
 
     try:
         VMMIN_cls = _apps[kind_id]
     except KeyError:
         raise VMCompactError(f'Invalid kind: {kind_id}')
-    return VMMIN_cls(vmr)
+    return VMMIN_cls(vmr, theme)
