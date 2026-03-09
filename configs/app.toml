@@ -1,10 +1,9 @@
 # load a specific profile on start (file name without .toml ext)
 # [configs]
 # config="example"
-# load with themes enabled? set the default mode
+# load with themes enabled?
 [theme]
 enabled = true
-mode = "light"
 # load in extended mode? if so which orientation
 [extends]
 extended = true
@@ -22,4 +21,4 @@ size = 3
 default = 0
 # show the navigation frame?
 [navigation]
-show = true
+show = false

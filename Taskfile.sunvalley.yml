@@ -1,0 +1,24 @@
+version: '3'
+
+tasks:
+  build:
+    desc: Build Sunvalley artifacts
+    cmds:
+      - for:
+          matrix:
+            KIND: [basic, banana, potato]
+        cmd: poetry run pyinstaller --noconfirm --distpath dist/sunvalley-{{.ITEM.KIND}} spec/sunvalley/sunvalley-{{.ITEM.KIND}}.spec
+
+  compress:
+    desc: Compress Sunvalley artifacts
+    cmds:
+      - for:
+          matrix:
+            KIND: [basic, banana, potato]
+        cmd: '{{.SHELL}} -Command "Compress-Archive -Path dist/sunvalley-{{.ITEM.KIND}} -DestinationPath dist/sunvalley-{{.ITEM.KIND}}.zip -Force"'
+
+  clean:
+    desc: Clean build and dist directories
+    cmds:
+      - |
+        {{.SHELL}} -Command "Remove-Item -Path build/sunvalley-*,dist/sunvalley-* -Recurse -Force"

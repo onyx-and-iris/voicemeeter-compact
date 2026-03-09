@@ -2,12 +2,12 @@
 ### set the ip then uncomment
 # [connection-1]
 # kind = 'banana'
-# ip = '<ip address 1>'
+# ip = 'localhost'
 # streamname = 'Command1'
 # port = 6980
 
 # [connection-2]
 # kind = 'potato'
-# ip = '<ip address 2>'
+# ip = 'gamepc.local'
 # streamname = 'Command1'
 # port = 6980

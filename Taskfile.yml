@@ -1,5 +1,19 @@
 version: '3'
 
+includes:
+  sunvalley:
+    taskfile: ./Taskfile.sunvalley.yml
+    vars:
+      THEME: sunvalley
+  forest:
+    taskfile: ./Taskfile.forest.yml
+    vars:
+      THEME: forest
+  azure:
+    taskfile: ./Taskfile.azure.yml
+    vars:
+      THEME: azure
+
 vars:
   SHELL: pwsh
 
@@ -19,63 +33,23 @@ tasks:
   build:
     desc: Build all artifacts
     cmds:
-      - task: build-sunvalley
-      - echo "Sunvalley build complete"
-      - task: build-forest
-      - echo "Forest build complete"
-
-  build-sunvalley:
-    desc: Build Sunvalley artifacts
-    cmds:
       - for:
           matrix:
-            KIND: [basic, banana, potato]
-        cmd: poetry run pyinstaller --noconfirm --distpath dist/sunvalley-{{.ITEM.KIND}} spec/sunvalley-{{.ITEM.KIND}}.spec
-
-  build-forest:
-    desc: Build Forest artifacts
-    deps: [rewrite]
-    cmds:
-      - defer: { task: restore }
-      - for:
-          matrix:
-            KIND: [basic, banana, potato]
-            THEME: [light, dark]
-        cmd: poetry run pyinstaller --noconfirm --distpath dist/forest-{{.ITEM.KIND}}-{{.ITEM.THEME}} spec/forest-{{.ITEM.KIND}}-{{.ITEM.THEME}}.spec
-
-  rewrite:
-    internal: true
-    desc: Run the source code rewriter
-    cmds:
-      - poetry run python tools/rewriter.py --rewrite
-
-  restore:
-    internal: true
-    desc: Restore the backup files
-    cmds:
-      - poetry run python tools/rewriter.py --restore
+            THEME: [sunvalley, forest, azure]
+        task: '{{.ITEM.THEME}}:build'
 
   compress:
-    deps: [compress-sunvalley, compress-forest]
-
-  compress-sunvalley:
+    desc: Compress all artifacts
     cmds:
       - for:
           matrix:
-            KIND: [basic, banana, potato]
-        cmd: '{{.SHELL}} -Command "Compress-Archive -Path dist/sunvalley-{{.ITEM.KIND}} -DestinationPath dist/sunvalley-{{.ITEM.KIND}}.zip -Force"'
-
-  compress-forest:
-    cmds:
-      - for:
-          matrix:
-            KIND: [basic, banana, potato]
-            THEME: [light, dark]
-        cmd: '{{.SHELL}} -Command "Compress-Archive -Path dist/forest-{{.ITEM.KIND}}-{{.ITEM.THEME}} -DestinationPath dist/forest-{{.ITEM.KIND}}-{{.ITEM.THEME}}.zip -Force"'
+            THEME: [sunvalley, forest, azure]
+        task: '{{.ITEM.THEME}}:compress'
 
   clean:
     desc: Clean up build and dist directories
     cmds:
-      - |
-        {{.SHELL}} -Command "
-          Remove-Item -Path build/forest-*,build/sunvalley-*,dist/forest-*,dist/sunvalley-* -Recurse -Force"
+      - for:
+          matrix:
+            THEME: [sunvalley, forest, azure]
+        task: '{{.ITEM.THEME}}:clean'

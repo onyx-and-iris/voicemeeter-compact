@@ -60,7 +60,7 @@ _defaults = {
     'submixes': {
         'default': 0,
     },
-    'navigation': {'show': True},
+    'navigation': {'show': False},
 }
 
 

@@ -1,0 +1,40 @@
+version: '3'
+
+tasks:
+  build:
+    desc: Build Forest artifacts
+    deps: [rewrite]
+    cmds:
+      - defer: { task: restore }
+      - for:
+          matrix:
+            KIND: [basic, banana, potato]
+            THEME: [forest-light, forest-dark]
+        cmd: poetry run pyinstaller --noconfirm --distpath dist/{{.ITEM.THEME}}-{{.ITEM.KIND}} spec/forest/{{.ITEM.THEME}}-{{.ITEM.KIND}}.spec
+
+  rewrite:
+    internal: true
+    desc: Run the source code rewriter
+    cmds:
+      - poetry run python tools/rewriter.py --rewrite --theme {{.THEME}}
+
+  restore:
+    internal: true
+    desc: Restore the backup files
+    cmds:
+      - poetry run python tools/rewriter.py --restore
+
+  compress:
+    desc: Compress Forest artifacts
+    cmds:
+      - for:
+          matrix:
+            KIND: [basic, banana, potato]
+            THEME: [forest-light, forest-dark]
+        cmd: '{{.SHELL}} -Command "Compress-Archive -Path dist/{{.ITEM.THEME}}-{{.ITEM.KIND}} -DestinationPath dist/{{.ITEM.THEME}}-{{.ITEM.KIND}}.zip -Force"'
+
+  clean:
+    desc: Clean build and dist directories
+    cmds:
+      - |
+        {{.SHELL}} -Command "Remove-Item -Path build/forest-*,dist/forest-* -Recurse -Force"
