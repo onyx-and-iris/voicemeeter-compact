@@ -36,7 +36,7 @@ def rewrite_app(theme):
                                 '        self._theme = theme\n',
                                 '        self._theme_name = theme.split("-")[0]\n',
                                 '        self._theme_type = theme.split("-")[-1]\n',
-                                '        tcldir = Path.cwd() / "theme"\n',
+                                '        tcldir = Path.cwd() / "theme" / self._theme_name\n',
                                 '        if not tcldir.is_dir():\n',
                                 '            tcldir = Path.cwd() / "_internal" / "theme"\n',
                                 '        match self._theme_name:\n',
@@ -223,37 +223,54 @@ def rewrite_menu(theme):
                         output.write(line)
 
 
+def rewrite_navigation(theme):
+    navigation_logger = logger.getChild('navigation')
+    navigation_logger.info('rewriting navigation.py')
+    infile = Path(SRC_DIR) / 'navigation.bk'
+    outfile = Path(PACKAGE_DIR) / 'navigation.py'
+    with open(infile, 'r') as input:
+        with open(outfile, 'w') as output:
+            for line in input:
+                match line:
+                    case '        self.builder.create_info_button()\n':
+                        if theme.startswith('azure'):
+                            output.write(
+                                '        # self.builder.create_info_button()\n'
+                            )
+                        else:
+                            output.write(line)
+                    case _:
+                        output.write(line)
+
+
 def prepare_for_build(theme):
     ################# MOVE FILES FROM PACKAGE DIR INTO SRC DIR #########################
     for file in (
         PACKAGE_DIR / 'app.py',
         PACKAGE_DIR / 'builders.py',
         PACKAGE_DIR / 'menu.py',
+        PACKAGE_DIR / 'navigation.py',
     ):
         if file.exists():
             logger.debug(f'moving {str(file)}')
             file.rename(SRC_DIR / f'{file.stem}.bk')
 
     ###################### RUN THE FILE REWRITER FOR EACH *.BK #########################
-    for step in (rewrite_app, rewrite_builders, rewrite_menu):
+    for step in (rewrite_app, rewrite_builders, rewrite_menu, rewrite_navigation):
         step(theme)
 
 
 def cleanup():
     ########################## RESTORE *.BK FILES #####################################
     for file in (
-        PACKAGE_DIR / 'app.py',
-        PACKAGE_DIR / 'builders.py',
-        PACKAGE_DIR / 'menu.py',
-    ):
-        file.unlink()
-
-    for file in (
         SRC_DIR / 'app.bk',
         SRC_DIR / 'builders.bk',
         SRC_DIR / 'menu.bk',
+        SRC_DIR / 'navigation.bk',
     ):
-        file.rename(PACKAGE_DIR / f'{file.stem}.py')
+        if file.exists():
+            logger.debug(f'moving {str(file)}')
+            file.replace(PACKAGE_DIR / f'{file.stem}.py')
 
 
 if __name__ == '__main__':
