@@ -61,10 +61,6 @@ class BaseValues(metaclass=SingletonMeta):
 _base_values = BaseValues()
 _configuration = Configurations()
 
-_kinds = {kind.name: kind for kind in kinds.kinds_all}
-
-_kinds_all = _kinds.values()
-
 
 def kind_get(kind_id):
-    return _kinds[kind_id]
+    return kinds.request_kind_map(kind_id)

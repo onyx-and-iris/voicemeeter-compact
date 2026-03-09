@@ -6,10 +6,11 @@ from tkinter import messagebox, ttk
 from typing import NamedTuple
 
 import voicemeeterlib
+from voicemeeterlib import kinds
 
 from .builders import MainFrameBuilder
 from .configurations import loader
-from .data import _base_values, _configuration, _kinds_all, get_configuration
+from .data import _base_values, _configuration, get_configuration
 from .errors import VMCompactError
 from .menu import Menus
 from .subject import Subject
@@ -198,7 +199,7 @@ class App(tk.Tk):
         self.destroy()
 
 
-_apps = {kind.name: App.make(kind) for kind in _kinds_all}
+_apps = {kind.name: App.make(kind) for kind in kinds.all}
 
 
 def connect(kind_id: str, vmr, theme=None) -> App:

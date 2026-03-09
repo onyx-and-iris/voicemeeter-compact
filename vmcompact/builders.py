@@ -6,6 +6,7 @@ from tkinter import ttk
 
 import sv_ttk
 
+from . import util
 from .banner import Banner
 from .channels import _make_channelframe
 from .config import BusConfig, StripConfig
@@ -561,31 +562,22 @@ class StripConfigFrameBuilder(ChannelConfigFrameBuilder):
 class BusConfigFrameBuilder(ChannelConfigFrameBuilder):
     """Responsible for building channel configframe widgets"""
 
+    def __init__(self, configframe, app):
+        super().__init__(configframe)
+        self.app = app
+
     def setup(self):
-        # fmt: off
-        self.configframe.bus_mode_map = {
-            "normal": "Normal",
-            "amix": "Mix Down A",
-            "bmix": "Mix Down B",
-            "repeat": "Stereo Repeat",
-            "composite": "Composite",
-            "tvmix": "Up Mix TV",
-            "upmix21": "Up Mix 2.1",
-            "upmix41": "Up Mix 4.1",
-            "upmix61": "Up Mix 6.1",
-            "centeronly": "Center Only",
-            "lfeonly": "LFE Only",
-            "rearonly": "Rear Only",
-        }
-        self.configframe.bus_mode_map_reverse = {v: k for k, v in self.configframe.bus_mode_map.items()}
-        self.configframe.bus_modes = list(self.configframe.bus_mode_map.keys())
-        # fmt: on
+        self.configframe.bus_mode_map = util.get_busmode_fullnames(self.app.kind)
+        self.configframe.bus_mode_map_reverse = util.get_busmode_fullnames_reversed(
+            self.app.kind
+        )
+        self.configframe.bus_modes = util.get_busmode_shortnames(self.app.kind)
         self.configframe.int_params = ('mono',)
         self.configframe.int_param_vars = [
             tk.IntVar(value=getattr(self.configframe.target, param))
             for param in self.configframe.int_params
         ]
-        self.configframe.mono_modes = ['mono: off', 'mono: on', 'stereo reverse']
+        self.configframe.mono_modes = util.get_busmono_modes()
         self.configframe.bus_mono_label_text = tk.StringVar(
             value=self.configframe.mono_modes[self.configframe.target.mono]
         )

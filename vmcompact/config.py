@@ -217,7 +217,7 @@ class BusConfig(Config):
             self.grid(column=0, row=1, columnspan=4, padx=(2,))
         else:
             self.grid(column=0, row=3, columnspan=4, padx=(2,))
-        self.builder = builders.BusConfigFrameBuilder(self)
+        self.builder = builders.BusConfigFrameBuilder(self, parent)
         self.builder.setup()
         self.make_row_0()
         self.make_row_1()
