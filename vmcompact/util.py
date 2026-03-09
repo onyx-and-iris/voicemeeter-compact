@@ -31,4 +31,4 @@ def get_busmode_shortnames(kind) -> list:
 
 
 def get_busmono_modes() -> list:
-    return ['mono: off', 'mono: on', 'stereo repeat']
+    return ['Mono: off', 'Mono: on', 'Stereo Reverse']

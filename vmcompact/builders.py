@@ -591,7 +591,9 @@ class BusConfigFrameBuilder(ChannelConfigFrameBuilder):
 
     def create_bus_mode_button(self):
         self.configframe.busmode_button = ttk.Button(
-            self.configframe, textvariable=self.configframe.bus_mode_label_text
+            self.configframe,
+            textvariable=self.configframe.bus_mode_label_text,
+            width=15,
         )
         self.configframe.busmode_button.grid(
             column=0, row=0, columnspan=2, sticky=(tk.W), padx=1, pady=1
@@ -611,7 +613,9 @@ class BusConfigFrameBuilder(ChannelConfigFrameBuilder):
 
     def create_bus_mono_button(self):
         self.configframe.mono_button = ttk.Button(
-            self.configframe, textvariable=self.configframe.bus_mono_label_text
+            self.configframe,
+            textvariable=self.configframe.bus_mono_label_text,
+            width=15,
         )
         self.configframe.mono_button.bind(
             '<Button-1>',
