@@ -357,15 +357,17 @@ class Menus(tk.Menu):
         opts = {}
         opts |= self.vban_config[f'connection-{i + 1}']
         kind_id = opts.pop('kind')
+        if 'ip' in opts:
+            opts['host'] = opts.pop('ip')
         self.vban = vban_cmd.api(kind_id, **opts)
         # login to vban interface
         try:
-            self.logger.info(f'Attempting vban connection to {opts.get("ip")}')
+            self.logger.info(f'Attempting vban connection to {opts.get("host")}')
             self.vban.login()
         except VBANCMDConnectionError as e:
             self.vban.logout()
             msg = (
-                f'Timeout attempting to establish connection to {opts.get("ip")}',
+                f'Timeout attempting to establish connection to {opts.get("host")}',
                 'Please check your connection settings',
             )
             messagebox.showerror('Connection Error', '\n'.join(msg))
