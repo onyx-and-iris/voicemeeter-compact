@@ -139,13 +139,13 @@ A valid `vban.toml` might look like this:
 ```toml
 [connection-1]
 kind = 'banana'
-ip = '192.168.1.2'
+host = '192.168.1.2'
 streamname = 'worklaptop'
 port = 6980
 
 [connection-2]
 kind = 'potato'
-ip = '192.168.1.3'
+host = '192.168.1.3'
 streamname = 'streampc'
 port = 6990
 ```
