@@ -602,7 +602,7 @@ class BusConfigFrameBuilder(ChannelConfigFrameBuilder):
             self.configframe, textvariable=self.configframe.bus_mode_label_text
         )
         self.configframe.busmode_button.grid(
-            column=0, row=0, columnspan=2, sticky=(tk.W)
+            column=0, row=0, columnspan=2, sticky=(tk.W), padx=1, pady=1
         )
         self.configframe.busmode_button.bind(
             '<Button-1>',
@@ -629,7 +629,9 @@ class BusConfigFrameBuilder(ChannelConfigFrameBuilder):
             '<Button-3>',
             partial(self.configframe.pause_updates, self.configframe.rotate_mono_left),
         )
-        self.configframe.mono_button.grid(column=0, row=1, sticky=(tk.W))
+        self.configframe.mono_button.grid(
+            column=0, row=1, sticky=(tk.W), padx=1, pady=1
+        )
 
     def create_param_buttons(self):
         param_buttons = [
