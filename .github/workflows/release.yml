@@ -66,6 +66,10 @@ jobs:
           path: .venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
 
+      - name: Install Poetry plugins
+        run: poetry self add poethepoet
+        shell: bash
+
       - name: Install dependencies
         run: poetry install --with build
         shell: bash
