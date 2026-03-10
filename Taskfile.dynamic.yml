@@ -2,14 +2,14 @@ version: '3'
 
 # Dynamic build system - no spec files needed!
 # Examples:
-# - task build THEMES="azure forest"
-# - task build-all
+# - task -t Taskfile.dynamic.yml build THEMES="azure forest"
+# - task -t Taskfile.dynamic.yml build-all
 # THEMES can be specified as a space-separated list or "all" to build everything.
 #
 # Compression tasks are also dynamic and can be used like:
 # Usage examples:
-#   task compress THEME=azure
-#   task compress-all
+#   task -t Taskfile.dynamic.yml compress THEME=azure
+#   task -t Taskfile.dynamic.yml compress-all
 
 vars:
   THEMES: '{{.THEMES | default "all"}}'
