@@ -33,6 +33,42 @@ tasks:
     cmds:
       - poetry run python tools/dynamic_builder.py sunvalley
 
+  compress:
+    desc: Compress artifacts for specified theme
+    cmds:
+      - task: compress-{{.THEME}}
+
+  compress-all:
+    desc: Compress artifacts for all themes
+    cmds:
+      - for:
+          matrix:
+            THEME: [azure, forest, sunvalley]
+        task: compress-{{.ITEM.THEME}}
+
+  compress-azure:
+    cmds:
+      - for:
+          matrix:
+            KIND: [basic, banana, potato]
+            VARIANT: [azure-light, azure-dark]
+        cmd: '{{.SHELL}} -Command "Compress-Archive -Path dist/{{.ITEM.VARIANT}}-{{.ITEM.KIND}} -DestinationPath dist/{{.ITEM.VARIANT}}-{{.ITEM.KIND}}.zip -Force"'
+
+  compress-forest:
+    cmds:
+      - for:
+          matrix:
+            KIND: [basic, banana, potato]
+            VARIANT: [forest-light, forest-dark]
+        cmd: '{{.SHELL}} -Command "Compress-Archive -Path dist/{{.ITEM.VARIANT}}-{{.ITEM.KIND}} -DestinationPath dist/{{.ITEM.VARIANT}}-{{.ITEM.KIND}}.zip -Force"'
+
+  compress-sunvalley:
+    cmds:
+      - for:
+          matrix:
+            KIND: [basic, banana, potato]
+        cmd: '{{.SHELL}} -Command "Compress-Archive -Path dist/sunvalley-{{.ITEM.KIND}} -DestinationPath dist/sunvalley-{{.ITEM.KIND}}.zip -Force"'
+
   clean:
     desc: Clean all build artifacts
     cmds:

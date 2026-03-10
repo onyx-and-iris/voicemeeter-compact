@@ -13,13 +13,11 @@ tasks:
         cmd: poetry run pyinstaller --noconfirm --distpath dist/{{.ITEM.THEME}}-{{.ITEM.KIND}} spec/azure/{{.ITEM.THEME}}-{{.ITEM.KIND}}.spec
 
   rewrite:
-    #internal: true
     desc: Run the source code rewriter
     cmds:
       - poetry run python tools/rewriter.py --rewrite --theme {{.THEME}}
 
   restore:
-    #internal: true
     desc: Restore the backup files
     cmds:
       - poetry run python tools/rewriter.py --restore
