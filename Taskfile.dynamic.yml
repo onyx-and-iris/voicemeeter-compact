@@ -11,27 +11,27 @@ tasks:
   build:
     desc: Build specified themes dynamically (no spec files needed)
     cmds:
-      - poetry run python tools/dynamic_builder.py {{.THEMES}}
+      - ${POETRY_BIN:-poetry} run python tools/dynamic_builder.py {{.THEMES}}
 
   build-all:
     desc: Build all themes
     cmds:
-      - poetry run python tools/dynamic_builder.py all
+      - ${POETRY_BIN:-poetry} run python tools/dynamic_builder.py all
 
   build-azure:
     desc: Build only azure theme
     cmds:
-      - poetry run python tools/dynamic_builder.py azure
+      - ${POETRY_BIN:-poetry} run python tools/dynamic_builder.py azure
 
   build-forest:
     desc: Build only forest theme
     cmds:
-      - poetry run python tools/dynamic_builder.py forest
+      - ${POETRY_BIN:-poetry} run python tools/dynamic_builder.py forest
 
   build-sunvalley:
     desc: Build only sunvalley theme
     cmds:
-      - poetry run python tools/dynamic_builder.py sunvalley
+      - ${POETRY_BIN:-poetry} run python tools/dynamic_builder.py sunvalley
 
   compress:
     desc: Compress artifacts for specified theme
