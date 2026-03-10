@@ -115,77 +115,77 @@ jobs:
       - name: Upload build artifacts - Forest Basic Dark
         uses: actions/upload-artifact@v4
         with:
-          name: forest-basic-dark
-          path: dist/forest-basic-dark.zip
+          name: forest-dark-basic
+          path: dist/forest-dark-basic.zip
 
       - name: Upload build artifacts - Forest Banana Dark
         uses: actions/upload-artifact@v4
         with:
-          name: forest-banana-dark
-          path: dist/forest-banana-dark.zip
+          name: forest-dark-banana
+          path: dist/forest-dark-banana.zip
 
       - name: Upload build artifacts - Forest Potato Dark
         uses: actions/upload-artifact@v4
         with:
-          name: forest-potato-dark
-          path: dist/forest-potato-dark.zip
+          name: forest-dark-potato
+          path: dist/forest-dark-potato.zip
 
       # Forest theme variants (light)
       - name: Upload build artifacts - Forest Basic Light
         uses: actions/upload-artifact@v4
         with:
-          name: forest-basic-light
-          path: dist/forest-basic-light.zip
+          name: forest-light-basic
+          path: dist/forest-light-basic.zip
 
       - name: Upload build artifacts - Forest Banana Light
         uses: actions/upload-artifact@v4
         with:
-          name: forest-banana-light
-          path: dist/forest-banana-light.zip
+          name: forest-light-banana
+          path: dist/forest-light-banana.zip
 
       - name: Upload build artifacts - Forest Potato Light
         uses: actions/upload-artifact@v4
         with:
-          name: forest-potato-light
-          path: dist/forest-potato-light.zip
+          name: forest-light-potato
+          path: dist/forest-light-potato.zip
 
       # Azure theme variants (dark)
       - name: Upload build artifacts - Azure Basic Dark
         uses: actions/upload-artifact@v4
         with:
-          name: azure-basic-dark
-          path: dist/azure-basic-dark.zip
+          name: azure-dark-basic
+          path: dist/azure-dark-basic.zip
 
       - name: Upload build artifacts - Azure Banana Dark
         uses: actions/upload-artifact@v4
         with:
-          name: azure-banana-dark
-          path: dist/azure-banana-dark.zip
+          name: azure-dark-banana
+          path: dist/azure-dark-banana.zip
 
       - name: Upload build artifacts - Azure Potato Dark
         uses: actions/upload-artifact@v4
         with:
-          name: azure-potato-dark
-          path: dist/azure-potato-dark.zip
+          name: azure-dark-potato
+          path: dist/azure-dark-potato.zip
 
       # Azure theme variants (light)
       - name: Upload build artifacts - Azure Basic Light
         uses: actions/upload-artifact@v4
         with:
-          name: azure-basic-light
-          path: dist/azure-basic-light.zip
+          name: azure-light-basic
+          path: dist/azure-light-basic.zip
 
       - name: Upload build artifacts - Azure Banana Light
         uses: actions/upload-artifact@v4
         with:
-          name: azure-banana-light
-          path: dist/azure-banana-light.zip
+          name: azure-light-banana
+          path: dist/azure-light-banana.zip
 
       - name: Upload build artifacts - Azure Potato Light
         uses: actions/upload-artifact@v4
         with:
-          name: azure-potato-light
-          path: dist/azure-potato-light.zip
+          name: azure-light-potato
+          path: dist/azure-light-potato.zip
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')
