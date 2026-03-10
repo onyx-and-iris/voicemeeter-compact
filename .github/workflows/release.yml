@@ -70,8 +70,9 @@ jobs:
         run: poetry self add poethepoet
         shell: bash
 
-      - name: Override local path dependencies with PyPI versions
+      - name: Replace path dependencies with PyPI versions
         run: |
+          poetry remove voicemeeter-api vban-cmd || true
           poetry add voicemeeter-api vban-cmd
         shell: bash
 
