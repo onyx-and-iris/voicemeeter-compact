@@ -1,0 +1,198 @@
+name: Release Voicemeeter Compact
+
+on:
+  release:
+    types: [published]
+  push:
+    tags: ['v*.*.*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: latest
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+
+      - name: Install Task
+        run: |
+          Invoke-WebRequest -OutFile go-task.zip -Uri "https://github.com/go-task/task/releases/latest/download/task_windows_amd64.zip"
+          Expand-Archive -Path go-task.zip -DestinationPath .
+          Move-Item task.exe C:\Windows\System32\
+        shell: pwsh
+
+      - name: Download Forest TTK Theme
+        run: |
+          # Clone the Forest theme repository
+          git clone https://github.com/rdbende/Forest-ttk-theme.git temp-forest-theme
+
+          # Copy the required theme files to theme/forest
+          Copy-Item "temp-forest-theme\forest-dark.tcl" "theme\forest\"
+          Copy-Item "temp-forest-theme\forest-light.tcl" "theme\forest\"
+          Copy-Item "temp-forest-theme\forest-dark" "theme\forest\" -Recurse
+          Copy-Item "temp-forest-theme\forest-light" "theme\forest\" -Recurse
+
+          # Clean up
+          Remove-Item temp-forest-theme -Recurse -Force
+        shell: pwsh
+
+      - name: Download Azure TTK Theme
+        run: |
+          # Clone the Azure theme repository
+          git clone https://github.com/rdbende/Azure-ttk-theme.git temp-azure-theme
+
+          # Copy the required theme files to theme/azure
+          Copy-Item "temp-azure-theme\azure.tcl" "theme\azure\"
+          Copy-Item "temp-azure-theme\theme" "theme\azure\" -Recurse
+
+          # Clean up
+          Remove-Item temp-azure-theme -Recurse -Force
+        shell: pwsh
+
+      - name: Cache Poetry dependencies
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install dependencies
+        run: poetry install --with build
+
+      - name: Build artifacts with dynamic taskfile
+        run: task --taskfile Taskfile.dynamic.yml build-all
+
+      - name: Create release archives
+        run: task --taskfile Taskfile.dynamic.yml compress-all
+
+      # Sunvalley theme variants
+      - name: Upload build artifacts - Sunvalley Basic
+        uses: actions/upload-artifact@v4
+        with:
+          name: sunvalley-basic
+          path: dist/sunvalley-basic.zip
+
+      - name: Upload build artifacts - Sunvalley Banana
+        uses: actions/upload-artifact@v4
+        with:
+          name: sunvalley-banana
+          path: dist/sunvalley-banana.zip
+
+      - name: Upload build artifacts - Sunvalley Potato
+        uses: actions/upload-artifact@v4
+        with:
+          name: sunvalley-potato
+          path: dist/sunvalley-potato.zip
+
+      # Forest theme variants (dark)
+      - name: Upload build artifacts - Forest Basic Dark
+        uses: actions/upload-artifact@v4
+        with:
+          name: forest-basic-dark
+          path: dist/forest-basic-dark.zip
+
+      - name: Upload build artifacts - Forest Banana Dark
+        uses: actions/upload-artifact@v4
+        with:
+          name: forest-banana-dark
+          path: dist/forest-banana-dark.zip
+
+      - name: Upload build artifacts - Forest Potato Dark
+        uses: actions/upload-artifact@v4
+        with:
+          name: forest-potato-dark
+          path: dist/forest-potato-dark.zip
+
+      # Forest theme variants (light)
+      - name: Upload build artifacts - Forest Basic Light
+        uses: actions/upload-artifact@v4
+        with:
+          name: forest-basic-light
+          path: dist/forest-basic-light.zip
+
+      - name: Upload build artifacts - Forest Banana Light
+        uses: actions/upload-artifact@v4
+        with:
+          name: forest-banana-light
+          path: dist/forest-banana-light.zip
+
+      - name: Upload build artifacts - Forest Potato Light
+        uses: actions/upload-artifact@v4
+        with:
+          name: forest-potato-light
+          path: dist/forest-potato-light.zip
+
+      # Azure theme variants (dark)
+      - name: Upload build artifacts - Azure Basic Dark
+        uses: actions/upload-artifact@v4
+        with:
+          name: azure-basic-dark
+          path: dist/azure-basic-dark.zip
+
+      - name: Upload build artifacts - Azure Banana Dark
+        uses: actions/upload-artifact@v4
+        with:
+          name: azure-banana-dark
+          path: dist/azure-banana-dark.zip
+
+      - name: Upload build artifacts - Azure Potato Dark
+        uses: actions/upload-artifact@v4
+        with:
+          name: azure-potato-dark
+          path: dist/azure-potato-dark.zip
+
+      # Azure theme variants (light)
+      - name: Upload build artifacts - Azure Basic Light
+        uses: actions/upload-artifact@v4
+        with:
+          name: azure-basic-light
+          path: dist/azure-basic-light.zip
+
+      - name: Upload build artifacts - Azure Banana Light
+        uses: actions/upload-artifact@v4
+        with:
+          name: azure-banana-light
+          path: dist/azure-banana-light.zip
+
+      - name: Upload build artifacts - Azure Potato Light
+        uses: actions/upload-artifact@v4
+        with:
+          name: azure-potato-light
+          path: dist/azure-potato-light.zip
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Create Release
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          gh release create $TAG_NAME --title "Release $TAG_NAME" --generate-notes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload release assets
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          find . -name "*.zip" -exec gh release upload $TAG_NAME {} \;
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
