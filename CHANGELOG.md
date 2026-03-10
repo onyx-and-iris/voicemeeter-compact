@@ -9,6 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   [ ] 
 
+## [1.10.0] - 2026-03-26
+
+### Added
+
+-   Automated builds for Releases. This is much preferred over manual releases because users can be sure the files are built directly from the source code.
+-   Azure theme added to Releases.
+-   vban.toml files can now use key `host` intead of `ip`.
+    -   `ip` is still usable for backwards compatibility.
+
+### Changed
+
+-   Attempting a VBAN connection now uses a PING/PONG handshake to verify connection, this makes connections more reliable.
+-   Navigation frame is disabled by default. You can easily enable it from the menu or with an app.toml config.
+
+### Fixed
+
+-   Comp, Gate sliders now receive feedback when changes are made on the Voicemeeter GUI.
+-   Bus CONFIG mode button rotates through the correct modes for Basic Kind.
+-   Bus CONFIG mono now rotates through *off, on, stereo reverse*.
+-   Bus CONFIG mode/mono buttons are now a fixed width.
+
 ## [1.9.8] - 2025-01-22
 
 ### Changed
