@@ -30,8 +30,14 @@ tasks:
       - task: compress
       - echo "Release complete"
 
+  generate-specs:
+    desc: Generate all spec files from templates
+    cmds:
+      - poetry run python tools/spec_generator.py --clean
+
   build:
     desc: Build all artifacts
+    deps: [generate-specs]
     cmds:
       - for:
           matrix:
