@@ -70,8 +70,14 @@ jobs:
         run: poetry self add poethepoet
         shell: bash
 
+      - name: Replace path dependencies with PyPI versions
+        run: |
+          poetry remove voicemeeter-api vban-cmd || true
+          poetry add voicemeeter-api vban-cmd
+        shell: bash
+
       - name: Install dependencies
-        run: poetry install --with build --without dev
+        run: poetry install --with build
         shell: bash
 
       - name: Build artifacts with dynamic taskfile
