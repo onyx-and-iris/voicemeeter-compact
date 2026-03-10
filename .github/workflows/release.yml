@@ -68,12 +68,15 @@ jobs:
 
       - name: Install dependencies
         run: poetry install --with build
+        shell: bash
 
       - name: Build artifacts with dynamic taskfile
         run: task --taskfile Taskfile.dynamic.yml build-all
+        shell: bash
 
       - name: Create release archives
         run: task --taskfile Taskfile.dynamic.yml compress-all
+        shell: bash
 
       # Sunvalley theme variants
       - name: Upload build artifacts - Sunvalley Basic
