@@ -70,6 +70,11 @@ jobs:
         run: poetry self add poethepoet
         shell: bash
 
+      - name: Override local path dependencies with PyPI versions
+        run: |
+          poetry add voicemeeter-api vban-cmd
+        shell: bash
+
       - name: Install dependencies
         run: poetry install --with build
         shell: bash
