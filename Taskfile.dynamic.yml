@@ -1,7 +1,15 @@
 version: '3'
 
 # Dynamic build system - no spec files needed!
-# Usage: task build THEMES="azure forest" or task build-all
+# Examples:
+# - task build THEMES="azure forest"
+# - task build-all
+# THEMES can be specified as a space-separated list or "all" to build everything.
+#
+# Compression tasks are also dynamic and can be used like:
+# Usage examples:
+#   task compress THEME=azure
+#   task compress-all
 
 vars:
   THEMES: '{{.THEMES | default "all"}}'
