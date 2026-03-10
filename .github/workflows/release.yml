@@ -28,11 +28,9 @@ jobs:
           virtualenvs-in-project: true
 
       - name: Install Task
-        run: |
-          Invoke-WebRequest -OutFile go-task.zip -Uri "https://github.com/go-task/task/releases/latest/download/task_windows_amd64.zip"
-          Expand-Archive -Path go-task.zip -DestinationPath .
-          Move-Item task.exe C:\Windows\System32\
-        shell: pwsh
+        uses: go-task/setup-task@v1
+        with:
+          version: 3.x
 
       - name: Download Forest TTK Theme
         run: |
