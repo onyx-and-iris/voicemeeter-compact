@@ -1,0 +1,40 @@
+version: '3'
+
+# Dynamic build system - no spec files needed!
+# Usage: task build THEMES="azure forest" or task build-all
+
+vars:
+  THEMES: '{{.THEMES | default "all"}}'
+  SHELL: pwsh
+
+tasks:
+  build:
+    desc: Build specified themes dynamically (no spec files needed)
+    cmds:
+      - poetry run python tools/dynamic_builder.py {{.THEMES}}
+
+  build-all:
+    desc: Build all themes
+    cmds:
+      - poetry run python tools/dynamic_builder.py all
+
+  build-azure:
+    desc: Build only azure theme
+    cmds:
+      - poetry run python tools/dynamic_builder.py azure
+
+  build-forest:
+    desc: Build only forest theme
+    cmds:
+      - poetry run python tools/dynamic_builder.py forest
+
+  build-sunvalley:
+    desc: Build only sunvalley theme
+    cmds:
+      - poetry run python tools/dynamic_builder.py sunvalley
+
+  clean:
+    desc: Clean all build artifacts
+    cmds:
+      - |
+        {{.SHELL}} -Command "Remove-Item -Path build/*,dist/* -Recurse -Force -ErrorAction SilentlyContinue"
