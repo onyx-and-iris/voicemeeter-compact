@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+"""Rewrites app.py, builders.py, menu.py, and navigation.py to remove sv_ttk dependencies and apply theme changes for the build process.
+Also provides a cleanup function to restore the original files after building.
+"""
+
 import argparse
 import logging
 from pathlib import Path
