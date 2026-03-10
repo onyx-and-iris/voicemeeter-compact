@@ -14,9 +14,9 @@ dependencies = [
 ]
 
 [project.scripts]
-gui-basic-compact = "vmcompact.gui.basic:run"
-gui-banana-compact = "vmcompact.gui.banana:run"
-gui-potato-compact = "vmcompact.gui.potato:run"
+voicemeeter-compact-basic = "vmcompact.gui.basic:run"
+voicemeeter-compact-banana = "vmcompact.gui.banana:run"
+voicemeeter-compact-potato = "vmcompact.gui.potato:run"
 
 [tool.poetry]
 packages = [{ include = "vmcompact" }]
