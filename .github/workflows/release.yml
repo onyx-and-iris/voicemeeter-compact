@@ -66,37 +66,31 @@ jobs:
           path: .venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
 
+      - name: Add Poetry to PATH
+        run: echo "/c/Users/runneradmin/.local/bin" >> $GITHUB_PATH
+        shell: bash
+
       - name: Install Poetry plugins
         run: poetry self add poethepoet
         shell: bash
-        env:
-          PATH: ${{ env.PATH }}:/c/Users/runneradmin/.local/bin
 
       - name: Replace path dependencies with PyPI versions
         run: |
           poetry remove voicemeeter-api vban-cmd || true
           poetry add voicemeeter-api vban-cmd
         shell: bash
-        env:
-          PATH: ${{ env.PATH }}:/c/Users/runneradmin/.local/bin
 
       - name: Install dependencies
         run: poetry install --with build
         shell: bash
-        env:
-          PATH: ${{ env.PATH }}:/c/Users/runneradmin/.local/bin
 
       - name: Build artifacts with dynamic taskfile
         run: task --taskfile Taskfile.dynamic.yml build-all
         shell: bash
-        env:
-          PATH: ${{ env.PATH }}:/c/Users/runneradmin/.local/bin
 
       - name: Create release archives
         run: task --taskfile Taskfile.dynamic.yml compress-all
         shell: bash
-        env:
-          PATH: ${{ env.PATH }}:/c/Users/runneradmin/.local/bin
 
       # Sunvalley theme variants
       - name: Upload build artifacts - Sunvalley Basic
