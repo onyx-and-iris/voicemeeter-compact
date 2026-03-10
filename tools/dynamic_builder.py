@@ -5,6 +5,7 @@ Generates spec files on-the-fly and builds executables without storing intermedi
 """
 
 import argparse
+import os
 import shutil
 import subprocess
 import sys
@@ -164,8 +165,9 @@ class DynamicBuilder:
 
         # Build with PyInstaller
         dist_path = self.dist_dir / f'{theme_variant}-{kind}'
+        poetry_bin = os.getenv('POETRY_BIN', 'poetry')
         cmd = [
-            'poetry',
+            poetry_bin,
             'run',
             'pyinstaller',
             '--noconfirm',
@@ -179,14 +181,14 @@ class DynamicBuilder:
                 cmd, cwd=self.base_dir, capture_output=True, text=True
             )
             if result.returncode == 0:
-                print(f'✓ Built {theme_variant}-{kind}')
+                print(f'[OK] Built {theme_variant}-{kind}')
                 return True
             else:
-                print(f'✗ Failed to build {theme_variant}-{kind}')
+                print(f'[FAIL] Failed to build {theme_variant}-{kind}')
                 print(f'Error: {result.stderr}')
                 return False
         except Exception as e:
-            print(f'✗ Exception building {theme_variant}-{kind}: {e}')
+            print(f'[ERROR] Exception building {theme_variant}-{kind}: {e}')
             return False
 
     def build_theme(self, theme_family: str) -> Dict[str, bool]:
@@ -211,8 +213,9 @@ def run_rewriter(theme_family: str, base_dir: Path) -> bool:
     """Run the theme rewriter if needed."""
     if theme_family in ['azure', 'forest']:
         print(f'Running rewriter for {theme_family} theme...')
+        poetry_bin = os.getenv('POETRY_BIN', 'poetry')
         cmd = [
-            'poetry',
+            poetry_bin,
             'run',
             'python',
             'tools/rewriter.py',
@@ -232,7 +235,8 @@ def run_rewriter(theme_family: str, base_dir: Path) -> bool:
 def restore_rewriter(base_dir: Path) -> bool:
     """Restore files after rewriter."""
     print('Restoring rewriter changes...')
-    cmd = ['poetry', 'run', 'python', 'tools/rewriter.py', '--restore']
+    poetry_bin = os.getenv('POETRY_BIN', 'poetry')
+    cmd = [poetry_bin, 'run', 'python', 'tools/rewriter.py', '--restore']
     try:
         result = subprocess.run(cmd, cwd=base_dir)
         return result.returncode == 0
@@ -298,7 +302,7 @@ def main():
     total_count = 0
 
     for build_name, success in all_results.items():
-        status = '✓' if success else '✗'
+        status = '[OK]' if success else '[FAIL]'
         print(f'{status} {build_name}')
         if success:
             success_count += 1
