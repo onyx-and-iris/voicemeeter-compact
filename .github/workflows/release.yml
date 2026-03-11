@@ -77,21 +77,21 @@ jobs:
         shell: bash
 
       - name: Install dependencies
-        shell: pwsh
+        shell: bash
         run: |
           # Install project dependencies
           poetry install --with build
 
           # Verify PyInstaller is available
-          Write-Host "Verifying PyInstaller installation..."
+          echo "Verifying PyInstaller installation..."
           poetry show pyinstaller
 
       - name: Get Poetry executable path
-        shell: pwsh
+        shell: bash
         run: |
-          $poetryPath = Get-Command poetry | Select-Object -ExpandProperty Source
-          Write-Host "Poetry path: $poetryPath"
-          echo "POETRY_BIN=$poetryPath" >> $env:GITHUB_ENV
+          poetryPath=$(which poetry)
+          echo "Poetry path: $poetryPath"
+          echo "POETRY_BIN=$poetryPath" >> $GITHUB_ENV
 
       - name: Build artifacts with dynamic taskfile
         run: task --taskfile Taskfile.dynamic.yml build-all
