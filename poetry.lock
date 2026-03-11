@@ -223,7 +223,7 @@ files = [
 
 [[package]]
 name = "vban-cmd"
-version = "2.10.2"
+version = "2.10.3"
 description = "Python interface for the VBAN RT Packet Service (Sendtext)"
 optional = false
 python-versions = ">=3.10"
