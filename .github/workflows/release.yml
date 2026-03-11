@@ -77,20 +77,79 @@ jobs:
         shell: bash
 
       - name: Install dependencies
-        run: poetry install --with build
-        shell: bash
+        shell: pwsh
+        run: |
+          # Install project dependencies
+          poetry install --with build
+
+          # Verify PyInstaller is available
+          Write-Host "Verifying PyInstaller installation..."
+          poetry show pyinstaller
+
+      - name: Get Poetry executable path
+        shell: pwsh
+        run: |
+          $poetryPath = Get-Command poetry | Select-Object -ExpandProperty Source
+          Write-Host "Poetry path: $poetryPath"
+          echo "POETRY_BIN=$poetryPath" >> $env:GITHUB_ENV
 
       - name: Build artifacts with dynamic taskfile
         run: task --taskfile Taskfile.dynamic.yml build-all
         shell: bash
         env:
-          POETRY_BIN: /c/Users/runneradmin/.local/bin/poetry
+          POETRY_BIN: ${{ env.POETRY_BIN }}
 
       - name: Create release archives
         run: task --taskfile Taskfile.dynamic.yml compress-all
         shell: bash
         env:
-          POETRY_BIN: /c/Users/runneradmin/.local/bin/poetry
+          POETRY_BIN: ${{ env.POETRY_BIN }}
+
+      - name: Verify build outputs
+        shell: pwsh
+        run: |
+          Write-Host "Verifying build outputs..."
+
+          $expectedFiles = @(
+            "dist/sunvalley-basic.zip",
+            "dist/sunvalley-banana.zip",
+            "dist/sunvalley-potato.zip",
+            "dist/forest-dark-basic.zip",
+            "dist/forest-dark-banana.zip",
+            "dist/forest-dark-potato.zip",
+            "dist/forest-light-basic.zip",
+            "dist/forest-light-banana.zip",
+            "dist/forest-light-potato.zip",
+            "dist/azure-dark-basic.zip",
+            "dist/azure-dark-banana.zip",
+            "dist/azure-dark-potato.zip",
+            "dist/azure-light-basic.zip",
+            "dist/azure-light-banana.zip",
+            "dist/azure-light-potato.zip"
+          )
+
+          $missingFiles = @()
+          $foundFiles = @()
+
+          foreach ($file in $expectedFiles) {
+            if (Test-Path $file) {
+              $size = [math]::Round((Get-Item $file).Length / 1MB, 2)
+              $foundFiles += "$file ($size MB)"
+            } else {
+              $missingFiles += $file
+            }
+          }
+
+          Write-Host "Found files:"
+          $foundFiles | ForEach-Object { Write-Host "  $_" }
+
+          if ($missingFiles.Count -gt 0) {
+            Write-Host -ForegroundColor Red "Missing files:"
+            $missingFiles | ForEach-Object { Write-Host "  $_" }
+            exit 1
+          }
+
+          Write-Host -ForegroundColor Green "All expected files found!"
 
       # Sunvalley theme variants
       - name: Upload build artifacts - Sunvalley Basic
@@ -187,6 +246,31 @@ jobs:
           name: azure-light-potato
           path: dist/azure-light-potato.zip
 
+      - name: Build Summary
+        shell: pwsh
+        run: |
+          Write-Host -ForegroundColor Green "Build completed successfully!"
+          Write-Host ""
+          Write-Host "Built artifacts (15 theme variants):"
+          Write-Host "  Sunvalley Theme:"
+          Write-Host "    - voicemeeter-compact-sunvalley-basic.zip"
+          Write-Host "    - voicemeeter-compact-sunvalley-banana.zip"
+          Write-Host "    - voicemeeter-compact-sunvalley-potato.zip"
+          Write-Host "  Forest Theme:"
+          Write-Host "    - voicemeeter-compact-forest-dark-basic.zip"
+          Write-Host "    - voicemeeter-compact-forest-dark-banana.zip"
+          Write-Host "    - voicemeeter-compact-forest-dark-potato.zip"
+          Write-Host "    - voicemeeter-compact-forest-light-basic.zip"
+          Write-Host "    - voicemeeter-compact-forest-light-banana.zip"
+          Write-Host "    - voicemeeter-compact-forest-light-potato.zip"
+          Write-Host "  Azure Theme:"
+          Write-Host "    - voicemeeter-compact-azure-dark-basic.zip"
+          Write-Host "    - voicemeeter-compact-azure-dark-banana.zip"
+          Write-Host "    - voicemeeter-compact-azure-dark-potato.zip"
+          Write-Host "    - voicemeeter-compact-azure-light-basic.zip"
+          Write-Host "    - voicemeeter-compact-azure-light-banana.zip"
+          Write-Host "    - voicemeeter-compact-azure-light-potato.zip"
+
   release:
     if: startsWith(github.ref, 'refs/tags/v')
     needs: build
@@ -204,7 +288,48 @@ jobs:
       - name: Create Release
         run: |
           TAG_NAME=${GITHUB_REF#refs/tags/}
-          gh release create $TAG_NAME --title "Release $TAG_NAME" --generate-notes
+          gh release create $TAG_NAME \
+            --title "Voicemeeter Compact $TAG_NAME" \
+            --notes "## Voicemeeter Compact Release $TAG_NAME
+
+          ### Theme Variants
+          Choose your preferred theme and Voicemeeter version:
+
+          **Sunvalley Theme**
+          - **sunvalley-basic.zip** - For Voicemeeter Basic
+          - **sunvalley-banana.zip** - For Voicemeeter Banana
+          - **sunvalley-potato.zip** - For Voicemeeter Potato
+
+          **Forest Theme**
+          - **forest-dark-basic.zip** - Dark theme for Voicemeeter Basic
+          - **forest-dark-banana.zip** - Dark theme for Voicemeeter Banana
+          - **forest-dark-potato.zip** - Dark theme for Voicemeeter Potato
+          - **forest-light-basic.zip** - Light theme for Voicemeeter Basic
+          - **forest-light-banana.zip** - Light theme for Voicemeeter Banana
+          - **forest-light-potato.zip** - Light theme for Voicemeeter Potato
+
+          **Azure Theme**
+          - **azure-dark-basic.zip** - Dark theme for Voicemeeter Basic
+          - **azure-dark-banana.zip** - Dark theme for Voicemeeter Banana
+          - **azure-dark-potato.zip** - Dark theme for Voicemeeter Potato
+          - **azure-light-basic.zip** - Light theme for Voicemeeter Basic
+          - **azure-light-banana.zip** - Light theme for Voicemeeter Banana
+          - **azure-light-potato.zip** - Light theme for Voicemeeter Potato
+
+          ### Requirements
+          - Windows 10/11
+          - Voicemeeter (Basic/Banana/Potato) installed
+          - Python 3.10+ (if running from source)
+
+          ### Installation
+          1. Download the zip file matching your Voicemeeter version and preferred theme
+          2. Extract and run the executable - no installation required
+          3. The application will automatically detect your Voicemeeter installation
+
+          ### Notes
+          - Built with PyInstaller for standalone execution
+          - Each variant is scaled for its specific Voicemeeter version
+          - Themes provide different visual styles while maintaining full functionality"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
