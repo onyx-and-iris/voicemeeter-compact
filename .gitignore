@@ -224,6 +224,9 @@ spec/**/*
 !spec/*/
 !spec/**/.gitkeep
 
+# Backup files
+tools/src/*.bk
+
 # Taskfile build files
 Taskfile.unified.yml
 SPEC_CONSOLIDATION.md

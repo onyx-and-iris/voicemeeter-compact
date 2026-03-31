@@ -3,24 +3,32 @@ version: '3'
 tasks:
   build:
     desc: Build Forest artifacts
-    deps: [rewrite]
+    deps: [generate-specs, rewrite]
     cmds:
       - defer: { task: restore }
       - for:
           matrix:
             KIND: [basic, banana, potato]
             THEME: [forest-light, forest-dark]
-        cmd: poetry run pyinstaller --noconfirm --distpath dist/{{.ITEM.THEME}}-{{.ITEM.KIND}} spec/forest/{{.ITEM.THEME}}-{{.ITEM.KIND}}.spec
+        cmd: poetry run pyinstaller --noconfirm --distpath dist/{{.ITEM.THEME}}-{{.ITEM.KIND}} spec/{{.THEME}}/{{.ITEM.THEME}}-{{.ITEM.KIND}}.spec
+
+  generate-specs:
+    desc: Generate all spec files from templates
+    cmds:
+      - poetry run python tools/spec_generator.py --clean
+    internal: true
 
   rewrite:
     desc: Run the source code rewriter
     cmds:
       - poetry run python tools/rewriter.py --rewrite --theme {{.THEME}}
+    internal: true
 
   restore:
     desc: Restore the backup files
     cmds:
       - poetry run python tools/rewriter.py --restore
+    internal: true
 
   compress:
     desc: Compress Forest artifacts
@@ -35,4 +43,4 @@ tasks:
     desc: Clean build and dist directories
     cmds:
       - |
-        {{.SHELL}} -Command "Remove-Item -Path build/forest-*,dist/forest-* -Recurse -Force"
+        {{.SHELL}} -Command "Remove-Item -Path build/{{.THEME}}-*,dist/{{.THEME}}-* -Recurse -Force"
