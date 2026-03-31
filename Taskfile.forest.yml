@@ -15,7 +15,7 @@ tasks:
   generate-specs:
     desc: Generate all spec files from templates
     cmds:
-      - poetry run python tools/spec_generator.py --clean
+      - task: :generate-specs
     internal: true
 
   rewrite:
